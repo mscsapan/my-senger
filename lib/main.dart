@@ -1,69 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'dependency_injection.dart';
+import 'presentation/routes/route_names.dart';
+import 'presentation/utils/constraints.dart';
+import 'presentation/widgets/custom_theme.dart';
+import 'presentation/widgets/fetch_error_text.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  await DInjector.initDB();
+  runApp(const MySenger());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MySenger extends StatelessWidget {
+  const MySenger({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+    return ScreenUtilInit(
+      designSize: const Size(375.0, 812.0),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      useInheritedMediaQuery: true,
+      builder: (BuildContext context, child) {
+        return MultiRepositoryProvider(
+          providers: DInjector.repositoryProvider,
+          child: MultiBlocProvider(
+            providers: DInjector.blocProviders,
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              onGenerateRoute: RouteNames.generateRoutes,
+              initialRoute: RouteNames.splashScreen,
+              theme: MyTheme.theme,
+              onUnknownRoute: (RouteSettings settings) {
+                return MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return Scaffold(
+                      body: FetchErrorText(
+                        text: 'No Route Found ${settings.name}',
+                        textColor: blackColor,
+                      ),
+                    );
+                  },
+                );
+              },
+              builder: (context, child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: const TextScaler.linear(1.0),
+                  ),
+                  child: child ?? const SizedBox(),
+                );
+              },
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+          ),
+        );
+      },
     );
   }
 }

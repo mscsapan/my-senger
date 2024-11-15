@@ -1,0 +1,33 @@
+class Language {
+  static String skip = "Skip";
+  static String getStarted = "Get Started";
+  static String emailAddress = "Email Address";
+  static String password = "Password";
+  static String rememberMe = "Remember Me";
+  static String forgotPassword = "Forgot Password";
+  static String changePassword = "Change Password";
+  static String signIn = "Sign In";
+  static String login = "Login";
+  static String logout = "Logout";
+  static String haveNotAcct = "Don't have an account";
+  static String signInToYourAct = "Sign in to your Account";
+  static String addBalance = "Add Balance";
+  static String freelancer = "Freelancer";
+  static String deliveryDate = "Delivery Date:";
+  static String dashboard = "Dashboard";
+  static String postAJob = "Post a Job";
+  static String myJob = "My Job";
+  static String appliedList = "Applied List";
+  static String myOrder = "My Orders";
+  static String refund = "Refund";
+  static String liveChat = "Live Chat";
+  static String walletTransList = "Wallet Transaction List";
+  static String wishlist = "Wishlist";
+  static String privacyAndPolicy = "Privacy and Policy";
+  static String termsAndCondition = "Terms and Condition";
+  static String editProfile = "Edit Profile";
+  static String accDelete = "Account Delete";
+  static String viewDetails = "View Details";
+  static String viewApplied = "View Applied";
+  static String status = "Status:";
+}
