@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "553333443745",
+    "project_id": "chat-app-9c078",
+    "storage_bucket": "chat-app-9c078.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553333443745:android:38b81e4289b5d3aa0e74e0",
+        "android_client_info": {
+          "package_name": "com.mysenger.ali"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBrHHL6Jb1jEvfL1PM2PvfF346UvD6e28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

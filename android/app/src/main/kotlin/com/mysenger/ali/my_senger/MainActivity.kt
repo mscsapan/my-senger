@@ -1,4 +1,4 @@
-package com.mysenger.ali.my_senger
+package com.mysenger.ali
 
 import io.flutter.embedding.android.FlutterActivity
 
