@@ -13,7 +13,7 @@ class MyTheme {
       // bottomSheetTheme: const BottomSheetThemeData(backgroundColor: whiteColor),
       // colorScheme: const ColorScheme.light(secondary: lightningYellowColor),
       appBarTheme: AppBarTheme(
-        backgroundColor: grayBackgroundColor,
+        backgroundColor: greenColor,
         centerTitle: true,
         scrolledUnderElevation: 0.0,
         titleTextStyle: GoogleFonts.ibmPlexSansDevanagari(
