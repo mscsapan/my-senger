@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
+    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
     _init();
     super.initState();
   }
@@ -25,13 +25,16 @@ class _SplashScreenState extends State<SplashScreen> {
   _init() {
     Future.delayed(
         const Duration(seconds: 1),
-        () => Navigator.pushNamedAndRemoveUntil(
-            context, RouteNames.authScreen, (route) => false));
+        () => _goToNext());
+  }
+
+  _goToNext() {
+    Navigator.pushNamedAndRemoveUntil(context, RouteNames.authScreen, (route) => false);
   }
 
   @override
   void dispose() {
-    _dispose();
+    //_dispose();
     super.dispose();
   }
 
@@ -42,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion(
+    /*return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         systemNavigationBarColor: whiteColor,
         systemNavigationBarIconBrightness: Brightness.dark,
@@ -58,6 +61,14 @@ class _SplashScreenState extends State<SplashScreen> {
           padding: Utils.symmetric(h: 60.0),
           child: const CustomImage(path: KImages.splashBg),
         ),
+      ),
+    );*/
+    return Scaffold(
+      body: Container(
+        height: Utils.mediaQuery(context).height,
+        width: Utils.mediaQuery(context).width,
+        padding: Utils.symmetric(h: 60.0),
+        child: const CustomImage(path: KImages.splashBg),
       ),
     );
   }
