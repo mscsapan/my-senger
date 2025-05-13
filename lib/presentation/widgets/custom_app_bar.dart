@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:my_senger/presentation/utils/k_images.dart';
+import 'package:my_senger/presentation/widgets/custom_image.dart';
 
 import '../utils/constraints.dart';
 import '../utils/utils.dart';
@@ -11,15 +14,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.onTap,
     this.horSpace = 24.0,
-    this.bgColor = Colors.transparent,
+    this.bgColor = scaffoldBgColor,
     this.textColor = blackColor,
     this.iconColor = blackColor,
     this.visibleLeading = true,
     this.iconBgColor = primaryColor,
+    this.toolBarHeight,
     this.action = const [],
   });
   final String title;
   final double horSpace;
+  final double? toolBarHeight;
   final Color bgColor;
   final Color textColor;
   final Color iconColor;
@@ -30,6 +35,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness iconBrightness =
+    bgColor.computeLuminance() > 0.5 ? Brightness.dark : Brightness.light;
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: bgColor,
+      statusBarIconBrightness: iconBrightness,
+      statusBarBrightness: iconBrightness == Brightness.dark
+          ? Brightness.light
+          : Brightness.dark,
+    ));
     return AppBar(
       backgroundColor: bgColor,
       surfaceTintColor: bgColor,
@@ -41,11 +56,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           if (visibleLeading)
             GestureDetector(
               onTap: () => Navigator.of(context).pop(),
-              child: const Icon(
-                Icons.arrow_back_sharp,
-                size: 26.0,
-                color: Color(0xFF040415),
-              ),
+              child: CustomImage(path: KImages.backIcon,color: blackColor),
             ),
           // Utils.horizontalSpace(horSpace),
           const Spacer(),
@@ -59,12 +70,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: action,
-      toolbarHeight: Utils.vSize(70.0),
+      toolbarHeight: Utils.vSize(toolBarHeight ?? 60.0),
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(Utils.vSize(70.0));
+  Size get preferredSize => Size.fromHeight(Utils.vSize(60.0));
 }
 
 

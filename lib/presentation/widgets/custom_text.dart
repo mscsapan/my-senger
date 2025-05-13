@@ -39,7 +39,7 @@ class CustomText extends StatelessWidget {
         textAlign: textAlign,
         overflow: overflow,
         maxLines: maxLine,
-        style: GoogleFonts.ibmPlexSansDevanagari(
+        style: GoogleFonts.roboto(
           fontWeight: fontWeight,
           fontSize: fontSize.sp,
           color: color,

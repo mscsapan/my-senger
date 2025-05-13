@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dependency_injection_packages.dart';
+import 'logic/cubit/auth/auth_cubit.dart';
 
 class DInjector {
   static late final SharedPreferences _sharedPreferences;
@@ -49,10 +50,12 @@ class DInjector {
     BlocProvider<LoginBloc>(
       create: (BuildContext context) => LoginBloc(repository: context.read()),
     ),
+
     BlocProvider<SettingCubit>(
       create: (BuildContext context) =>
           SettingCubit(repository: context.read()),
     ),
+    BlocProvider<AuthCubit>(create: (BuildContext context) => AuthCubit()),
 
     // BlocProvider<PasswordChangeCubit>(
     //   create: (BuildContext context) => PasswordChangeCubit(

@@ -2,6 +2,7 @@
 class Assets {
   Assets._();
 
+  static const String iconsBackIcon = 'assets/icons/back_icon.svg';
   static const String imagesBg = 'assets/images/bg.jpg';
   static const String imagesSplashImage = 'assets/images/splash-image.png';
 

@@ -5,42 +5,42 @@ import '../utils/constraints.dart';
 import '../utils/utils.dart';
 
 class MyTheme {
-  static final borderRadius = BorderRadius.circular(10.0);
+  static final borderRadius = BorderRadius.circular(6.0);
   static final theme = ThemeData(
-      //brightness: Brightness.light,
+      brightness: Brightness.light,
       primaryColor: whiteColor,
       scaffoldBackgroundColor: scaffoldBgColor,
-      // bottomSheetTheme: const BottomSheetThemeData(backgroundColor: whiteColor),
-      // colorScheme: const ColorScheme.light(secondary: lightningYellowColor),
+      bottomSheetTheme: const BottomSheetThemeData(backgroundColor: whiteColor),
       appBarTheme: AppBarTheme(
-        backgroundColor: greenColor,
+        backgroundColor: Colors.transparent,
         centerTitle: true,
         scrolledUnderElevation: 0.0,
-        titleTextStyle: GoogleFonts.ibmPlexSansDevanagari(
-            color: blackColor, fontSize: 20.0, fontWeight: FontWeight.bold),
+        titleTextStyle: GoogleFonts.roboto(
+            color: blackColor, fontSize: 20, fontWeight: FontWeight.bold),
         iconTheme: const IconThemeData(color: blackColor),
         elevation: 0,
       ),
-      textTheme: GoogleFonts.ibmPlexSansDevanagariTextTheme(
+      textTheme: GoogleFonts.robotoTextTheme(
         TextTheme(
-          bodySmall:
-              GoogleFonts.ibmPlexSansDevanagari(fontSize: 12, height: 1.83),
-          bodyLarge: GoogleFonts.ibmPlexSansDevanagari(
-              fontSize: 16, fontWeight: FontWeight.w500, height: 1.375),
-          bodyMedium:
-              GoogleFonts.ibmPlexSansDevanagari(fontSize: 14, height: 1.5714),
-          labelLarge: GoogleFonts.ibmPlexSansDevanagari(
-              fontSize: 16, height: 2, fontWeight: FontWeight.w600),
-          titleLarge: GoogleFonts.ibmPlexSansDevanagari(
-              fontSize: 16, height: 2, fontWeight: FontWeight.w600),
+          bodySmall: GoogleFonts.roboto(fontSize: 12.0),
+          bodyLarge: GoogleFonts.roboto(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w500,
+              height: 2.16,
+              color: blackColor),
+          bodyMedium: GoogleFonts.roboto(fontSize: 14.0),
+          labelLarge:
+              GoogleFonts.roboto(fontSize: 16.0, fontWeight: FontWeight.w600),
+          titleLarge:
+              GoogleFonts.roboto(fontSize: 16.0, fontWeight: FontWeight.w600),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 64),
+          minimumSize: const Size(double.infinity, 42.0),
           backgroundColor: whiteColor,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
         ),
       ),
       textButtonTheme: const TextButtonThemeData(
@@ -58,57 +58,49 @@ class MyTheme {
         elevation: 3,
         backgroundColor: whiteColor,
         showUnselectedLabels: true,
-        selectedLabelStyle: GoogleFonts.ibmPlexSansDevanagari(
-          fontWeight: FontWeight.w600,
-          color: primaryColor,
-          fontSize: 14.0,
-        ),
-        unselectedLabelStyle: GoogleFonts.ibmPlexSansDevanagari(
-          fontWeight: FontWeight.w600,
+        selectedLabelStyle: GoogleFonts.roboto(
+          fontWeight: FontWeight.w400,
           color: grayColor,
           fontSize: 14.0,
         ),
-        selectedItemColor: primaryColor,
-        unselectedItemColor: grayColor,
+        unselectedLabelStyle: GoogleFonts.roboto(
+          fontWeight: FontWeight.w400,
+          color: blackColor,
+          fontSize: 14.0,
+        ),
+        selectedItemColor: grayColor,
+        unselectedItemColor: blackColor,
       ),
       inputDecorationTheme: InputDecorationTheme(
         isDense: true,
-        hintStyle: GoogleFonts.ibmPlexSansDevanagari(
+        hintStyle: GoogleFonts.roboto(
           fontWeight: FontWeight.w400,
           fontSize: 16.0,
-          color: grayColor,
+          color: const Color(0xFFBABABA),
         ),
-        labelStyle: GoogleFonts.ibmPlexSansDevanagari(
-          fontWeight: FontWeight.w400,
-          fontSize: 16.0,
-          color: inputTextColor,
-        ),
-        contentPadding: Utils.symmetric(v: 20.0),
+        labelStyle: GoogleFonts.roboto(
+            fontWeight: FontWeight.w400, fontSize: 16.0, color: blackColor),
+        contentPadding: Utils.symmetric(v: 9.0, h: 20.0),
         border: OutlineInputBorder(
           borderRadius: borderRadius,
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: borderColor, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: borderRadius,
-          borderSide: const BorderSide(color: primaryColor),
+          borderSide: const BorderSide(color: borderColor, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: borderRadius,
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: borderColor, width: 1),
         ),
         fillColor: whiteColor,
-        //fillColor: fillColor,
         filled: true,
-        focusColor: primaryColor,
+        //focusColor: primaryColor,
       ),
-      textSelectionTheme: const TextSelectionThemeData(
+      textSelectionTheme: TextSelectionThemeData(
         cursorColor: blackColor,
-        selectionColor: blackColor,
-        selectionHandleColor: blackColor,
-      ),
-      dialogTheme: DialogTheme(
-        shape: RoundedRectangleBorder(borderRadius: Utils.borderRadius(r: 6.0)),
-        insetPadding: Utils.symmetric(),
+        selectionColor: blueColor.withValues(alpha: 0.4),
+        selectionHandleColor: primaryColor,
       ),
       progressIndicatorTheme:
           const ProgressIndicatorThemeData(color: primaryColor));

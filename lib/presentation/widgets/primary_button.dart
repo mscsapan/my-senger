@@ -8,20 +8,21 @@ import 'custom_text.dart';
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
-    this.maximumSize = const Size(double.infinity, 52.0),
+    this.maximumSize = const Size(double.infinity, 44.0),
     required this.text,
-    this.fontSize = 18.0,
-    this.fontWeight = FontWeight.w400,
+    this.fontSize = 16.0,
+    this.fontWeight = FontWeight.w500,
     required this.onPressed,
     this.textColor = whiteColor,
-    this.bgColor =const Color(0xFF22BE0D),
+    this.bgColor = blackColor,
     this.borderColor = primaryColor,
-    this.minimumSize = const Size(double.infinity, 52.0),
-    this.borderRadiusSize = 25.0,
+    this.minimumSize = const Size(double.infinity, 44.0),
+    this.borderRadiusSize = 4.0,
     this.buttonType = ButtonType.elevated,
     this.padding,
     this.icon,
-    this.fontFamily,
+    this.maxLine,
+    this.isGradient = true,
   });
 
   final VoidCallback? onPressed;
@@ -38,7 +39,8 @@ class PrimaryButton extends StatelessWidget {
   final EdgeInsets? padding;
   final Widget? icon;
   final FontWeight fontWeight;
-  final String? fontFamily;
+  final int? maxLine;
+  final bool isGradient;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +52,8 @@ class PrimaryButton extends StatelessWidget {
         padding: p,
         child: ElevatedButton.icon(
           onPressed: onPressed,
-          label: tempIcon,
-          icon: Padding(
+          icon: tempIcon,
+          label: Padding(
             padding: p,
             child: CustomText(
               text: text,
@@ -59,6 +61,7 @@ class PrimaryButton extends StatelessWidget {
               fontSize: fontSize.sp,
               height: 1.5.h,
               fontWeight: fontWeight,
+              maxLine: maxLine ?? 1,
               textAlign: TextAlign.center,
             ),
           ),
@@ -82,11 +85,13 @@ class PrimaryButton extends StatelessWidget {
         child: OutlinedButton(
           onPressed: onPressed,
           style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(bgColor),
+            backgroundColor: WidgetStateProperty.all(transparent),
             splashFactory: NoSplash.splashFactory,
             shadowColor: WidgetStateProperty.all(transparent),
             overlayColor: WidgetStateProperty.all(transparent),
             elevation: WidgetStateProperty.all(0.0),
+            side: WidgetStateProperty.all(
+                BorderSide(color: borderColor, width: 0.4)),
             shape: WidgetStateProperty.all(RoundedRectangleBorder(
                 borderRadius: borderRadius,
                 side: BorderSide(color: borderColor))),
@@ -101,8 +106,37 @@ class PrimaryButton extends StatelessWidget {
               fontSize: fontSize.sp,
               height: 1.5.h,
               fontWeight: fontWeight,
+              maxLine: maxLine ?? 1,
               textAlign: TextAlign.center,
             ),
+          ),
+        ),
+      );
+    } else if (buttonType == ButtonType.gradient) {
+      return Container(
+        decoration: BoxDecoration(
+          gradient: buttonGradient,
+          borderRadius: borderRadius,
+        ),
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(bgColor),
+            splashFactory: NoSplash.splashFactory,
+            shadowColor: WidgetStateProperty.all(transparent),
+            overlayColor: WidgetStateProperty.all(transparent),
+            elevation: WidgetStateProperty.all(0.0),
+            shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(borderRadius: borderRadius)),
+            minimumSize: WidgetStateProperty.all(minimumSize),
+            maximumSize: WidgetStateProperty.all(maximumSize),
+          ),
+          child: CustomText(
+            text: text,
+            color: textColor,
+            fontSize: fontSize.sp,
+            height: 1.5.h,
+            fontWeight: FontWeight.w500,
           ),
         ),
       );
@@ -113,11 +147,12 @@ class PrimaryButton extends StatelessWidget {
           onPressed: onPressed,
           style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all(bgColor),
-            splashFactory: NoSplash.splashFactory,
+            // splashFactory: NoSplash.splashFactory,
             shadowColor: WidgetStateProperty.all(transparent),
             overlayColor: WidgetStateProperty.all(transparent),
             elevation: WidgetStateProperty.all(0.0),
-            shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: borderRadius)),
+            shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(borderRadius: borderRadius)),
             minimumSize: WidgetStateProperty.all(minimumSize),
             maximumSize: WidgetStateProperty.all(maximumSize),
           ),
@@ -129,6 +164,7 @@ class PrimaryButton extends StatelessWidget {
               fontSize: fontSize,
               height: 1.5,
               fontWeight: fontWeight,
+              maxLine: maxLine ?? 1,
               textAlign: TextAlign.center,
             ),
           ),
@@ -138,4 +174,4 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-enum ButtonType { elevated, outlined, iconButton }
+enum ButtonType { elevated, outlined, iconButton, gradient }
