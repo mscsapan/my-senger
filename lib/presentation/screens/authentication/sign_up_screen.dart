@@ -35,16 +35,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: '',visibleLeading: true,toolBarHeight: 40.0),
+      backgroundColor: scaffoldBgColor,
+      appBar: CustomAppBar(title: '',visibleLeading: true,toolBarHeight: 40.0,bgColor: scaffoldBgColor),
       body: SizedBox(
         height: Utils.mediaQuery(context).height,
         width: Utils.mediaQuery(context).width,
         child: ListView(
           padding: Utils.all(),
           children: [
-            Utils.verticalSpace(Utils.mediaQuery(context).height * 0.02),
+            Utils.verticalSpace(Utils.mediaQuery(context).height * 0.2),
             Container(
-              height: Utils.mediaQuery(context).height * 0.9,
+              height: Utils.mediaQuery(context).height * 0.7,
               width: Utils.mediaQuery(context).width,
               alignment: Alignment.bottomCenter,
               padding: Utils.symmetric(v: 30.0).copyWith(bottom: 0.0),
@@ -72,29 +73,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     fontWeight: FontWeight.w400,
                   ),
                   Utils.verticalSpace(10.0),
-                  BlocBuilder<AuthCubit, AuthStateModel>(builder: (context, state) {
-                    final login = state.authState;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomForm(
-                            label: 'Your Name',
-                            bottomSpace: 10.0,
-                            child: TextFormField(
-                              initialValue: state.email,
-                              onChanged:  loginBloc.addEmail,
-                              decoration: const InputDecoration(
-                                hintText: 'your name',
-                              ),
-                              keyboardType: TextInputType.name,
-                            )),
-                        // if (login is LoginStateFormValidate) ...[
-                        //   if (login.errors.email.isNotEmpty)
-                        //     FetchErrorText(text: login.errors.email.first)
-                        // ]
-                      ],
-                    );
-                  }),
+                  // BlocBuilder<AuthCubit, AuthStateModel>(builder: (context, state) {
+                  //   final login = state.authState;
+                  //   return Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       CustomForm(
+                  //           label: 'Your Name',
+                  //           bottomSpace: 10.0,
+                  //           child: TextFormField(
+                  //             initialValue: state.email,
+                  //             onChanged:  loginBloc.addEmail,
+                  //             decoration: const InputDecoration(
+                  //               hintText: 'your name',
+                  //             ),
+                  //             keyboardType: TextInputType.name,
+                  //           )),
+                  //       // if (login is LoginStateFormValidate) ...[
+                  //       //   if (login.errors.email.isNotEmpty)
+                  //       //     FetchErrorText(text: login.errors.email.first)
+                  //       // ]
+                  //     ],
+                  //   );
+                  // }),
                   BlocBuilder<AuthCubit, AuthStateModel>(builder: (context, state) {
                     final login = state.authState;
                     return Column(
@@ -118,34 +119,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ],
                     );
                   }),
-                  BlocBuilder<AuthCubit, AuthStateModel>(builder: (context, state) {
-                    final login = state.authState;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomForm(
-                            label: 'Phone Number',
-                            bottomSpace: 10.0,
-                            child: TextFormField(
-                              initialValue: state.email,
-                              onChanged:  loginBloc.addEmail,
-                              decoration: const InputDecoration(
-                                hintText: 'your phone number',
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                FilteringTextInputFormatter.deny('a'),
-                                // LengthLimitingTextInputFormatter(11),
-                              ],
-                              keyboardType: TextInputType.phone,
-                            )),
-                        // if (login is LoginStateFormValidate) ...[
-                        //   if (login.errors.email.isNotEmpty)
-                        //     FetchErrorText(text: login.errors.email.first)
-                        // ]
-                      ],
-                    );
-                  }),
+                  // BlocBuilder<AuthCubit, AuthStateModel>(builder: (context, state) {
+                  //   final login = state.authState;
+                  //   return Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       CustomForm(
+                  //           label: 'Phone Number',
+                  //           bottomSpace: 10.0,
+                  //           child: TextFormField(
+                  //             initialValue: state.email,
+                  //             onChanged:  loginBloc.addEmail,
+                  //             decoration: const InputDecoration(
+                  //               hintText: 'your phone number',
+                  //             ),
+                  //             inputFormatters: [
+                  //               FilteringTextInputFormatter.digitsOnly,
+                  //               FilteringTextInputFormatter.deny('a'),
+                  //               // LengthLimitingTextInputFormatter(11),
+                  //             ],
+                  //             keyboardType: TextInputType.phone,
+                  //           )),
+                  //       // if (login is LoginStateFormValidate) ...[
+                  //       //   if (login.errors.email.isNotEmpty)
+                  //       //     FetchErrorText(text: login.errors.email.first)
+                  //       // ]
+                  //     ],
+                  //   );
+                  // }),
 
                   BlocBuilder<AuthCubit, AuthStateModel>(builder: (context, state) {
                     final login = state.authState;
@@ -161,7 +162,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               onChanged:  loginBloc.addPassword,
                               obscureText: state.show,
                               decoration: InputDecoration(
-                                fillColor: Colors.white,
                                 hintText: 'password',
                                 suffixIcon: IconButton(
                                   onPressed: () => loginBloc.showPassword(),
@@ -183,18 +183,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       children: [
                         CustomForm(
                             label: 'Confirm Password',
-                            bottomSpace: 10.0,
+                            bottomSpace: 20.0,
                             child: TextFormField(
                               keyboardType: TextInputType.visiblePassword,
                               initialValue: state.password,
                               onChanged:  loginBloc.addPassword,
-                              obscureText: state.show,
+                              obscureText: state.showConfirm,
                               decoration: InputDecoration(
-                                fillColor: Colors.white,
                                 hintText: 'confirm password',
                                 suffixIcon: IconButton(
-                                  onPressed: () => loginBloc.showPassword(),
-                                  icon: Icon(state.show ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: blackColor),
+                                  onPressed: () => loginBloc.showConfirmPassword(),
+                                  icon: Icon(state.showConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: blackColor),
                                 ),
                               ),
                             )),
@@ -209,26 +208,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   BlocConsumer<AuthCubit, AuthStateModel>(
                     listener: (context, login) {
                       final state = login.authState;
-                      if (state is LoginStateError) {
-                        // Utils.errorSnackBar(context, state.message);
-                      } else if (state is LoginStateLoaded) {
-                        // if (widget.carId.isEmpty) {
-                        //   Navigator.pushNamedAndRemoveUntil(context, RouteNames.mainScreen, (route) => false);
-                        // } else {
-                        //   Navigator.pushNamedAndRemoveUntil(context, RouteNames.detailsCarScreen, arguments: widget.carId.toString(), (route) => false);
-                        // }
+                      if (state is AuthError) {
+                        Utils.errorSnackBar(context, state.message??'');
+                      } else if (state is AuthSuccess) {
+                        Utils.showSnackBar(context, state.message??'');
                       }
                     },
                     builder: (context, login) {
                       final state = login.authState;
-                      if (state is LoginStateLoading) {
+                      if (state is AuthLoading) {
                         return const LoadingWidget();
                       }
                       return PrimaryButton(
                         text: Utils.translatedText(context, 'Sign up'),
                         onPressed: () {
                           Utils.closeKeyBoard(context);
-                          // loginBloc.add(const LoginEventSubmit());
+                         loginBloc.signUp();
                         },
                       );
                     },
@@ -247,7 +242,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       GestureDetector(
                         onTap: () {
                           // context.read<RegisterCubit>().clearAllField();
-                          // Navigator.pushNamed(context, RouteNames.registrationScreen);
+                          Navigator.pushNamed(context, RouteNames.authScreen);
                         },
                         child: const CustomText(
                           text: 'Login',

@@ -1,0 +1,2 @@
+D:/apps/my-senger/android/app/.cxx/Debug/511k1o2s/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/apps/my-senger/android/app/.cxx/Debug/511k1o2s/armeabi-v7a/CMakeFiles/rebuild_cache.dir

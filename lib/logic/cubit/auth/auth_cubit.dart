@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/auth/auth_state_model.dart';
@@ -17,4 +19,21 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
   void showPassword() =>emit(state.copyWith(show: !state.show,authState: AuthInitial()));
 
+  void showConfirmPassword() =>emit(state.copyWith(showConfirm: !state.showConfirm,authState: AuthInitial()));
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  Future<void> signUp() async {
+    try {
+      emit(state.copyWith(authState: AuthLoading()));
+      await _firebaseAuth.createUserWithEmailAndPassword(
+        email: state.email,
+        password: state.password,
+      );
+      emit(state.copyWith(authState: AuthSuccess('Successfully registered')));
+    } on FirebaseAuthException catch (e) {
+      debugPrint('FirebaseAuthException: ${e.code}');
+      emit(state.copyWith(authState: AuthError(e.message, e.code)));
+    }
+  }
 }

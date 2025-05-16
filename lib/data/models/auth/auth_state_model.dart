@@ -10,6 +10,7 @@ class AuthStateModel extends Equatable {
   final String password;
   final bool isActive;
   final bool show;
+  final bool showConfirm;
   final AuthState authState;
 
   const AuthStateModel({
@@ -19,6 +20,7 @@ class AuthStateModel extends Equatable {
     this.password = '',
     this.isActive = false,
     this.show = true,
+    this.showConfirm = true,
     this.authState = const AuthInitial(),
   });
 
@@ -27,6 +29,7 @@ class AuthStateModel extends Equatable {
     String? password,
     bool? isActive,
     bool? show,
+    bool? showConfirm,
     AuthState? authState,
   }) {
     return AuthStateModel(
@@ -34,6 +37,7 @@ class AuthStateModel extends Equatable {
       password: password ?? this.password,
       isActive: isActive ?? this.isActive,
       show: show ?? this.show,
+      showConfirm: showConfirm ?? this.showConfirm,
       authState: authState ?? this.authState,
     );
   }
@@ -44,6 +48,7 @@ class AuthStateModel extends Equatable {
       password: '',
       isActive: false,
       show: true,
+      showConfirm: true,
       authState: AuthInitial(),
     );
   }
@@ -80,6 +85,7 @@ class AuthStateModel extends Equatable {
         password,
         isActive,
         show,
+        showConfirm,
         authState,
       ];
 }

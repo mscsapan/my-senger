@@ -93,7 +93,7 @@ class MyTheme {
           borderRadius: borderRadius,
           borderSide: const BorderSide(color: borderColor, width: 1),
         ),
-        fillColor: whiteColor,
+        fillColor: filledColor,
         filled: true,
         //focusColor: primaryColor,
       ),

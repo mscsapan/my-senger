@@ -33,7 +33,8 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: '',visibleLeading: false),
+      backgroundColor: scaffoldBgColor,
+      appBar: CustomAppBar(title: '',visibleLeading: false,bgColor: scaffoldBgColor),
       body: SizedBox(
         height: Utils.mediaQuery(context).height,
         width: Utils.mediaQuery(context).width,
@@ -75,7 +76,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomForm(
-                            label: 'Email',
+                            label: 'Email Address',
                             child: TextFormField(
                               initialValue: state.email,
                               onChanged:  loginBloc.addEmail,
@@ -105,7 +106,6 @@ class _AuthScreenState extends State<AuthScreen> {
                               onChanged:  loginBloc.addPassword,
                               obscureText: state.show,
                               decoration: InputDecoration(
-                                fillColor: Colors.white,
                                 hintText: 'Password here',
                                 suffixIcon: IconButton(
                                   onPressed: () => loginBloc.showPassword(),
