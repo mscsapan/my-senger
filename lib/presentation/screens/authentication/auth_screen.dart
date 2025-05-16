@@ -45,6 +45,7 @@ class _AuthScreenState extends State<AuthScreen> {
               height: Utils.mediaQuery(context).height * 0.8,
               width: Utils.mediaQuery(context).width,
               alignment: Alignment.bottomCenter,
+              // padding: EdgeInsets.only(left: 20.0, right: 20.0,top: 20.0, bottom: MediaQuery.of(context).viewInsets.bottom),
               padding: Utils.symmetric(v: 30.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -162,26 +163,22 @@ class _AuthScreenState extends State<AuthScreen> {
                   BlocConsumer<AuthCubit, AuthStateModel>(
                     listener: (context, login) {
                       final state = login.authState;
-                      if (state is LoginStateError) {
-                        // Utils.errorSnackBar(context, state.message);
-                      } else if (state is LoginStateLoaded) {
-                        // if (widget.carId.isEmpty) {
-                        //   Navigator.pushNamedAndRemoveUntil(context, RouteNames.mainScreen, (route) => false);
-                        // } else {
-                        //   Navigator.pushNamedAndRemoveUntil(context, RouteNames.detailsCarScreen, arguments: widget.carId.toString(), (route) => false);
-                        // }
+                      if (state is AuthError) {
+                        Utils.errorSnackBar(context, state.code??'');
+                      } else if (state is AuthSuccess) {
+                        Utils.showSnackBar(context, state.message??'');
                       }
                     },
                     builder: (context, login) {
                       final state = login.authState;
-                      if (state is LoginStateLoading) {
+                      if (state is AuthLoading) {
                         return const LoadingWidget();
                       }
                       return PrimaryButton(
-                        text: Utils.translatedText(context, 'Log in'),
+                        text: Utils.translatedText(context, 'Login'),
                         onPressed: () {
                           Utils.closeKeyBoard(context);
-                         // loginBloc.add(const LoginEventSubmit());
+                          loginBloc.signIn();
                         },
                       );
                     },
@@ -199,7 +196,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // context.read<RegisterCubit>().clearAllField();
+                          loginBloc.clear();
                           Navigator.pushNamed(context, RouteNames.signUpScreen);
                         },
                         child: const CustomText(

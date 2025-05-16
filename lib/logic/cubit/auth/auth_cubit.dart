@@ -36,4 +36,31 @@ class AuthCubit extends Cubit<AuthStateModel> {
       emit(state.copyWith(authState: AuthError(e.message, e.code)));
     }
   }
+
+  Future<void> signIn() async {
+    try {
+      emit(state.copyWith(authState: AuthLoading()));
+      await _firebaseAuth.signInWithEmailAndPassword(
+        email: state.email,
+        password: state.password,
+      );
+      emit(state.copyWith(authState: AuthSuccess('Successfully login')));
+    } on FirebaseAuthException catch (e) {
+      debugPrint('FirebaseAuthException: ${e.code}');
+      emit(state.copyWith(authState: AuthError(e.message, e.code)));
+    }
+  }
+
+  Future<void> forgotPassword() async {
+    try {
+      emit(state.copyWith(authState: AuthLoading()));
+      await _firebaseAuth.sendPasswordResetEmail (email: state.email);
+      emit(state.copyWith(authState: AuthSuccess('Successfully sent password reset email')));
+    } on FirebaseAuthException catch (e) {
+      debugPrint('FirebaseAuthException: ${e.code}');
+      emit(state.copyWith(authState: AuthError(e.message, e.code)));
+    }
+  }
+
+  void clear() => emit(state.clear());
 }

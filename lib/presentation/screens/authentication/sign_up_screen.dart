@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -241,7 +243,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // context.read<RegisterCubit>().clearAllField();
+                          loginBloc.clear();
                           Navigator.pushNamed(context, RouteNames.authScreen);
                         },
                         child: const CustomText(
