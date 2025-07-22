@@ -76,37 +76,41 @@ class UserResponseModel extends Equatable {
 }
 
 class UserResponse extends Equatable {
-  final int id;
+  final String id;
   final String name;
   final String email;
   final String phone;
   final String image;
-  final int status;
+  final String password;
+  final String address;
 
   const UserResponse({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.image,
-    required this.status,
+    this.id = '',
+    this.name = '',
+    this.email = '',
+    this.phone = '',
+    this.password = '',
+    this.image = '',
+    this.address = '',
   });
 
   UserResponse copyWith({
-    int? id,
+    String? id,
     String? name,
     String? email,
     String? phone,
+    String? password,
     String? image,
-    int? status,
+    String? address,
   }) {
     return UserResponse(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
       phone: phone ?? this.phone,
+      password: password ?? this.password,
       image: image ?? this.image,
-      status: status ?? this.status,
+      address: address ?? this.address,
     );
   }
 
@@ -116,19 +120,21 @@ class UserResponse extends Equatable {
       'name': name,
       'email': email,
       'phone': phone,
+      'password': password,
       'image': image,
-      'status': status,
+      'address': address,
     };
   }
 
   factory UserResponse.fromMap(Map<String, dynamic> map) {
     return UserResponse(
-      id: map['id'] ?? 0,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
+      password: map['password'] ?? '',
       image: map['image'] ?? '',
-      status: map['status'] != null ? int.parse(map['status'].toString()) : 0,
+      address: map['status'] ?? '',
     );
   }
 
@@ -148,8 +154,9 @@ class UserResponse extends Equatable {
       name,
       email,
       phone,
+      password,
       image,
-      status,
+      address,
     ];
   }
 }

@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
-import '../../../logic/bloc/login/login_bloc.dart';
 import '../../../logic/cubit/auth/auth_cubit.dart';
+import 'user_response_model.dart';
 
 class AuthStateModel extends Equatable {
   final String email;
@@ -11,6 +11,7 @@ class AuthStateModel extends Equatable {
   final bool isActive;
   final bool show;
   final bool showConfirm;
+  final UserResponse? users;
   final AuthState authState;
 
   const AuthStateModel({
@@ -21,6 +22,7 @@ class AuthStateModel extends Equatable {
     this.isActive = false,
     this.show = true,
     this.showConfirm = true,
+    this.users,
     this.authState = const AuthInitial(),
   });
 
@@ -30,6 +32,7 @@ class AuthStateModel extends Equatable {
     bool? isActive,
     bool? show,
     bool? showConfirm,
+    UserResponse? users,
     AuthState? authState,
   }) {
     return AuthStateModel(
@@ -38,6 +41,7 @@ class AuthStateModel extends Equatable {
       isActive: isActive ?? this.isActive,
       show: show ?? this.show,
       showConfirm: showConfirm ?? this.showConfirm,
+      users: users ?? this.users,
       authState: authState ?? this.authState,
     );
   }
@@ -49,6 +53,7 @@ class AuthStateModel extends Equatable {
       isActive: false,
       show: true,
       showConfirm: true,
+      users: null,
       authState: AuthInitial(),
     );
   }
@@ -80,12 +85,13 @@ class AuthStateModel extends Equatable {
       'AuthModelState(username: $email, password: $password, state: $authState)';
 
   @override
-  List<Object> get props => [
-        email,
-        password,
-        isActive,
-        show,
-        showConfirm,
-        authState,
-      ];
+  List<Object?> get props => [
+    email,
+    password,
+    isActive,
+    show,
+    showConfirm,
+    users,
+    authState,
+  ];
 }

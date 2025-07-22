@@ -214,6 +214,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Utils.errorSnackBar(context, state.message??'');
                       } else if (state is AuthSuccess) {
                         Utils.showSnackBar(context, state.message??'');
+
+                        WidgetsBinding.instance.addPostFrameCallback((_){
+                          loginBloc.storeNewUser();
+                        });
                       }
                     },
                     builder: (context, login) {
