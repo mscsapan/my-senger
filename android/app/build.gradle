@@ -18,7 +18,8 @@ android {
     namespace "com.mysenger.ali"
     compileSdk = 35
     buildToolsVersion "35.0.0"
-    ndkVersion = "25.1.8937393"
+    ndkVersion = "28.0.13004108"
+//    ndkVersion = "25.1.8937393"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
