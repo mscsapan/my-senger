@@ -98,5 +98,20 @@ class AuthCubit extends Cubit<AuthStateModel> {
     }
   }
 
+  Future<void> updateUser() async {
+    try {
+      //emit(state.copyWith(authState: AuthLoading()));
+      // Future.delayed(const Duration(seconds: 1));
+      // debugPrint('user-map ${state.users?.toMap()}');
+      // debugPrint('user-newly-created-id ${_auth.currentUser?.uid}');
+      await _db.collection('users').doc(_auth.currentUser?.uid).update(state.users?.toMap() ?? <String, dynamic>{});
+      // emit(state.copyWith(authState: AuthSuccess('Successfully login')));
+      // debugPrint('successfully store');
+    } on FirebaseException catch (e,t) {
+      debugPrint('FirebaseAuthException: ${e.message} - ${e.stackTrace} - $t');
+      //emit(state.copyWith(authState: AuthError(e.message, e.code)));
+    }
+  }
+
   void clear() => emit(state.clear());
 }
