@@ -28,29 +28,29 @@ class AuthCubit extends Cubit<AuthStateModel> {
     emit(state.copyWith(users: stateUser));
   }
 
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Future<void> signUp() async {
     try {
       emit(state.copyWith(authState: AuthLoading()));
-      await _firebaseAuth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: state.email,
         password: state.password,
-      ).then((_){
-        debugPrint('User registered successful with UID ${_firebaseAuth.currentUser?.uid}.');
-        final user = state.users ?? UserResponse();
+      ).whenComplete(() {
 
-        user.copyWith(
-          id: _firebaseAuth.currentUser?.uid,
-          name: '',
+        // debugPrint('User registered successful with UID ${_auth.currentUser?.uid}.');
+
+        final updatedUser = (state.users ?? UserResponse()).copyWith(
+          id: _auth.currentUser?.uid,
           email: state.email,
           password: state.password,
         );
-        emit(state.copyWith(users: user));
-        debugPrint('User registered successful with user object ${state.users}');
+        emit(state.copyWith(users: updatedUser));
       });
+
+      // debugPrint('User registered successful with user object ${state.users}');
       emit(state.copyWith(authState: AuthSuccess('Successfully registered')));
     } on FirebaseAuthException catch (e) {
       debugPrint('FirebaseAuthException: ${e.code}');
@@ -61,7 +61,7 @@ class AuthCubit extends Cubit<AuthStateModel> {
   Future<void> signIn() async {
     try {
       emit(state.copyWith(authState: AuthLoading()));
-      await _firebaseAuth.signInWithEmailAndPassword(
+      await _auth.signInWithEmailAndPassword(
         email: state.email,
         password: state.password,
       );
@@ -75,7 +75,7 @@ class AuthCubit extends Cubit<AuthStateModel> {
   Future<void> forgotPassword() async {
     try {
       emit(state.copyWith(authState: AuthLoading()));
-      await _firebaseAuth.sendPasswordResetEmail (email: state.email);
+      await _auth.sendPasswordResetEmail (email: state.email);
       emit(state.copyWith(authState: AuthSuccess('Successfully sent password reset email')));
     } on FirebaseAuthException catch (e) {
       debugPrint('FirebaseAuthException: ${e.code}');
@@ -86,12 +86,14 @@ class AuthCubit extends Cubit<AuthStateModel> {
   Future<void> storeNewUser() async {
     try {
       //emit(state.copyWith(authState: AuthLoading()));
-      debugPrint('user-map ${state.users?.toMap()}');
-      await _fireStore.collection('users').doc(state.users?.id).set(state.users?.toMap() ?? <String, dynamic>{});
+      // Future.delayed(const Duration(seconds: 1));
+      // debugPrint('user-map ${state.users?.toMap()}');
+      // debugPrint('user-newly-created-id ${_auth.currentUser?.uid}');
+      await _db.collection('users').doc(_auth.currentUser?.uid).set(state.users?.toMap() ?? <String, dynamic>{});
       // emit(state.copyWith(authState: AuthSuccess('Successfully login')));
-      debugPrint('successfully store');
-    } on FirebaseAuthException catch (e) {
-      debugPrint('FirebaseAuthException: ${e.code}');
+      // debugPrint('successfully store');
+    } on FirebaseException catch (e,t) {
+      debugPrint('FirebaseAuthException: ${e.message} - ${e.stackTrace} - $t');
       //emit(state.copyWith(authState: AuthError(e.message, e.code)));
     }
   }
