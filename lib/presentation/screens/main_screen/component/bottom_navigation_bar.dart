@@ -52,8 +52,7 @@ class MyBottomNavigationBar extends StatelessWidget {
                   backgroundColor: Colors.white,
                   selectedLabelStyle:
                   const TextStyle(fontSize: 14, color: blackColor),
-                  unselectedLabelStyle:
-                  const TextStyle(fontSize: 14, color: paraColor),
+                  unselectedLabelStyle: const TextStyle(fontSize: 14, color: gray5B),
                   items: <BottomNavigationBarItem>[
 
                       BottomNavigationBarItem(
@@ -68,12 +67,12 @@ class MyBottomNavigationBar extends StatelessWidget {
                       //   activeIcon: _navIcon(KImages.quoteActive),
                       //   label: 'Quote',
                       // ),
-                      BottomNavigationBarItem(
-                        tooltip: 'Categories',
-                        icon: _navIcon(KImages.category),
-                        activeIcon: _navIcon(KImages.categoryActive),
-                        label: 'Categories',
-                      ),
+                      // BottomNavigationBarItem(
+                      //   tooltip: 'Chat',
+                      //   icon: _navIcon(KImages.category),
+                      //   activeIcon: _navIcon(KImages.categoryActive),
+                      //   label: 'Chat',
+                      // ),
                       // BottomNavigationBarItem(
                       //   tooltip: 'Favourite',
                       //   icon: _navIcon(KImages.favourite),
@@ -82,16 +81,16 @@ class MyBottomNavigationBar extends StatelessWidget {
                       // ),
 
                     BottomNavigationBarItem(
-                      tooltip: 'Quote',
+                      tooltip: 'Chat',
                       icon: _navIcon(KImages.quote),
                       activeIcon: _navIcon(KImages.quoteActive),
-                      label: 'Quote',
+                      label: 'Chat',
                     ),
                     BottomNavigationBarItem(
-                      tooltip: 'More',
+                      tooltip: 'Profile',
                       activeIcon: _navIcon(KImages.moreActive),
                       icon: _navIcon(KImages.more),
-                      label: 'More',
+                      label: 'Profile',
                     ),
                   ],
                   // type: BottomNavigationBarType.fixed,
