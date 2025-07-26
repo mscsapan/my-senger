@@ -55,21 +55,7 @@ class MyBottomNavigationBar extends StatelessWidget {
                   unselectedLabelStyle:
                   const TextStyle(fontSize: 14, color: paraColor),
                   items: <BottomNavigationBarItem>[
-                    if(state.isDealer)...[
-                      BottomNavigationBarItem(
-                        tooltip: 'Dashboard',
-                        icon: _navIcon(KImages.dashboard),
-                        activeIcon: _navIcon(KImages.dashboardActive),
-                        label: 'Dashboard',
-                      ),
 
-                      BottomNavigationBarItem(
-                        tooltip: 'Submit Ads',
-                        icon: _navIcon(KImages.submitAdd),
-                        activeIcon: _navIcon(KImages.submitAddActive),
-                        label: 'Submit Ads',
-                      ),
-                    ]else...[
                       BottomNavigationBarItem(
                         tooltip: 'Home',
                         icon: _navIcon(KImages.home),
@@ -94,7 +80,7 @@ class MyBottomNavigationBar extends StatelessWidget {
                       //   activeIcon: _navIcon(KImages.favouriteActive),
                       //   label: 'Favourite',
                       // ),
-                    ],
+
                     BottomNavigationBarItem(
                       tooltip: 'Quote',
                       icon: _navIcon(KImages.quote),

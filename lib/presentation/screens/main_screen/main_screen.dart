@@ -7,8 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/auth/login_state_model.dart';
 import '../../../logic/bloc/login/login_bloc.dart';
 
+import '../chat/chat_screen.dart';
 import '../home/home_screen.dart';
 
+import '../profile/profile_screen.dart';
 import 'component/bottom_navigation_bar.dart';
 import 'component/main_controller.dart';
 
@@ -28,25 +30,15 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     loginBloc = context.read<LoginBloc>();
-    context.read<ProfileCubit>().getProfileData();
     _init();
 
   }
 
-  _init(){
+  void _init(){
     screenList = [
-
-      if(loginBloc.state.isDealer)...[
-        const DashboardScreen(),
-        const AddNewAdsScreen(isShow: false),
-      ]else...[
-        const HomeScreen(),
-       // const QuoteScreen(isShow: false),
-        const CategoriesScreen(isShow:false),
-        //const FavouriteScreen(isShow:false),
-      ],
-      const QuoteScreen(isShow: false),
-      const MoreScreen(),
+      const HomeScreen(),
+      const ChatScreen(),
+      const ProfileScreen(),
     ];
 
   }
@@ -70,10 +62,6 @@ class _MainScreenState extends State<MainScreen> {
           stream: _homeController.naveListener.stream,
           builder: (context, AsyncSnapshot<int> snapshot) {
             int item = snapshot.data ?? 0;
-
-            if(loginBloc.state.isDealer && item == 2) {
-              context.read<AddCarCubit>().clear();
-            }
             return screenList[item];
           },
         ),
