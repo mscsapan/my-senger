@@ -1,26 +1,95 @@
 {
   "project_info": {
-    "project_number": "553333443745",
-    "project_id": "chat-app-9c078",
-    "storage_bucket": "chat-app-9c078.firebasestorage.app"
+    "project_number": "432405771305",
+    "project_id": "bdmarket-726ff",
+    "storage_bucket": "bdmarket-726ff.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:553333443745:android:38b81e4289b5d3aa0e74e0",
+        "mobilesdk_app_id": "1:432405771305:android:5cb70659123ebd78be5838",
         "android_client_info": {
-          "package_name": "com.mysenger.ali"
+          "package_name": "com.bdmarket.xyz"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "432405771305-2euhe0p2iul9ua9b8263l3mcpf3fsql0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bdmarket.xyz",
+            "certificate_hash": "e97b386c1f1224c0b63c0c8e46bf4e9178769da3"
+          }
+        },
+        {
+          "client_id": "432405771305-c20ae6jkunb0mingtfalinf682bhn219.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bdmarket.xyz",
+            "certificate_hash": "697192add11bf355f35edf8892717396984e1de0"
+          }
+        },
+        {
+          "client_id": "432405771305-c6nlftjoq5r223vl47nns46gj6t28seg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBBrHHL6Jb1jEvfL1PM2PvfF346UvD6e28"
+          "current_key": "AIzaSyAc5919Vok48TeLQUPEgqKB8sCLgPEA0kk"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "432405771305-c6nlftjoq5r223vl47nns46gj6t28seg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "432405771305-1860ae9cqv48p0lbso88413stk15b0ch.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bdmarket.xyz"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432405771305:android:5604388ba49b995ebe5838",
+        "android_client_info": {
+          "package_name": "com.mysenger.ali"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "432405771305-c6nlftjoq5r223vl47nns46gj6t28seg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc5919Vok48TeLQUPEgqKB8sCLgPEA0kk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "432405771305-c6nlftjoq5r223vl47nns46gj6t28seg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "432405771305-1860ae9cqv48p0lbso88413stk15b0ch.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bdmarket.xyz"
+              }
+            }
+          ]
         }
       }
     }

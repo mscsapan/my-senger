@@ -2,18 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>432405771305-pr2nicoj1ksr88lfpj1q85orpmvor98n.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.432405771305-pr2nicoj1ksr88lfpj1q85orpmvor98n</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>432405771305-2euhe0p2iul9ua9b8263l3mcpf3fsql0.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDnUda3eu64-2eH5Gm0auxTH3LMR_HLrcQ</string>
+	<string>AIzaSyDc6nEn7XTkNddsgE9-XJ723Ufg3Jt_f8Q</string>
 	<key>GCM_SENDER_ID</key>
-	<string>553333443745</string>
+	<string>432405771305</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.mysenger.ali</string>
 	<key>PROJECT_ID</key>
-	<string>chat-app-9c078</string>
+	<string>bdmarket-726ff</string>
 	<key>STORAGE_BUCKET</key>
-	<string>chat-app-9c078.firebasestorage.app</string>
+	<string>bdmarket-726ff.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:553333443745:ios:53d006e1a9e609a00e74e0</string>
+	<string>1:432405771305:ios:d31e7acbf9032505be5838</string>
 </dict>
 </plist>

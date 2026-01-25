@@ -50,19 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBBrHHL6Jb1jEvfL1PM2PvfF346UvD6e28',
-    appId: '1:553333443745:android:38b81e4289b5d3aa0e74e0',
-    messagingSenderId: '553333443745',
-    projectId: 'chat-app-9c078',
-    storageBucket: 'chat-app-9c078.firebasestorage.app',
+    apiKey: 'AIzaSyAc5919Vok48TeLQUPEgqKB8sCLgPEA0kk',
+    appId: '1:432405771305:android:5604388ba49b995ebe5838',
+    messagingSenderId: '432405771305',
+    projectId: 'bdmarket-726ff',
+    storageBucket: 'bdmarket-726ff.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDnUda3eu64-2eH5Gm0auxTH3LMR_HLrcQ',
-    appId: '1:553333443745:ios:53d006e1a9e609a00e74e0',
-    messagingSenderId: '553333443745',
-    projectId: 'chat-app-9c078',
-    storageBucket: 'chat-app-9c078.firebasestorage.app',
+    apiKey: 'AIzaSyDc6nEn7XTkNddsgE9-XJ723Ufg3Jt_f8Q',
+    appId: '1:432405771305:ios:d31e7acbf9032505be5838',
+    messagingSenderId: '432405771305',
+    projectId: 'bdmarket-726ff',
+    storageBucket: 'bdmarket-726ff.firebasestorage.app',
+    androidClientId: '432405771305-2euhe0p2iul9ua9b8263l3mcpf3fsql0.apps.googleusercontent.com',
+    iosClientId: '432405771305-pr2nicoj1ksr88lfpj1q85orpmvor98n.apps.googleusercontent.com',
     iosBundleId: 'com.mysenger.ali',
   );
 }
