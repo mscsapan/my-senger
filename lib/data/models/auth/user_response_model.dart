@@ -84,11 +84,13 @@ class UserResponse extends Equatable {
   final String loginEmail;
   final String signUpEmail;
   final String phone;
+  final String localImage;
   final String image;
   final String loginPassword;
   final String signUpPassword;
   final String signUpConPassword;
   final String address;
+  final String deviceToken;
   final bool isActive;
   final bool status;
   final bool showPassword;
@@ -104,10 +106,12 @@ class UserResponse extends Equatable {
     this.signUpEmail = '',
     this.phone = '',
     this.image = '',
+    this.localImage = '',
     this.loginPassword = '',
     this.signUpPassword = '',
     this.signUpConPassword = '',
     this.address = '',
+    this.deviceToken = '',
     this.status = false,
     this.isActive = false,
     this.showPassword = true,
@@ -124,10 +128,12 @@ class UserResponse extends Equatable {
     String? signUpEmail,
     String? phone,
     String? image,
+    String? localImage,
     String? loginPassword,
     String? signUpPassword,
     String? signUpConPassword,
     String? address,
+    String? deviceToken,
     bool? status,
     bool? isActive,
     bool? showPassword,
@@ -143,10 +149,12 @@ class UserResponse extends Equatable {
         signUpEmail : signUpEmail ?? this.signUpEmail,
         phone : phone ?? this.phone,
         image : image ?? this.image,
+        localImage : localImage ?? this.localImage,
         loginPassword : loginPassword ?? this.loginPassword,
         signUpPassword : signUpPassword ?? this.signUpPassword,
         signUpConPassword : signUpConPassword ?? this.signUpConPassword,
         address : address ?? this.address,
+        deviceToken : deviceToken ?? this.deviceToken,
         status : status ?? this.status,
         isActive : isActive ?? this.isActive,
         showPassword : showPassword ?? this.showPassword,
@@ -166,7 +174,23 @@ class UserResponse extends Equatable {
       'password': signUpPassword,
       'image': image,
       'address': address,
+      'device_token': deviceToken,
       'status': status,
+    };
+  }
+
+  Map<String, dynamic> toUpdateMap() {
+    return <String, dynamic>{
+      // 'id': id,
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': signUpEmail,
+      'phone': phone,
+      // 'password': signUpPassword,
+      'image': image,
+      'address': address,
+      'device_token': deviceToken,
+      // 'status': status,
     };
   }
 
@@ -180,6 +204,7 @@ class UserResponse extends Equatable {
       signUpPassword: map['password'] ?? '',
       image: map['image'] ?? '',
       address: map['address'] ?? '',
+      deviceToken: map['device_token'] ?? '',
       status: map['status'] ?? false,
     );
   }
@@ -215,11 +240,13 @@ class UserResponse extends Equatable {
       signUpEmail,
       phone,
       image,
+      localImage,
       status,
       loginPassword,
       signUpPassword,
       signUpConPassword,
       address,
+      deviceToken,
       isActive,
       showPassword,
       show,

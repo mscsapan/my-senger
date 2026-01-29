@@ -18,11 +18,12 @@ final class AuthLoading extends AuthState {
 final class AuthError extends AuthState {
   final String? message;
   final String? code;
+  final AuthType? authType;
 
-  const AuthError(this.message, this.code);
+  const AuthError(this.message, this.code,this.authType);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message,authType];
 }
 
 final class AuthSuccess extends AuthState {

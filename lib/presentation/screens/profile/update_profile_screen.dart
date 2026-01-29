@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_senger/presentation/widgets/loading_widget.dart';
+import '../../utils/navigation_service.dart';
 import '/data/models/auth/auth_state_model.dart';
 
 import '../../../logic/cubit/auth/auth_cubit.dart';
@@ -85,13 +87,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         bottom: 10.0,
                         child: GestureDetector(
                           onTap: () async {
-                            // final image = await Utils.pickSingleImage();
-                            // //debugPrint('picked-image $image');
-                            // if (image?.isNotEmpty??false) {
-                            //   final cover = CoverModel(blurUrl: image?? '');
-                            //   profileCubit..addProfileInfo((r)=>r.copyWith(cover: cover))..uploadImgToCloudinary(ProfileUrlType.uploadImg);
-                            // }
-                            // debugPrint('picked-state-image ${state.user?.cover?.blurUrl}');
+                            final image = await Utils.pickSingleImage();
+                            if (image?.isNotEmpty??false) {
+                               profileCubit..updateUserInfo((info)=>info.copyWith(image: image))..uploadProfileImg();
+                            }
                           },
                           child: Container(
                             padding: Utils.all(value:4.0),
@@ -113,8 +112,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   label: 'First Name',
                   bottomSpace: 12.0,
                   child: TextFormField(
-                    initialValue: state.users?.firstName,
-                    onChanged: (String? val)=>profileCubit.addUserInfo((user)=>user.copyWith(firstName: val)),
+                    initialValue: state.updateInfo?.firstName,
+                    onChanged: (String? val)=>profileCubit.updateUserInfo((user)=>user.copyWith(firstName: val)),
                     validator: Utils.requiredValidator('First Name'),
                     decoration: InputDecoration(
                       prefix: Utils.horizontalSpace(textFieldSpace),
@@ -128,8 +127,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   label: 'Last Name',
                   bottomSpace: 12.0,
                   child: TextFormField(
-                    initialValue: state.users?.lastName,
-                    onChanged: (String? val)=>profileCubit.addUserInfo((user)=>user.copyWith(lastName: val)),
+                    initialValue: state.updateInfo?.lastName,
+                    onChanged: (String? val)=>profileCubit.updateUserInfo((user)=>user.copyWith(lastName: val)),
                     validator: Utils.requiredValidator('Last Name'),
                     decoration: InputDecoration(
                       prefix: Utils.horizontalSpace(textFieldSpace),
@@ -143,9 +142,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   label: 'Email',
                   bottomSpace: 12.0,
                   child: TextFormField(
-                    initialValue: state.users?.signUpEmail,
+                    initialValue: state.updateInfo?.signUpEmail,
                     // initialValue: profileCubit.userInformation?.signUpEmail,
-                    onChanged: (String? val)=>profileCubit.addUserInfo((user)=>user.copyWith(signUpEmail: val)),
+                    onChanged: (String? val)=>profileCubit.updateUserInfo((user)=>user.copyWith(signUpEmail: val)),
                     readOnly: true,
                     validator: Utils.requiredValidator('Email'),
                     decoration: InputDecoration(
@@ -160,8 +159,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   label: 'Phone',
                   bottomSpace: 27.0,
                   child: TextFormField(
-                    initialValue: state.users?.phone,
-                    onChanged: (String? val)=>profileCubit.addUserInfo((user)=>user.copyWith(phone: val)),
+                    initialValue: state.updateInfo?.phone,
+                    onChanged: (String? val)=>profileCubit.updateUserInfo((user)=>user.copyWith(phone: val)),
                     validator: Utils.requiredValidator('Phone'),
                     decoration: InputDecoration(
                       prefix: Utils.horizontalSpace(textFieldSpace),
@@ -294,8 +293,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   label: 'Address',
                   bottomSpace: 12.0,
                   child: TextFormField(
-                    // initialValue: state.user?.address,
-                    // onChanged: (String? val)=>profileCubit.addProfileInfo((user)=>user.copyWith(address: val)),
+                    initialValue: state.updateInfo?.address,
+                    onChanged: (String? val)=>profileCubit.updateUserInfo((user)=>user.copyWith(address: val)),
                     decoration: InputDecoration(
                       prefix: Utils.horizontalSpace(textFieldSpace),
                       hintText: Utils.translatedText(context, 'Address'),
@@ -318,39 +317,33 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     return BottomWidget(
       child: BlocConsumer<AuthCubit, AuthStateModel>(
         listener: (context, profile) {
-         //  final state = profile.profileState;
-         // if(state is ProfileInfoError && state.apiType == ProfileUrlType.update){
-         //   NavigationService.showSnackBar(context,state.message);
-         // }else if(state is ProfileInfoLoaded && state.apiType == ProfileUrlType.update){
-         //
-         //   profileCubit.profileInfo(ProfileUrlType.getInfo);
-         //
-         //   WidgetsBinding.instance.addPostFrameCallback((_){
-         //     NavigationService.goBack();
-         //   });
-         // }
-         //
-         //
-         // if(state is UploadImgToCloudinaryLoaded){
-         //
-         //   if(state.uploaded?.isNotEmpty??false){
-         //     final cover = CoverModel(tempImg: state.uploaded?? '',isPreviousImg: false);
-         //
-         //     profileCubit.addProfileInfo((user)=>user.copyWith(cover: cover));
-         //   }
-         //
-         // }
+          final state = profile.authState;
+         if(state is  AuthError && state.authType == AuthType.update){
+           NavigationService.showSnackBar(context,state.message??'');
+         }else if(state is AuthSuccess && state.authType == AuthType.update){
+
+           profileCubit.fetchUserData();
+
+           WidgetsBinding.instance.addPostFrameCallback((_){
+             NavigationService.goBack();
+           });
+         }
 
         },
         builder: (context, profile) {
-          // final state = profile.profileState;
-          return PrimaryButton(
-            text: 'Update Now',
-            onPressed: () {
-              Utils.closeKeyBoard(context);
-              //profileCubit.profileInfo(ProfileUrlType.update);
-            },
-          );
+          final state = profile.authState;
+          if(state is AuthLoading){
+            return UpdateWidget();
+          }else{
+            return PrimaryButton(
+              text: 'Update Now',
+              onPressed: () async{
+                Utils.closeKeyBoard(context);
+                await profileCubit.updateProfile();
+              },
+            );
+          }
+
         },
       ),
     );

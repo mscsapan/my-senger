@@ -12,6 +12,7 @@ class AuthStateModel extends Equatable {
   // final bool show;
   // final bool showConfirm;
   final UserResponse? users;
+  final UserResponse? updateInfo;
   final AuthState authState;
 
   const AuthStateModel({
@@ -23,6 +24,7 @@ class AuthStateModel extends Equatable {
     // this.show = true,
     // this.showConfirm = true,
     this.users,
+    this.updateInfo,
     this.authState = const AuthInitial(),
   });
 
@@ -33,6 +35,7 @@ class AuthStateModel extends Equatable {
     // bool? show,
     // bool? showConfirm,
     UserResponse? users,
+    UserResponse? updateInfo,
     AuthState? authState,
   }) {
     return AuthStateModel(
@@ -42,6 +45,7 @@ class AuthStateModel extends Equatable {
       // show: show ?? this.show,
       // showConfirm: showConfirm ?? this.showConfirm,
       users: users ?? this.users,
+      updateInfo: updateInfo ?? this.updateInfo,
       authState: authState ?? this.authState,
     );
   }
@@ -91,6 +95,7 @@ class AuthStateModel extends Equatable {
     // show,
     // showConfirm,
     users,
+    updateInfo,
     authState,
   ];
 }
