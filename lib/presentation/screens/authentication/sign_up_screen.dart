@@ -160,8 +160,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           bottomSpace: 10.0,
                           child: TextFormField(
                             keyboardType: TextInputType.visiblePassword,
-                            initialValue: state.users?.loginPassword,
-                            onChanged: (val) => loginBloc.addUserInfo((info) => info.copyWith(loginPassword: val),),
+                            initialValue: state.users?.signUpPassword,
+                            onChanged: (val) => loginBloc.addUserInfo((info) => info.copyWith(signUpPassword: val),),
                             obscureText: isShowPass,
                             validator: Utils.requiredValidator('Password'),
                             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -183,9 +183,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           bottomSpace: 20.0,
                           child: TextFormField(
                             keyboardType: TextInputType.visiblePassword,
-                            initialValue: state.users?.loginPassword,
+                            initialValue: state.users?.signUpConPassword,
                             onChanged: (val) => loginBloc.addUserInfo(
-                                  (info) => info.copyWith(loginPassword: val),
+                                  (info) => info.copyWith(signUpConPassword: val),
                             ),
                             obscureText: isShowConPass,
                             validator: Utils.requiredValidator('Confirm Password'),

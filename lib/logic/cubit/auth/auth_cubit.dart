@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,9 +19,6 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // final loginFormKey = GlobalKey<FormState>();
-  // final signUpFormKey = GlobalKey<FormState>();
-
   void addUserInfo(UserResponse Function(UserResponse existing) updateFn) {
 
     final existing = state.users ?? UserResponse();
@@ -29,6 +28,47 @@ class AuthCubit extends Cubit<AuthStateModel> {
     emit(state.copyWith(users: updated,authState: AuthInitial()));
   }
 
+  User? get currentUser => _auth.currentUser;
+
+  bool get isLoggedIn => _auth.currentUser != null;
+
+  UserResponse? _userResponse;
+
+  UserResponse? get userInformation => _userResponse;
+
+  // set saveUserData(UserResponseModel usersData) => _users = usersData;
+
+
+  Future<void> checkAuthStatus() async {
+    emit(state.copyWith(authState: AuthLoading()));
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (_auth.currentUser != null) {
+
+      await _fetchUserData();
+
+     emit(state.copyWith(authState: AuthAuthenticated(_auth.currentUser)));
+    } else {
+      emit(state.copyWith(authState: AuthUnauthenticated()));
+    }
+  }
+
+
+  Future<void> _fetchUserData() async {
+    try {
+      final doc = await _db.collection(DatabaseConfig.userCollection).doc(_auth.currentUser?.uid).get();
+
+      if (doc.exists) {
+        final userData = UserResponse.fromMap(doc.data()??{});
+        _userResponse = userData;
+        emit(state.copyWith(users: userData));
+      }
+    } catch (e) {
+      debugPrint('Error fetching user data: $e');
+    }
+  }
+
   Future<void> signUp() async {
     try {
       emit(state.copyWith(authState: AuthLoading()));
@@ -36,9 +76,11 @@ class AuthCubit extends Cubit<AuthStateModel> {
         email: state.users?.signUpEmail?? '',
         password: state.users?.signUpPassword ?? '',
       ).whenComplete(() {
-
+        // debugPrint('id-uid-1 ${state.users?.id} - ${_auth.currentUser?.uid}');
+        // addUserInfo((info)=>info.copyWith(id: _auth.currentUser?.uid,status: true));
+        // debugPrint('id-uid-2 ${state.users?.id} - ${_auth.currentUser?.uid}');
+        //
         // debugPrint('User registered successful with UID ${_auth.currentUser?.uid}.');
-        emit(state.copyWith(authState: AuthSuccess('Successfully registered',AuthType.signUp)));
       /*    final updatedUser = (state.users ?? UserResponse()).copyWith(
             id: _auth.currentUser?.uid,
             loginEmail: state.loginEmail,
@@ -48,14 +90,13 @@ class AuthCubit extends Cubit<AuthStateModel> {
       });
 
       // debugPrint('User registered successful with user object ${state.users}');
-      // emit(state.copyWith(authState: AuthSuccess('Successfully registered')));
+      emit(state.copyWith(authState: AuthSuccess('Successfully registered',AuthType.signUp)));
     } on FirebaseAuthException catch (e) {
       debugPrint('FirebaseAuthException: ${e.code}');
       emit(state.copyWith(authState: AuthError(e.message, e.code)));
     }
   }
 
-  // ✅ CORRECT - Use try-catch with await
   Future<void> signIn() async {
     try {
       emit(state.copyWith(authState: AuthLoading()));
@@ -95,6 +136,7 @@ class AuthCubit extends Cubit<AuthStateModel> {
       // Future.delayed(const Duration(seconds: 1));
       // debugPrint('user-map ${state.users?.toMap()}');
       // debugPrint('user-newly-created-id ${_auth.currentUser?.uid}');
+      debugPrint('id-uid-33 ${state.users?.id} - ${_auth.currentUser?.uid}');
       await _db.collection(DatabaseConfig.userCollection).doc(_auth.currentUser?.uid).set(state.users?.toMap() ?? <String, dynamic>{});
       // emit(state.copyWith(authState: AuthSuccess('Successfully login')));
       // debugPrint('successfully store');

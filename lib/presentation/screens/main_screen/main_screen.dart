@@ -67,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
         ),
         bottomNavigationBar: BlocBuilder<LoginBloc, LoginStateModel>(
           builder: (context, state) {
-            _init();
+            //_init();
 
             return MyBottomNavigationBar();
 

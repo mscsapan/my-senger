@@ -19,7 +19,7 @@ final class AuthError extends AuthState {
   final String? message;
   final String? code;
 
-  const AuthError(this.message,this.code);
+  const AuthError(this.message, this.code);
 
   @override
   List<Object?> get props => [message];
@@ -27,10 +27,25 @@ final class AuthError extends AuthState {
 
 final class AuthSuccess extends AuthState {
   final String? message;
-  final AuthType ? authType;
+  final AuthType? authType;
 
-  const AuthSuccess(this.message,this.authType);
+  const AuthSuccess(this.message, this.authType);
 
   @override
-  List<Object?> get props => [message,authType];
+  List<Object?> get props => [message, authType];
+}
+
+class AuthAuthenticated extends AuthState {
+  final User? user;
+  const AuthAuthenticated(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}
+
+class AuthUnauthenticated extends AuthState {
+  const AuthUnauthenticated();
+
+  @override
+  List<Object?> get props => [];
 }

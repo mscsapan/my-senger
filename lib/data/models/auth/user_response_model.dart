@@ -90,6 +90,7 @@ class UserResponse extends Equatable {
   final String signUpConPassword;
   final String address;
   final bool isActive;
+  final bool status;
   final bool showPassword;
   final bool show;
   final bool showConfirm;
@@ -107,10 +108,11 @@ class UserResponse extends Equatable {
     this.signUpPassword = '',
     this.signUpConPassword = '',
     this.address = '',
+    this.status = false,
     this.isActive = false,
     this.showPassword = true,
     this.show = true,
-    this.showConfirm = false,
+    this.showConfirm = true,
     this.authState = const AuthInitial(),
   });
 
@@ -126,6 +128,7 @@ class UserResponse extends Equatable {
     String? signUpPassword,
     String? signUpConPassword,
     String? address,
+    bool? status,
     bool? isActive,
     bool? showPassword,
     bool? show,
@@ -144,6 +147,7 @@ class UserResponse extends Equatable {
         signUpPassword : signUpPassword ?? this.signUpPassword,
         signUpConPassword : signUpConPassword ?? this.signUpConPassword,
         address : address ?? this.address,
+        status : status ?? this.status,
         isActive : isActive ?? this.isActive,
         showPassword : showPassword ?? this.showPassword,
         show : show ?? this.show,
@@ -155,24 +159,28 @@ class UserResponse extends Equatable {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'name': firstName,
-      'email': loginEmail,
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': signUpEmail,
       'phone': phone,
-      'password': loginPassword,
+      'password': signUpPassword,
       'image': image,
       'address': address,
+      'status': status,
     };
   }
 
   factory UserResponse.fromMap(Map<String, dynamic> map) {
     return UserResponse(
       id: map['id'] ?? '',
-      firstName: map['name'] ?? '',
-      loginEmail: map['email'] ?? '',
+      firstName: map['first_name'] ?? '',
+      lastName: map['last_name'] ?? '',
+      signUpEmail: map['email'] ?? '',
       phone: map['phone'] ?? '',
-      loginPassword: map['password'] ?? '',
+      signUpPassword: map['password'] ?? '',
       image: map['image'] ?? '',
-      address: map['status'] ?? '',
+      address: map['address'] ?? '',
+      status: map['status'] ?? false,
     );
   }
 
@@ -207,6 +215,7 @@ class UserResponse extends Equatable {
       signUpEmail,
       phone,
       image,
+      status,
       loginPassword,
       signUpPassword,
       signUpConPassword,

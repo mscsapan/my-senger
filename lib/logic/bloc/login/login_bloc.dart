@@ -67,8 +67,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginStateModel> {
     pref.setString('password', password);
   }
 
-  Future<void> _loginEvent(
-      LoginEventSubmit event, Emitter<LoginStateModel> emit) async {
+  Future<void> _loginEvent(LoginEventSubmit event, Emitter<LoginStateModel> emit) async {
     emit(state.copyWith(loginState: LoginStateLoading()));
     final result = await _repository.login(state);
     result.fold(
@@ -98,14 +97,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginStateModel> {
     );
   }
 
-  Future<void> remoteCredentials() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
+  Future<void> remoteCredentials() async {final SharedPreferences pref = await SharedPreferences.getInstance();
     pref.remove('email');
     pref.remove('password');
   }
 
-  Future<void> _logoutEvent(
-      LoginEventLogout event, Emitter<LoginStateModel> emit) async {
+  Future<void> _logoutEvent(LoginEventLogout event, Emitter<LoginStateModel> emit) async {
     emit(state.copyWith(loginState: LoginStateLogoutLoading()));
     final result = await _repository.logout(userInformation!.accessToken);
     result.fold(
