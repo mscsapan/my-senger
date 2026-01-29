@@ -27,7 +27,7 @@ class CustomForm extends StatelessWidget {
           color: blackColor,
           fontSize: 12.0,
         ),
-        Utils.verticalSpace(10.0),
+        Utils.verticalSpace(6.0),
         child,
         Utils.verticalSpace(bottomSpace),
       ],

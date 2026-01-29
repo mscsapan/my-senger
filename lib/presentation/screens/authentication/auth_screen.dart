@@ -23,9 +23,12 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   late AuthCubit loginBloc;
 
+  late GlobalKey<FormState> loginFormKey;
+
   @override
   void initState() {
     loginBloc = context.read<AuthCubit>();
+    loginFormKey = GlobalKey<FormState>();
     super.initState();
   }
 
@@ -67,8 +70,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   final isShow = state.users?.showPassword?? true;
                   final isValidate = state.users?.validateLoginField ?? false;
                   return Form(
-                    key: loginBloc.loginFormKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    key: loginFormKey,
+                    // autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       // padding: Utils.symmetric(),
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,7 +95,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               initialValue: state.users?.loginEmail,
                               onChanged:(val)=>  loginBloc.addUserInfo((info)=>info.copyWith(loginEmail: val)),
                               validator: Utils.requiredValidator('Email'),
-                              // autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
                               decoration:  InputDecoration(
                                 hintText: 'email here',
                                 prefix: Utils.horizontalSpace(textFieldSpace),
@@ -109,7 +112,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               obscureText: isShow,
 
                               validator: Utils.requiredValidator('Password'),
-                              // autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
                               decoration: InputDecoration(
                                 hintText: 'Password here',
                                 prefix: Utils.horizontalSpace(textFieldSpace),
@@ -166,7 +169,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             onPressed: () {
                               Utils.closeKeyBoard(context);
                               // if(isValidate && (loginBloc.loginFormKey.currentState?.validate()??false)){
-                              if(loginBloc.loginFormKey.currentState?.validate()??false){
+                              if(loginFormKey.currentState?.validate()??false){
                                 loginBloc.signIn();
                               }
                             },
@@ -217,6 +220,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   );
                 },
+                // listenWhen: (previous,current)=>previous == current,
 
               ),
             ),

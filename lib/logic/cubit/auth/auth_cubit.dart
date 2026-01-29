@@ -17,9 +17,8 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-
-  final loginFormKey = GlobalKey<FormState>();
-  final signUpFormKey = GlobalKey<FormState>();
+  // final loginFormKey = GlobalKey<FormState>();
+  // final signUpFormKey = GlobalKey<FormState>();
 
   void addUserInfo(UserResponse Function(UserResponse existing) updateFn) {
 
@@ -112,4 +111,5 @@ class AuthCubit extends Cubit<AuthStateModel> {
   }
 
   void clear() => emit(state.clear());
+
 }
