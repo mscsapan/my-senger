@@ -70,16 +70,42 @@ class StorageService {
   }
 
   // Delete old profile image
-  Future<void> deleteImage(String? imageUrl) async {
+  // Future<void> deleteImage(String? imageUrl) async {
+  //   try {
+  //     if(imageUrl?.trim().isNotEmpty??false){
+  //       final Reference ref = _storage.refFromURL(imageUrl??'');
+  //       await ref.delete();
+  //       debugPrint('Old image deleted successfully');
+  //     }
+  //
+  //   } catch (e) {
+  //     debugPrint('Error deleting image: $e');
+  //   }
+  // }
+
+  Future<bool> deleteImage(String? imageUrl) async {
     try {
-      if(imageUrl?.trim().isNotEmpty??false){
-        final Reference ref = _storage.refFromURL(imageUrl??'');
-        await ref.delete();
-        debugPrint('Old image deleted successfully');
-      }
+      if (imageUrl == null || imageUrl.isEmpty) return false;
+
+      // Extract path from URL manually
+      final Uri uri = Uri.parse(imageUrl);
+      final String encodedPath = uri.pathSegments.last;
+      final String decodedPath = Uri.decodeComponent(encodedPath.split('?').first);
+
+      debugPrint('📁 Decoded Path: $decodedPath');
+
+      // Delete using path instead of URL
+      final Reference ref = FirebaseStorage.instance.ref().child(decodedPath);
+
+      debugPrint('📁 Reference Path: ${ref.fullPath}');
+
+      await ref.delete();
+      debugPrint('✅ Deleted successfully');
+      return true;
 
     } catch (e) {
-      debugPrint('Error deleting image: $e');
+      debugPrint('❌ Error: $e');
+      return false;
     }
   }
 }

@@ -14,7 +14,9 @@ import '../../../data/models/auth/user_response_model.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthStateModel> {
-  AuthCubit() : super(AuthStateModel());
+  AuthCubit() : super(AuthStateModel()){
+    fetchUserData();
+  }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -62,7 +64,7 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
     if (_auth.currentUser != null) {
 
-      await fetchUserData();
+      // await fetchUserData();
 
      emit(state.copyWith(authState: AuthAuthenticated(_auth.currentUser)));
     } else {

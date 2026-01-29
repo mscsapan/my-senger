@@ -69,6 +69,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           // debugPrint('blur-image ${state.user?.cover?.blurUrl}');
           // debugPrint('url-image ${state.user?.cover?.url}');
 
+          final existingImg = Utils.imagePath(profileCubit.userInformation?.image);
+          final pickImg = state.updateInfo?.localImage.isNotEmpty??false?state.updateInfo?.localImage??KImages.placeholderImg:existingImg;
+
           return Form(
             key: profileUpdateKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -80,7 +83,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 Center(
                   child: Stack(
                     children: [
-                      CircleImage(size: 120.0,image: Utils.imagePath(profileCubit.userInformation?.image)),
+                      CircleImage(size: 120.0,image: pickImg,isFile: state.updateInfo?.localImage.isNotEmpty??false),
                       // CircleImage(size: 120.0,image: pickedImg,isFile: state.user?.cover?.blurUrl.trim().isNotEmpty),
                       Positioned(
                         right: 0.0,
@@ -89,7 +92,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           onTap: () async {
                             final image = await Utils.pickSingleImage();
                             if (image?.isNotEmpty??false) {
-                               profileCubit..updateUserInfo((info)=>info.copyWith(image: image))..uploadProfileImg();
+                               profileCubit..updateUserInfo((info)=>info.copyWith(localImage: image))..uploadProfileImg();
                             }
                           },
                           child: Container(
@@ -143,7 +146,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   bottomSpace: 12.0,
                   child: TextFormField(
                     initialValue: state.updateInfo?.signUpEmail,
-                    // initialValue: profileCubit.userInformation?.signUpEmail,
                     onChanged: (String? val)=>profileCubit.updateUserInfo((user)=>user.copyWith(signUpEmail: val)),
                     readOnly: true,
                     validator: Utils.requiredValidator('Email'),
@@ -301,7 +303,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       fillColor: fillColor,
                     ),
                     keyboardType: TextInputType.multiline,
-                    maxLines: 2,
                   ),
                 ),
               ],
