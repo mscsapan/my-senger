@@ -5,7 +5,6 @@ import '../../../data/models/auth/auth_state_model.dart';
 import '../../../logic/cubit/auth/auth_cubit.dart';
 import '../../routes/route_names.dart';
 import '../../utils/constraints.dart';
-import '../../utils/navigation_service.dart';
 import '../../utils/utils.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_form.dart';

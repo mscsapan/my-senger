@@ -9,7 +9,7 @@ class MyTheme {
   static final theme = ThemeData(
       brightness: Brightness.light,
       primaryColor: whiteColor,
-      scaffoldBackgroundColor: scaffoldBgColor,
+      scaffoldBackgroundColor: whiteColor,
       bottomSheetTheme: const BottomSheetThemeData(backgroundColor: whiteColor),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,

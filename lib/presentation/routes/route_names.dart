@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_senger/presentation/screens/profile/update_profile_screen.dart';
 
 import '../screens/authentication/sign_up_screen.dart';
 import '../screens/main_screen/main_screen.dart';
@@ -16,12 +17,16 @@ class RouteNames {
   static const String verificationScreen = '/verificationScreen';
   static const String mainScreen = '/mainScreen';
 
+
+
+
   ///setting routes
   static const String privacyPolicyScreen = '/privacyPolicyScreen';
 
 
   ///profile routes
   static const String profileScreen = '/profileScreen';
+  static const String updateProfile = '/updateProfile';
 
   static Route<dynamic> generateRoutes(RouteSettings settings) {
     switch (settings.name) {
@@ -61,6 +66,10 @@ class RouteNames {
       case RouteNames.mainScreen:
         return MaterialPageRoute(
             settings: settings, builder: (_) => const MainScreen());
+
+        case RouteNames.updateProfile:
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const UpdateProfileScreen());
 
 
       default:

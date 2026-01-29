@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:my_senger/presentation/utils/k_images.dart';
 
 import '../../data/models/auth/login_state_model.dart';
 import '../../data/models/setting/currencies_model.dart';
@@ -100,6 +101,13 @@ class Utils {
       }
       return null;
     };
+  }
+
+  static String imagePath(String ? path){
+
+    if(path?.isEmpty??false) return KImages.placeholderImg;
+
+    return path ?? KImages.placeholderImg;
   }
 
   static String convertCurrency(var price, BuildContext context, CurrenciesModel c, [int radix = 1]) {

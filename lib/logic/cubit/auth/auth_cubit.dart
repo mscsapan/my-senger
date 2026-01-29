@@ -28,6 +28,13 @@ class AuthCubit extends Cubit<AuthStateModel> {
     emit(state.copyWith(users: updated,authState: AuthInitial()));
   }
 
+  void storeExistingInfo(UserResponse? updateFn) {
+
+    final existing = state.users ?? UserResponse();
+
+    emit(state.copyWith(users: existing));
+  }
+
   User? get currentUser => _auth.currentUser;
 
   bool get isLoggedIn => _auth.currentUser != null;
@@ -62,6 +69,7 @@ class AuthCubit extends Cubit<AuthStateModel> {
       if (doc.exists) {
         final userData = UserResponse.fromMap(doc.data()??{});
         _userResponse = userData;
+        storeExistingInfo(userData);
         emit(state.copyWith(users: userData));
       }
     } catch (e) {

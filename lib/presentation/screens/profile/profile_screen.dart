@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_senger/data/models/auth/auth_state_model.dart';
 
 import '../../../logic/cubit/auth/auth_cubit.dart';
+import '../../utils/navigation_service.dart';
 import '../../widgets/custom_form.dart';
 
 import '../../widgets/loading_widget.dart';
@@ -101,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               icon: Icon(Icons.person_outline),
               title: "Manage Account",
               onTap: () {
-                //NavigationService.navigateTo(RouteNames.updateProfileScreen);
+                NavigationService.navigateTo(RouteNames.updateProfile);
               },
             ),
             AccountItem(

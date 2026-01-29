@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/presentation/utils/utils.dart';
 
 const primaryColor = Color(0xFF13544E);
 const secondaryColor = Color(0xFF22BE0D);
@@ -13,6 +14,8 @@ const redColor = Color(0xFFFE2C55);
 const whiteColor = Color(0xFFFFFFFF);
 const stockColor = Color(0xFFEDEBE7);
 
+const Color fillColor = Color(0xFFF3F4F6);
+
 const scaffoldBgColor = Color(0xFFEEF2F6);
 // const scaffoldBgColor = Color(0xFFF7F5F0);
 const grayBackgroundColor = Color(0xFFF3F3F3);
@@ -25,6 +28,18 @@ const kDuration = Duration(microseconds: 300);
 const Color transparent = Colors.transparent;
 const double dialogHeight = 270.0;
 double textFieldSpace = 14.0;
+
+final defaultDecoration = BoxDecoration(
+  color: whiteColor,
+  borderRadius: Utils.borderRadius(r: 4.0),
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.03),
+      blurRadius: 6.0,
+      offset: const Offset(0, 2),
+    ),
+  ],
+);
 
 
 ///gradient colors

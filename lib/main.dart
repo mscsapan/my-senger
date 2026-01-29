@@ -8,6 +8,7 @@ import 'dependency_injection.dart';
 import 'firebase_options.dart';
 import 'presentation/routes/route_names.dart';
 import 'presentation/utils/constraints.dart';
+import 'presentation/utils/navigation_service.dart';
 import 'presentation/widgets/custom_theme.dart';
 import 'presentation/widgets/fetch_error_text.dart';
 
@@ -40,6 +41,7 @@ class MySenger extends StatelessWidget {
           child: MultiBlocProvider(
             providers: DInjector.blocProviders,
             child: MaterialApp(
+              navigatorKey: NavigationService.navigatorKey,
               debugShowCheckedModeBanner: false,
               onGenerateRoute: RouteNames.generateRoutes,
               initialRoute: RouteNames.splashScreen,

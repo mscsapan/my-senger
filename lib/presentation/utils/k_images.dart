@@ -4,6 +4,7 @@ class KImages {
   static const String splashBg = 'assets/images/splash-image.png';
   static const String loginBg = 'assets/images/bg.jpg';
   static const String defaultImg = 'assets/images/default_image.png';
+  static const String editIcon = 'assets/icons/edit_iocn.svg';
 
 
 
@@ -24,4 +25,8 @@ class KImages {
   static const String submitAdd = 'assets/icons/submit-add.svg';
   static const String submitAddActive = 'assets/icons/submit-add-active.svg';
   static const String adAddedSuccess = 'assets/icons/ad-added-success.svg';
+
+
+  static const String placeholderImg = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';
+
 }
