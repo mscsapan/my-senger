@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../screens/authentication/sign_up_screen.dart';
+import '../screens/main_screen/main_screen.dart';
 import 'route_packages_name.dart';
 
 class RouteNames {
@@ -56,6 +57,11 @@ class RouteNames {
       case RouteNames.changePasswordScreen:
         return MaterialPageRoute(
             settings: settings, builder: (_) => const ChangePasswordScreen());
+
+      case RouteNames.mainScreen:
+        return MaterialPageRoute(
+            settings: settings, builder: (_) => const MainScreen());
+
 
       default:
         return MaterialPageRoute(

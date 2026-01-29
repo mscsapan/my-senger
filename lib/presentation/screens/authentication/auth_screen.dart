@@ -5,6 +5,7 @@ import '../../../data/models/auth/auth_state_model.dart';
 import '../../../logic/cubit/auth/auth_cubit.dart';
 import '../../routes/route_names.dart';
 import '../../utils/constraints.dart';
+import '../../utils/navigation_service.dart';
 import '../../utils/utils.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_form.dart';
@@ -62,7 +63,12 @@ class _AuthScreenState extends State<AuthScreen> {
                   if (state is AuthError) {
                     Utils.errorSnackBar(context, state.code??'');
                   } else if (state is AuthSuccess) {
+
                     Utils.showSnackBar(context, state.message??'');
+
+                    if(state.authType == AuthType.login){
+                      Navigator.pushNamedAndRemoveUntil(context, RouteNames.mainScreen, (route)=>false);
+                    }
                   }
                 },
                 builder: (context,state){
@@ -92,7 +98,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         CustomForm(
                             label: 'Email Address',
                             child: TextFormField(
-                              initialValue: state.users?.loginEmail,
+                              initialValue: state.users?.loginEmail ?? '',
                               onChanged:(val)=>  loginBloc.addUserInfo((info)=>info.copyWith(loginEmail: val)),
                               validator: Utils.requiredValidator('Email'),
                               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -107,7 +113,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             label: 'Password',
                             child: TextFormField(
                               keyboardType: TextInputType.visiblePassword,
-                              initialValue: state.users?.loginPassword,
+                              initialValue: state.users?.loginPassword ?? '',
                               onChanged:(val)=>  loginBloc.addUserInfo((info)=>info.copyWith(loginPassword: val)),
                               obscureText: isShow,
 

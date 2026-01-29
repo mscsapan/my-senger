@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
+import '../../../logic/cubit/auth/auth_cubit.dart';
+
 class UserResponseModel extends Equatable {
   final String accessToken;
   final String tokenType;
@@ -91,6 +93,7 @@ class UserResponse extends Equatable {
   final bool showPassword;
   final bool show;
   final bool showConfirm;
+  final AuthState authState;
 
   const UserResponse({
     this.id = '',
@@ -108,6 +111,7 @@ class UserResponse extends Equatable {
     this.showPassword = true,
     this.show = true,
     this.showConfirm = false,
+    this.authState = const AuthInitial(),
   });
 
   UserResponse copyWith({
@@ -126,6 +130,7 @@ class UserResponse extends Equatable {
     bool? showPassword,
     bool? show,
     bool? showConfirm,
+    AuthState? authState,
   }) {
     return UserResponse(
         id : id ?? this.id,
@@ -143,6 +148,7 @@ class UserResponse extends Equatable {
         showPassword : showPassword ?? this.showPassword,
         show : show ?? this.show,
         showConfirm : showConfirm ?? this.showConfirm,
+        authState : authState ?? this.authState,
     );
   }
 
@@ -192,7 +198,7 @@ class UserResponse extends Equatable {
   }
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       id,
       firstName,
@@ -209,6 +215,7 @@ class UserResponse extends Equatable {
       showPassword,
       show,
       showConfirm,
+      authState,
     ];
   }
 }

@@ -38,7 +38,7 @@ class AuthCubit extends Cubit<AuthStateModel> {
       ).whenComplete(() {
 
         // debugPrint('User registered successful with UID ${_auth.currentUser?.uid}.');
-
+        emit(state.copyWith(authState: AuthSuccess('Successfully registered',AuthType.signUp)));
       /*    final updatedUser = (state.users ?? UserResponse()).copyWith(
             id: _auth.currentUser?.uid,
             loginEmail: state.loginEmail,
@@ -48,24 +48,33 @@ class AuthCubit extends Cubit<AuthStateModel> {
       });
 
       // debugPrint('User registered successful with user object ${state.users}');
-      emit(state.copyWith(authState: AuthSuccess('Successfully registered')));
+      // emit(state.copyWith(authState: AuthSuccess('Successfully registered')));
     } on FirebaseAuthException catch (e) {
       debugPrint('FirebaseAuthException: ${e.code}');
       emit(state.copyWith(authState: AuthError(e.message, e.code)));
     }
   }
 
+  // ✅ CORRECT - Use try-catch with await
   Future<void> signIn() async {
     try {
       emit(state.copyWith(authState: AuthLoading()));
-      await _auth.signInWithEmailAndPassword(
+
+      final userCredential = await _auth.signInWithEmailAndPassword(
         email: state.users?.loginEmail ?? '',
-        password: state.users?.loginPassword?? '',
+        password: state.users?.loginPassword ?? '',
       );
-      emit(state.copyWith(authState: AuthSuccess('Successfully login')));
+
+      if (userCredential.user != null) {
+        emit(state.copyWith(authState: AuthSuccess('Successfully login', AuthType.login)));
+      }
+
     } on FirebaseAuthException catch (e) {
       debugPrint('FirebaseAuthException: ${e.code}');
       emit(state.copyWith(authState: AuthError(e.message, e.code)));
+    } catch (e) {
+      debugPrint('Error: $e');
+      emit(state.copyWith(authState: AuthError('Something went wrong', null)));
     }
   }
 
@@ -113,3 +122,5 @@ class AuthCubit extends Cubit<AuthStateModel> {
   void clear() => emit(state.clear());
 
 }
+
+enum AuthType {login,signUp}
