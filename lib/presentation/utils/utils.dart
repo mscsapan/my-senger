@@ -93,6 +93,15 @@ class Utils {
     // }
   }
 
+  static FormFieldValidator<String> requiredValidator(String message) {
+    return (value) {
+      if (value == null || value.trim().isEmpty) {
+        return '*$message is required';
+      }
+      return null;
+    };
+  }
+
   static String convertCurrency(var price, BuildContext context, CurrenciesModel c, [int radix = 1]) {
     String afterPrice = 'right';
     String afterPriceWithSpace = 'after_price_with_space';

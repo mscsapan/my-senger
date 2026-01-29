@@ -62,6 +62,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   final login = state.authState;
                   final isShowPass = state.users?.show?? true;
                   final isShowConPass = state.users?.showConfirm?? true;
+
+                  final isValidate = state.users?.validateSignUpField ?? false;
+
                   return Column(
                     // padding: Utils.symmetric(),
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,9 +197,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ]else...[
                         PrimaryButton(
                           text: Utils.translatedText(context, 'Sign up'),
+                          bgColor: isValidate ? blackColor:disableColor,
+                          textColor: isValidate ? whiteColor:grayColor,
                           onPressed: () {
                             Utils.closeKeyBoard(context);
-                            // loginBloc.signUp();
+                            if(isValidate){
+                            loginBloc.signUp();
+                            }
                           },
                         )
                       ],

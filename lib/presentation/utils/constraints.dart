@@ -18,11 +18,13 @@ const scaffoldBgColor = Color(0xFFEEF2F6);
 const grayBackgroundColor = Color(0xFFF3F3F3);
 const Color borderColor = Color(0xFFE2E8F0);
 const Color filledColor = Color(0xFFF8FAFC);
+const Color disableColor = Color(0xFFE5E5E5);
 
 const kDuration = Duration(microseconds: 300);
 
 const Color transparent = Colors.transparent;
 const double dialogHeight = 270.0;
+double textFieldSpace = 14.0;
 
 
 ///gradient colors

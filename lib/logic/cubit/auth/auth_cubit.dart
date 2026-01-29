@@ -17,16 +17,9 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // void addEmail(String text) =>emit(state.copyWith(email: text,authState: AuthInitial()));
-  //
-  // void addPassword(String text) =>emit(state.copyWith(password: text,authState: AuthInitial()));
-  //
-  // void addIsActive() =>emit(state.copyWith(isActive: !state.isActive,authState: AuthInitial()));
-  //
-  // void showPassword() =>emit(state.copyWith(show: !state.show,authState: AuthInitial()));
-  //
-  // void showConfirmPassword() =>emit(state.copyWith(showConfirm: !state.showConfirm,authState: AuthInitial()));
-  //
+
+  final loginFormKey = GlobalKey<FormState>();
+  final signUpFormKey = GlobalKey<FormState>();
 
   void addUserInfo(UserResponse Function(UserResponse existing) updateFn) {
 
@@ -37,46 +30,46 @@ class AuthCubit extends Cubit<AuthStateModel> {
     emit(state.copyWith(users: updated,authState: AuthInitial()));
   }
 
-  // Future<void> signUp() async {
-  //   try {
-  //     emit(state.copyWith(authState: AuthLoading()));
-  //     await _auth.createUserWithEmailAndPassword(
-  //       email: state.loginEmail,
-  //       password: state.loginPassword,
-  //     ).whenComplete(() {
-  //
-  //       // debugPrint('User registered successful with UID ${_auth.currentUser?.uid}.');
-  //
-  //       final updatedUser = (state.users ?? UserResponse()).copyWith(
-  //         id: _auth.currentUser?.uid,
-  //         loginEmail: state.loginEmail,
-  //         loginPassword: state.loginPassword,
-  //       );
-  //       emit(state.copyWith(users: updatedUser));
-  //     });
-  //
-  //     // debugPrint('User registered successful with user object ${state.users}');
-  //     emit(state.copyWith(authState: AuthSuccess('Successfully registered')));
-  //   } on FirebaseAuthException catch (e) {
-  //     debugPrint('FirebaseAuthException: ${e.code}');
-  //     emit(state.copyWith(authState: AuthError(e.message, e.code)));
-  //   }
-  // }
-  //
-  // Future<void> signIn() async {
-  //   try {
-  //     emit(state.copyWith(authState: AuthLoading()));
-  //     await _auth.signInWithEmailAndPassword(
-  //       email: state.loginEmail,
-  //       password: state.loginPassword,
-  //     );
-  //     emit(state.copyWith(authState: AuthSuccess('Successfully login')));
-  //   } on FirebaseAuthException catch (e) {
-  //     debugPrint('FirebaseAuthException: ${e.code}');
-  //     emit(state.copyWith(authState: AuthError(e.message, e.code)));
-  //   }
-  // }
-  //
+  Future<void> signUp() async {
+    try {
+      emit(state.copyWith(authState: AuthLoading()));
+      await _auth.createUserWithEmailAndPassword(
+        email: state.users?.signUpEmail?? '',
+        password: state.users?.signUpPassword ?? '',
+      ).whenComplete(() {
+
+        // debugPrint('User registered successful with UID ${_auth.currentUser?.uid}.');
+
+      /*    final updatedUser = (state.users ?? UserResponse()).copyWith(
+            id: _auth.currentUser?.uid,
+            loginEmail: state.loginEmail,
+            loginPassword: state.loginPassword,
+          );
+          emit(state.copyWith(users: updatedUser));*/
+      });
+
+      // debugPrint('User registered successful with user object ${state.users}');
+      emit(state.copyWith(authState: AuthSuccess('Successfully registered')));
+    } on FirebaseAuthException catch (e) {
+      debugPrint('FirebaseAuthException: ${e.code}');
+      emit(state.copyWith(authState: AuthError(e.message, e.code)));
+    }
+  }
+
+  Future<void> signIn() async {
+    try {
+      emit(state.copyWith(authState: AuthLoading()));
+      await _auth.signInWithEmailAndPassword(
+        email: state.users?.loginEmail ?? '',
+        password: state.users?.loginPassword?? '',
+      );
+      emit(state.copyWith(authState: AuthSuccess('Successfully login')));
+    } on FirebaseAuthException catch (e) {
+      debugPrint('FirebaseAuthException: ${e.code}');
+      emit(state.copyWith(authState: AuthError(e.message, e.code)));
+    }
+  }
+
   // Future<void> forgotPassword() async {
   //   try {
   //     emit(state.copyWith(authState: AuthLoading()));

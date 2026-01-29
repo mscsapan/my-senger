@@ -78,9 +78,8 @@ class MyTheme {
           fontSize: 14.0,
           color: const Color(0xFFBABABA),
         ),
-        labelStyle: GoogleFonts.roboto(
-            fontWeight: FontWeight.w400, fontSize: 15.0, color: blackColor),
-        contentPadding: Utils.symmetric(v: 6.0, h: 20.0),
+        labelStyle: GoogleFonts.roboto(fontWeight: FontWeight.w400, fontSize: 15.0, color: blackColor),
+        contentPadding: Utils.symmetric(v: 6.0, h: 0.0),
         border: OutlineInputBorder(
           borderRadius: borderRadius,
           borderSide: const BorderSide(color: borderColor, width: 1),
@@ -92,6 +91,9 @@ class MyTheme {
         enabledBorder: OutlineInputBorder(
           borderRadius: borderRadius,
           borderSide: const BorderSide(color: borderColor, width: 1),
+        ),
+        errorStyle: GoogleFonts.roboto(
+            color: redColor,fontSize: 12.0,fontWeight: FontWeight.w400
         ),
         fillColor: filledColor,
         filled: true,

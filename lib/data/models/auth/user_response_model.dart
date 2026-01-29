@@ -172,12 +172,24 @@ class UserResponse extends Equatable {
 
   String toJson() => json.encode(toMap());
 
-  factory UserResponse.fromJson(String source) =>
-      UserResponse.fromMap(
-          json.decode(source) as Map<String, dynamic>);
+  factory UserResponse.fromJson(String source) => UserResponse.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;
+
+
+  bool get validateLoginField => [loginEmail,loginPassword].every((e)=>e.trim().isNotEmpty);
+
+  bool get validateSignUpField {
+
+    final fieldsNotEmpty = [signUpEmail, signUpPassword, signUpConPassword].every((e) => e.trim().isNotEmpty);
+
+    final passwordValid = signUpPassword.length >= 6;
+    final confirmPasswordValid = signUpConPassword.length >= 6;
+    final passwordsMatch = signUpPassword == signUpConPassword;
+
+    return fieldsNotEmpty && passwordValid && confirmPasswordValid && passwordsMatch;
+  }
 
   @override
   List<Object> get props {
