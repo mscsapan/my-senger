@@ -77,50 +77,82 @@ class UserResponseModel extends Equatable {
 
 class UserResponse extends Equatable {
   final String id;
-  final String name;
-  final String email;
+  final String firstName;
+  final String lastName;
+  final String loginEmail;
+  final String signUpEmail;
   final String phone;
   final String image;
-  final String password;
+  final String loginPassword;
+  final String signUpPassword;
+  final String signUpConPassword;
   final String address;
+  final bool isActive;
+  final bool showPassword;
+  final bool show;
+  final bool showConfirm;
 
   const UserResponse({
     this.id = '',
-    this.name = '',
-    this.email = '',
+    this.firstName = '',
+    this.lastName = '',
+    this.loginEmail = '',
+    this.signUpEmail = '',
     this.phone = '',
-    this.password = '',
     this.image = '',
+    this.loginPassword = '',
+    this.signUpPassword = '',
+    this.signUpConPassword = '',
     this.address = '',
+    this.isActive = false,
+    this.showPassword = true,
+    this.show = true,
+    this.showConfirm = false,
   });
 
   UserResponse copyWith({
     String? id,
-    String? name,
-    String? email,
+    String? firstName,
+    String? lastName,
+    String? loginEmail,
+    String? signUpEmail,
     String? phone,
-    String? password,
     String? image,
+    String? loginPassword,
+    String? signUpPassword,
+    String? signUpConPassword,
     String? address,
+    bool? isActive,
+    bool? showPassword,
+    bool? show,
+    bool? showConfirm,
   }) {
     return UserResponse(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      phone: phone ?? this.phone,
-      password: password ?? this.password,
-      image: image ?? this.image,
-      address: address ?? this.address,
+        id : id ?? this.id,
+        firstName : firstName ?? this.firstName,
+        lastName : lastName ?? this.lastName,
+        loginEmail : loginEmail ?? this.loginEmail,
+        signUpEmail : signUpEmail ?? this.signUpEmail,
+        phone : phone ?? this.phone,
+        image : image ?? this.image,
+        loginPassword : loginPassword ?? this.loginPassword,
+        signUpPassword : signUpPassword ?? this.signUpPassword,
+        signUpConPassword : signUpConPassword ?? this.signUpConPassword,
+        address : address ?? this.address,
+        isActive : isActive ?? this.isActive,
+        showPassword : showPassword ?? this.showPassword,
+        show : show ?? this.show,
+        showConfirm : showConfirm ?? this.showConfirm,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'name': name,
-      'email': email,
+      'name': firstName,
+      'email': loginEmail,
       'phone': phone,
-      'password': password,
+      'password': loginPassword,
       'image': image,
       'address': address,
     };
@@ -129,10 +161,10 @@ class UserResponse extends Equatable {
   factory UserResponse.fromMap(Map<String, dynamic> map) {
     return UserResponse(
       id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      email: map['email'] ?? '',
+      firstName: map['name'] ?? '',
+      loginEmail: map['email'] ?? '',
       phone: map['phone'] ?? '',
-      password: map['password'] ?? '',
+      loginPassword: map['password'] ?? '',
       image: map['image'] ?? '',
       address: map['status'] ?? '',
     );
@@ -151,12 +183,20 @@ class UserResponse extends Equatable {
   List<Object> get props {
     return [
       id,
-      name,
-      email,
+      firstName,
+      lastName,
+      loginEmail,
+      signUpEmail,
       phone,
-      password,
       image,
+      loginPassword,
+      signUpPassword,
+      signUpConPassword,
       address,
+      isActive,
+      showPassword,
+      show,
+      showConfirm,
     ];
   }
 }

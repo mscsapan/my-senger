@@ -25,6 +25,7 @@ class CustomForm extends StatelessWidget {
           text: label,
           fontWeight: FontWeight.w500,
           color: blackColor,
+          fontSize: 12.0,
         ),
         Utils.verticalSpace(10.0),
         child,

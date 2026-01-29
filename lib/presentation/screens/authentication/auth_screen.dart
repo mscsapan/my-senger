@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/auth/auth_state_model.dart';
-import '../../../logic/bloc/login/login_bloc.dart';
 import '../../../logic/cubit/auth/auth_cubit.dart';
 import '../../routes/route_names.dart';
 import '../../utils/constraints.dart';
@@ -54,178 +53,154 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 color: whiteColor,
               ),
-              child: Column(
-                // padding: Utils.symmetric(),
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CustomText(
-                    text: "Log in to your Account",
-                    fontSize: 24.0,
-                    height: 1.6,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  const CustomText(
-                    text: "Welcome back! Please enter your details.",
-                    fontSize: 14.0,
-                    height: 1.6,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  Utils.verticalSpace(16.0),
-                  BlocBuilder<AuthCubit, AuthStateModel>(builder: (context, state) {
-                    final login = state.authState;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomForm(
-                            label: 'Email Address',
-                            child: TextFormField(
-                              initialValue: state.email,
-                              onChanged:  loginBloc.addEmail,
-                              decoration: const InputDecoration(
-                                hintText: 'email here',
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                            )),
-                        // if (login is LoginStateFormValidate) ...[
-                        //   if (login.errors.email.isNotEmpty)
-                        //     FetchErrorText(text: login.errors.email.first)
-                        // ]
-                      ],
-                    );
-                  }),
-                  Utils.verticalSpace(10.0),
-                  BlocBuilder<AuthCubit, AuthStateModel>(builder: (context, state) {
-                    final login = state.authState;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomForm(
-                            label: 'Password',
-                            child: TextFormField(
-                              keyboardType: TextInputType.visiblePassword,
-                              initialValue: state.password,
-                              onChanged:  loginBloc.addPassword,
-                              obscureText: state.show,
-                              decoration: InputDecoration(
-                                hintText: 'Password here',
-                                suffixIcon: IconButton(
-                                  onPressed: () => loginBloc.showPassword(),
-                                  icon: Icon(state.show ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: blackColor),
-                                ),
-                              ),
-                            )),
-                        // if (login is LoginStateFormValidate) ...[
-                        //   if (login.errors.password.isNotEmpty)
-                        //     FetchErrorText(text: login.errors.password.first)
-                        // ]
-                      ],
-                    );
-                  }),
-                  Utils.verticalSpace(12.0),
-                  BlocBuilder<AuthCubit, AuthStateModel>(builder: (context, state) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              margin: Utils.only(right: 8.0),
-                              height: Utils.vSize(24.0),
-                              width: Utils.hSize(24.0),
-                              child: Checkbox(
-                                onChanged: (val)=>  loginBloc.addIsActive(),
-                                value: state.isActive,
-                                activeColor: blackColor,
-                              ),
-                            ),
-                            const CustomText(
-                              text: 'Remember me',
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w400,
-                              color: blackColor,
-                              height: 1.6,
-                            ),
-                          ],
-                        ),
-                        GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, RouteNames.forgotPasswordScreen),
-                          child: CustomText(
-                            text: 'Forgot Password?',
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w400,
-                            color: redColor,
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
-                  Utils.verticalSpace(30.0),
-                  BlocConsumer<AuthCubit, AuthStateModel>(
-                    listener: (context, login) {
-                      final state = login.authState;
-                      if (state is AuthError) {
-                        Utils.errorSnackBar(context, state.code??'');
-                      } else if (state is AuthSuccess) {
-                        Utils.showSnackBar(context, state.message??'');
-                      }
-                    },
-                    builder: (context, login) {
-                      final state = login.authState;
-                      if (state is AuthLoading) {
-                        return const LoadingWidget();
-                      }
-                      return PrimaryButton(
-                        text: Utils.translatedText(context, 'Login'),
-                        onPressed: () {
-                          Utils.closeKeyBoard(context);
-                          loginBloc.signIn();
-                        },
-                      );
-                    },
-                  ),
-                  Utils.verticalSpace(18.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+              child: BlocConsumer<AuthCubit, AuthStateModel>(
+                listener: (context, login) {
+                  final state = login.authState;
+                  if (state is AuthError) {
+                    Utils.errorSnackBar(context, state.code??'');
+                  } else if (state is AuthSuccess) {
+                    Utils.showSnackBar(context, state.message??'');
+                  }
+                },
+                builder: (context,state){
+                  final login = state.authState;
+                  final isShow = state.users?.showPassword?? true;
+                  return Column(
+                    // padding: Utils.symmetric(),
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const CustomText(
-                        text: "Don't have an account? ",
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w400,
-                        color: blackColor,
+                        text: "Log in to your Account",
+                        fontSize: 24.0,
                         height: 1.6,
+                        fontWeight: FontWeight.w600,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          loginBloc.clear();
-                          Navigator.pushNamed(context, RouteNames.signUpScreen);
-                        },
-                        child: const CustomText(
-                          text: 'Sign up',
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w400,
-                          color: secondaryColor,
-                          height: 1.6,
+                      const CustomText(
+                        text: "Welcome back! Please enter your details.",
+                        fontSize: 14.0,
+                        height: 1.6,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      Utils.verticalSpace(16.0),
+                      CustomForm(
+                          label: 'Email Address',
+                          child: TextFormField(
+                            initialValue: state.users?.loginEmail,
+                            onChanged:(val)=>  loginBloc.addUserInfo((info)=>info.copyWith(loginEmail: val)),
+                            decoration: const InputDecoration(
+                              hintText: 'email here',
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                          )),
+                      Utils.verticalSpace(10.0),
+                      CustomForm(
+                          label: 'Password',
+                          child: TextFormField(
+                            keyboardType: TextInputType.visiblePassword,
+                            initialValue: state.users?.loginPassword,
+                            onChanged:(val)=>  loginBloc.addUserInfo((info)=>info.copyWith(loginPassword: val)),
+                            obscureText: isShow,
+                            decoration: InputDecoration(
+                              hintText: 'Password here',
+                              suffixIcon: IconButton(
+                                onPressed: () => loginBloc.addUserInfo((info)=>info.copyWith(showPassword: !(state.users?.showPassword??false))),
+                                icon: Icon(isShow ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: blackColor),
+                              ),
+                            ),
+                          )),
+                      Utils.verticalSpace(12.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                margin: Utils.only(right: 8.0),
+                                height: Utils.vSize(20.0),
+                                width: Utils.hSize(20.0),
+                                child: Checkbox(
+                                  onChanged: (val)=>  loginBloc.addUserInfo((info)=>info.copyWith(isActive: !(state.users?.isActive??false))),
+                                  value: state.users?.isActive ?? false,
+                                  activeColor: blackColor,
+                                ),
+                              ),
+                              const CustomText(
+                                text: 'Remember me',
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w400,
+                                color: blackColor,
+                                height: 1.6,
+                              ),
+                            ],
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.pushNamed(context, RouteNames.forgotPasswordScreen),
+                            child: CustomText(
+                              text: 'Forgot Password?',
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Utils.verticalSpace(30.0),
+                      if(login is AuthLoading)...[
+                        const LoadingWidget()
+                      ]else...[
+                        PrimaryButton(
+                          text: Utils.translatedText(context, 'Login'),
+                          onPressed: () {
+                            Utils.closeKeyBoard(context);
+                            // loginBloc.signIn();
+                          },
+                        )
+                      ],
+                      Utils.verticalSpace(18.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CustomText(
+                            text: "Don't have an account? ",
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w400,
+                            color: blackColor,
+                            height: 1.6,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              loginBloc.clear();
+                              Navigator.pushNamed(context, RouteNames.signUpScreen);
+                            },
+                            child: const CustomText(
+                              text: 'Sign up',
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w400,
+                              color: secondaryColor,
+                              height: 1.6,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Utils.verticalSpace(20.0),
+                      Align(
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamedAndRemoveUntil(context, RouteNames.mainScreen, (route) => false);
+                          },
+                          child: const CustomText(
+                            textAlign: TextAlign.center,
+                            text: "Guest Login",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
-                  ),
-                  Utils.verticalSpace(20.0),
-                  Align(
-                    alignment: Alignment.center,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, RouteNames.mainScreen, (route) => false);
-                      },
-                      child: const CustomText(
-                        textAlign: TextAlign.center,
-                        text: "Guest Login",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
+                  );
+                },
+
               ),
             ),
           ],

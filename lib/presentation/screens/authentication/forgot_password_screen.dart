@@ -36,15 +36,14 @@ class ForgotPasswordScreen extends StatelessWidget {
           Utils.verticalSpace(30.0),
           BlocBuilder<AuthCubit, AuthStateModel>(
               builder: (context, state) {
-                final validate = state.authState;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomForm(
                         label: Utils.translatedText(context, 'Email Address'),
                         child: TextFormField(
-                          initialValue: state.email,
-                          onChanged: fCubit.addEmail,
+                          // initialValue: state.loginEmail,
+                          // onChanged: fCubit.addEmail,
                           decoration: const InputDecoration(hintText: 'email here'),
                           keyboardType: TextInputType.emailAddress,
                         )),
@@ -81,7 +80,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 text: Utils.translatedText(context, 'Send OTP'),
                 onPressed: () {
                   Utils.closeKeyBoard(context);
-                  fCubit.forgotPassword();
+                  // fCubit.forgotPassword();
                 }),
           ),
         ],

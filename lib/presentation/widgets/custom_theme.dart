@@ -75,12 +75,12 @@ class MyTheme {
         isDense: true,
         hintStyle: GoogleFonts.roboto(
           fontWeight: FontWeight.w400,
-          fontSize: 16.0,
+          fontSize: 14.0,
           color: const Color(0xFFBABABA),
         ),
         labelStyle: GoogleFonts.roboto(
-            fontWeight: FontWeight.w400, fontSize: 16.0, color: blackColor),
-        contentPadding: Utils.symmetric(v: 9.0, h: 20.0),
+            fontWeight: FontWeight.w400, fontSize: 15.0, color: blackColor),
+        contentPadding: Utils.symmetric(v: 6.0, h: 20.0),
         border: OutlineInputBorder(
           borderRadius: borderRadius,
           borderSide: const BorderSide(color: borderColor, width: 1),
