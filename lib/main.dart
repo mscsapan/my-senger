@@ -1,10 +1,12 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'core/notification_service.dart';
 import 'dependency_injection.dart';
 import 'firebase_options.dart';
 import 'presentation/routes/route_names.dart';
@@ -18,6 +20,9 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // Register background message handler
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   await FirebaseAppCheck.instance.activate(
     providerAndroid: AndroidPlayIntegrityProvider(),
     providerApple: AppleAppAttestProvider(),
@@ -30,7 +35,8 @@ Future<void> main() async {
 
   await DInjector.initDB();
 
-  //await NotificationService().init();
+  // Initialize notification service
+  await NotificationService().init();
 
   runApp(const MySenger());
 }

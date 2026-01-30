@@ -3,6 +3,11 @@ import 'package:my_senger/data/models/auth/auth_state_model.dart';
 
 import '../../../logic/cubit/auth/auth_cubit.dart';
 import '../../utils/navigation_service.dart';
+import '../../widgets/custom_form.dart';
+
+import '../../widgets/loading_widget.dart';
+import '../authentication/change_password_screen.dart';
+import '/presentation/utils/k_images.dart';
 import 'package:flutter/material.dart';
 
 import '../../routes/route_names.dart';
@@ -12,6 +17,7 @@ import '../../widgets/circle_image.dart';
 
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_text.dart';
+import '../../widgets/primary_button.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

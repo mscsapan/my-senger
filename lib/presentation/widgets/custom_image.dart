@@ -40,9 +40,7 @@ class CustomImage extends StatelessWidget {
           fit: fit,
           height: height,
           width: width,
-          colorFilter: color != null
-              ? ColorFilter.mode(color!, BlendMode.srcIn)
-              : null,
+          color: color,
           placeholderBuilder: (context) =>
               const Center(child: Icon(Icons.error)),
         );
@@ -52,9 +50,7 @@ class CustomImage extends StatelessWidget {
           fit: fit,
           height: height,
           width: width,
-          colorFilter: color != null
-              ? ColorFilter.mode(color!, BlendMode.srcIn)
-              : null,
+          color: color,
           placeholderBuilder: (context) =>
               const Center(child: Icon(Icons.error)),
         );

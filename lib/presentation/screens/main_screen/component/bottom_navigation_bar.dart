@@ -30,7 +30,7 @@ class MyBottomNavigationBar extends StatelessWidget {
             offset: Offset(0.0, 4.0),
             spreadRadius: 0.0,
             blurRadius: 40.0,
-            color: Color(0xFF000000).withValues(alpha: 0.1),
+            color: Color(0xFF000000).withOpacity(0.1),
             blurStyle: BlurStyle.outer,
           ),
         ],

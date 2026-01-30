@@ -5,11 +5,7 @@ import '../utils/utils.dart';
 import 'custom_text.dart';
 
 class DialogHeading extends StatelessWidget {
-  const DialogHeading({
-    super.key,
-    required this.title,
-    required this.onTap,
-  });
+  const DialogHeading({super.key, required this.title, required this.onTap});
 
   final String title;
   final VoidCallback onTap;

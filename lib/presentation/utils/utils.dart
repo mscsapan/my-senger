@@ -62,12 +62,10 @@ class Utils {
     return input.toLowerCase().replaceAll(RegExp(r'[^a-zA-Z\d]+'), '-');
   }
 
-
-
   static Size mediaQuery(BuildContext context) => MediaQuery.of(context).size;
 
   static List<TextInputFormatter> inputFormatter = [
-    FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,4}$'))
+    FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,4}$')),
   ];
 
   static String capitalizeFirstLetter(String input) {
@@ -77,7 +75,11 @@ class Utils {
     return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
 
-  static String translatedText(BuildContext context, String key, [bool lower = false]) {
+  static String translatedText(
+    BuildContext context,
+    String key, [
+    bool lower = false,
+  ]) {
     return key;
     // final webSetting = context.read<AppSettingCubit>().settingModel;
     // if (lower == true) {
@@ -104,14 +106,18 @@ class Utils {
     };
   }
 
-  static String imagePath(String ? path){
-
-    if(path?.isEmpty??false) return KImages.placeholderImg;
+  static String imagePath(String? path) {
+    if (path?.isEmpty ?? false) return KImages.placeholderImg;
 
     return path ?? KImages.placeholderImg;
   }
 
-  static String convertCurrency(var price, BuildContext context, CurrenciesModel c, [int radix = 1]) {
+  static String convertCurrency(
+    var price,
+    BuildContext context,
+    CurrenciesModel c, [
+    int radix = 1,
+  ]) {
     String afterPrice = 'right';
     String afterPriceWithSpace = 'after_price_with_space';
     if (c.status == 1 && (c.currencyPosition.toLowerCase() == afterPrice)) {
@@ -170,7 +176,6 @@ class Utils {
     //     return '\$$p';
     //   }
     return '\$$price';
-
   }
 
   static String imageContent(BuildContext context, String key) {
@@ -183,23 +188,35 @@ class Utils {
   }
 
   static Uri tokenWithCode(String url, String token, String langCode) {
-    return Uri.parse(url)
-        .replace(queryParameters: {'token': token, 'lang_code': langCode});
+    return Uri.parse(
+      url,
+    ).replace(queryParameters: {'token': token, 'lang_code': langCode});
   }
 
-  static Uri tokenWithQuery(String url, String token, String langCode, {Map<String, dynamic>? extraParams}) {
+  static Uri tokenWithQuery(
+    String url,
+    String token,
+    String langCode, {
+    Map<String, dynamic>? extraParams,
+  }) {
     final baseUri = Uri.parse(url);
     final queryParams = {
       'token': token,
       'lang_code': langCode,
-      ...extraParams??{},
+      ...extraParams ?? {},
     };
     return baseUri.replace(queryParameters: queryParams);
   }
 
-  static Uri tokenWithCodeAndPage(String url, String token, String langCode, String page) {
+  static Uri tokenWithCodeAndPage(
+    String url,
+    String token,
+    String langCode,
+    String page,
+  ) {
     return Uri.parse(url).replace(
-        queryParameters: {'token': token, 'lang_code': langCode, 'page': page});
+      queryParameters: {'token': token, 'lang_code': langCode, 'page': page},
+    );
   }
 
   static BlocListener<LoginBloc, LoginStateModel> logoutListener() {
@@ -297,9 +314,10 @@ class Utils {
 
   static Future<List<String>> pickMultipleFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['mp4', 'jpg', 'jpeg', 'zip', 'pdf', 'png'],
-        allowMultiple: true);
+      type: FileType.custom,
+      allowedExtensions: ['mp4', 'jpg', 'jpeg', 'zip', 'pdf', 'png'],
+      allowMultiple: true,
+    );
     final List<String> fileList = [];
     if (result != null && result.files.isNotEmpty) {
       for (var file in result.files) {
@@ -315,8 +333,9 @@ class Utils {
   static String timeWithData(String data, [bool timeAndDate = true]) {
     if (timeAndDate) {
       DateTime dateTime = DateTime.parse(data);
-      String formattedDate =
-          DateFormat('h:mm a - MMM d, yyyy').format(dateTime);
+      String formattedDate = DateFormat(
+        'h:mm a - MMM d, yyyy',
+      ).format(dateTime);
       return formattedDate;
     } else {
       DateTime dateTime = DateTime.parse(data);
@@ -407,7 +426,9 @@ class Utils {
 
   static EdgeInsets symmetric({double h = 20.0, v = 0.0}) {
     return EdgeInsets.symmetric(
-        horizontal: Utils.hPadding(size: h), vertical: Utils.vPadding(size: v));
+      horizontal: Utils.hPadding(size: h),
+      vertical: Utils.vPadding(size: v),
+    );
   }
 
   static double radius(double radius) {
@@ -429,7 +450,11 @@ class Utils {
     double bottom = 0.0,
   }) {
     return EdgeInsets.only(
-        left: left.w, top: top.h, right: right.w, bottom: bottom.h);
+      left: left.w,
+      top: top.h,
+      right: right.w,
+      bottom: bottom.h,
+    );
   }
 
   static double vPadding({double size = 20.0}) {
@@ -459,11 +484,11 @@ class Utils {
   }
 
   static Future<DateTime?> selectDate(BuildContext context) => showDatePicker(
-        context: context,
-        initialDate: _selectedDate,
-        firstDate: DateTime(1990, 1),
-        lastDate: DateTime(2050),
-      );
+    context: context,
+    initialDate: _selectedDate,
+    firstDate: DateTime(1990, 1),
+    lastDate: DateTime(2050),
+  );
 
   static Future<TimeOfDay?> selectTime(BuildContext context) =>
       showTimePicker(context: context, initialTime: _initialTime);
@@ -488,7 +513,7 @@ class Utils {
             children: [
               const CircularProgressIndicator(color: primaryColor),
               Utils.horizontalSpace(15.0),
-              const CustomText(text: 'Please wait a moment')
+              const CustomText(text: 'Please wait a moment'),
             ],
           ),
         ),
@@ -536,44 +561,54 @@ class Utils {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: CustomText(text:errorMsg, color: redColor),),
+        SnackBar(
+          content: CustomText(text: errorMsg, color: redColor),
+        ),
       );
   }
 
-  static void showSnackBar(BuildContext context, String msg,
-      [Color textColor = whiteColor, int time = 1000]) {
+  static void showSnackBar(
+    BuildContext context,
+    String msg, [
+    Color textColor = whiteColor,
+    int time = 1000,
+  ]) {
     final snackBar = SnackBar(
-        duration: Duration(milliseconds: time),
-      content: CustomText(text:msg,color: textColor),);
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
-  }
-
-  static void serviceUnAvailable(BuildContext context, String msg,
-      [Color textColor = whiteColor]) {
-    final snackBar = SnackBar(
-        backgroundColor: redColor,
-        duration: const Duration(milliseconds: 500),
-      content: CustomText(text:msg,color: textColor),);
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
-  }
-
-  static void showSnackBarWithAction(
-      BuildContext context, String msg, VoidCallback onPress,
-      [Color textColor = primaryColor]) {
-    final snackBar = SnackBar(
-      content: CustomText(text:msg,color: textColor),
-      action: SnackBarAction(
-        label: 'Active',
-        onPressed: onPress,
-      ),
+      duration: Duration(milliseconds: time),
+      content: CustomText(text: msg, color: textColor),
     );
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
   }
 
+  static void serviceUnAvailable(
+    BuildContext context,
+    String msg, [
+    Color textColor = whiteColor,
+  ]) {
+    final snackBar = SnackBar(
+      backgroundColor: redColor,
+      duration: const Duration(milliseconds: 500),
+      content: CustomText(text: msg, color: textColor),
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
+  }
+
+  static void showSnackBarWithAction(
+    BuildContext context,
+    String msg,
+    VoidCallback onPress, [
+    Color textColor = primaryColor,
+  ]) {
+    final snackBar = SnackBar(
+      content: CustomText(text: msg, color: textColor),
+      action: SnackBarAction(label: 'Active', onPressed: onPress),
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
+  }
 }

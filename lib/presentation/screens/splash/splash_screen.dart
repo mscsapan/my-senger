@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_senger/logic/cubit/auth/auth_cubit.dart';
+import 'package:my_senger/presentation/routes/route_packages_name.dart';
 
 import '../../../data/models/auth/auth_state_model.dart';
 import '../../routes/route_names.dart';
 import '../../utils/k_images.dart';
+import '../../utils/navigation_service.dart';
 import '../../utils/utils.dart';
 import '../../widgets/custom_image.dart';
 
@@ -26,6 +29,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _init() {
     authCubit = context.read<AuthCubit>()..checkAuthStatus();
+  }
+
+  void _goToNext() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      RouteNames.authScreen,
+      (route) => false,
+    );
   }
 
   // _dispose(){
