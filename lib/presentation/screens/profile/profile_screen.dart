@@ -414,17 +414,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildCardSection(List<Widget> children) {
     return Container(
-      decoration: BoxDecoration(
-        color: whiteColor,
-        borderRadius: Utils.borderRadius(r: 12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 6.0,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: defaultDecoration,
       child: Column(children: children),
     );
   }

@@ -191,16 +191,17 @@ class AuthCubit extends Cubit<AuthStateModel> {
           userId: userId,
         );
 
-        if (imageUrl?.trim().isNotEmpty??false) {
-          updateUserInfo((e)=>e.copyWith(image: imageUrl));
-        }
+        // if (imageUrl?.trim().isNotEmpty??false) {
+        //   updateUserInfo((e)=>e.copyWith(image: imageUrl));
+        // }
 
+      emit(state.copyWith(authState: AuthSuccess(imageUrl,authType)));
 
     } on FirebaseException catch (e) {
-      debugPrint('❌ Firebase Error: ${e.message}');
+      debugPrint('Firebase Error: ${e.message}');
       emit(state.copyWith(authState: AuthError(e.message, e.code,authType)));
     } catch (e) {
-      debugPrint('❌ Error updating profile: $e');
+      debugPrint('Error updating profile: $e');
       emit(state.copyWith(authState: AuthError('Failed to update profile', null,authType)));
     }
   }

@@ -35,12 +35,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     super.initState();
     profileCubit = context.read<AuthCubit>()..updateUserInfo((info)=>info.copyWith(localImage: ''));
     profileUpdateKey = GlobalKey<FormState>();
-
-    //final model = CoverModel(blurUrl: '',tempImg: '',isPreviousImg: true,url: profileCubit.profile?.cover?.url?? '');
-
-   // debugPrint('init-model $model');
-
-    //profileCubit..resetState()..addProfileInfo((r)=>r.copyWith(cover: model));
   }
 
   @override
@@ -49,25 +43,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       appBar: CustomAppBar(title: 'Manage Account', bgColor: whiteColor),
       body: BlocBuilder<AuthCubit, AuthStateModel>(
         builder: (context, state) {
-
-          // debugPrint('current-state ${state.profileState}');
-
-          // debugPrint('state-cover ${state.user?.cover}');
-
-          //final coverUrl = state.user?.cover?.url.trim().isNotEmpty??false?state.user?.cover?.url??'':KImages.placeholder;
-
-          // final existingImg = state.user?.cover?.tempImg?.trim().isNotEmpty??false? state.user?.cover?.tempImg??KImages.placeholder:KImages.placeholder;
-          //final existingImg = state.user?.cover?.tempImg?.trim().isNotEmpty??false? state.user?.cover?.tempImg??KImages.placeholder:coverUrl;
-          // final existingImg = state.user?.cover?.url.trim().isNotEmpty??false? state.user?.cover?.url??KImages.defaultImg:KImages.defaultImg;
-
-          //final pickedImg = state.user?.cover?.blurUrl.trim().isNotEmpty??false?state.user?.cover?.blurUrl??KImages.placeholder:existingImg;
-
-          // debugPrint('existing-image $existingImg');
-          // debugPrint('picked-image $pickedImg');
-          //
-          // debugPrint('temp-image ${state.user?.cover?.tempImg}');
-          // debugPrint('blur-image ${state.user?.cover?.blurUrl}');
-          // debugPrint('url-image ${state.user?.cover?.url}');
 
           final existingImg = Utils.imagePath(profileCubit.userInformation?.image);
           final pickImg = state.updateInfo?.localImage.isNotEmpty??false?state.updateInfo?.localImage??KImages.placeholderImg:existingImg;
@@ -84,7 +59,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   child: Stack(
                     children: [
                       CircleImage(size: 120.0,image: pickImg,isFile: state.updateInfo?.localImage.isNotEmpty??false),
-                      // CircleImage(size: 120.0,image: pickedImg,isFile: state.user?.cover?.blurUrl.trim().isNotEmpty),
                       Positioned(
                         right: 0.0,
                         bottom: 10.0,
@@ -92,7 +66,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           onTap: () async {
                             final image = await Utils.pickSingleImage();
                             if (image?.isNotEmpty??false) {
-                               profileCubit..updateUserInfo((info)=>info.copyWith(localImage: image))..uploadProfileImg();
+                               profileCubit
+                                 ..updateUserInfo((info)=>info.copyWith(localImage: image))
+                                 ..uploadProfileImg();
+                                 // ..updateProfile();
                             }
                           },
                           child: Container(
@@ -177,23 +154,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     obscureText: false,
                   ),
                 ),
-                // CustomForm(
-                //   label: 'About Yourself',
-                //   bottomSpace: 12.0,
-                //   isRequired: false,
-                //   child: TextFormField(
-                //     initialValue: state.user?.about,
-                //     onChanged: (String? val)=>profileCubit.addProfileInfo((user)=>user.copyWith(about: val)),
-                //     decoration: InputDecoration(
-                //       prefix: Utils.horizontalSpace(textFieldSpace),
-                //       hintText: Utils.translatedText(context, 'about yourself'),
-                //       fillColor: fillColor,
-                //     ),
-                //     keyboardType: TextInputType.text,
-                //   ),
-                // ),
-                // CustomText(text: 'Location',fontSize: 16.0,fontWeight: FontWeight.w500,color: primaryColor),
-                // Utils.verticalSpace(16.0),
+
                 /*     CustomForm(
                       label: 'Country',
                       bottomSpace: 14.0,
@@ -328,8 +289,14 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
            WidgetsBinding.instance.addPostFrameCallback((_){
              NavigationService.goBack();
            });
+
          }
 
+          if(state is AuthSuccess && state.authType == AuthType.uploadImg){
+            profileCubit
+              ..updateUserInfo((info)=>info.copyWith(image: state.message))
+              ..updateProfile();
+          }
         },
         builder: (context, profile) {
           final state = profile.authState;
