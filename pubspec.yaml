@@ -38,6 +38,7 @@ dependencies:
   permission_handler: ^12.0.1
   image_picker: ^1.2.1
   firebase_app_check: ^0.4.1+4
+  flutter_launcher_icons: ^0.14.4
 
 
 dev_dependencies:
@@ -58,3 +59,10 @@ flutter:
     - assets/
     - assets/icons/
     - assets/images/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/launcher_icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
