@@ -19,22 +19,21 @@ class MyBottomNavigationBar extends StatelessWidget {
     final controller = MainController();
     return Container(
       height: Platform.isAndroid ? 86 : 110,
-      decoration:  BoxDecoration(
-          color: whiteColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24.0),
-            topRight: Radius.circular(24.0),
-          ),
+      decoration: BoxDecoration(
+        color: whiteColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24.0),
+          topRight: Radius.circular(24.0),
+        ),
         boxShadow: [
           BoxShadow(
             offset: Offset(0.0, 4.0),
             spreadRadius: 0.0,
             blurRadius: 40.0,
-            color:  Color(0xFF000000).withOpacity(0.1),
+            color: Color(0xFF000000).withValues(alpha: 0.1),
             blurStyle: BlurStyle.outer,
-
           ),
-        ]
+        ],
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -50,36 +49,40 @@ class MyBottomNavigationBar extends StatelessWidget {
                   showUnselectedLabels: true,
                   type: BottomNavigationBarType.fixed,
                   backgroundColor: Colors.white,
-                  selectedLabelStyle:
-                  const TextStyle(fontSize: 14, color: blackColor),
-                  unselectedLabelStyle: const TextStyle(fontSize: 14, color: gray5B),
+                  selectedLabelStyle: const TextStyle(
+                    fontSize: 14,
+                    color: blackColor,
+                  ),
+                  unselectedLabelStyle: const TextStyle(
+                    fontSize: 14,
+                    color: gray5B,
+                  ),
                   items: <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      tooltip: 'Home',
+                      icon: _navIcon(KImages.home),
+                      activeIcon: _navIcon(KImages.homeActive),
+                      label: 'Home',
+                    ),
 
-                      BottomNavigationBarItem(
-                        tooltip: 'Home',
-                        icon: _navIcon(KImages.home),
-                        activeIcon: _navIcon(KImages.homeActive),
-                        label: 'Home',
-                      ),
-                      // BottomNavigationBarItem(
-                      //   tooltip: 'Quote',
-                      //   icon: _navIcon(KImages.quote),
-                      //   activeIcon: _navIcon(KImages.quoteActive),
-                      //   label: 'Quote',
-                      // ),
-                      // BottomNavigationBarItem(
-                      //   tooltip: 'Chat',
-                      //   icon: _navIcon(KImages.category),
-                      //   activeIcon: _navIcon(KImages.categoryActive),
-                      //   label: 'Chat',
-                      // ),
-                      // BottomNavigationBarItem(
-                      //   tooltip: 'Favourite',
-                      //   icon: _navIcon(KImages.favourite),
-                      //   activeIcon: _navIcon(KImages.favouriteActive),
-                      //   label: 'Favourite',
-                      // ),
-
+                    // BottomNavigationBarItem(
+                    //   tooltip: 'Quote',
+                    //   icon: _navIcon(KImages.quote),
+                    //   activeIcon: _navIcon(KImages.quoteActive),
+                    //   label: 'Quote',
+                    // ),
+                    // BottomNavigationBarItem(
+                    //   tooltip: 'Chat',
+                    //   icon: _navIcon(KImages.category),
+                    //   activeIcon: _navIcon(KImages.categoryActive),
+                    //   label: 'Chat',
+                    // ),
+                    // BottomNavigationBarItem(
+                    //   tooltip: 'Favourite',
+                    //   icon: _navIcon(KImages.favourite),
+                    //   activeIcon: _navIcon(KImages.favouriteActive),
+                    //   label: 'Favourite',
+                    // ),
                     BottomNavigationBarItem(
                       tooltip: 'Chat',
                       icon: _navIcon(KImages.quote),
@@ -108,5 +111,7 @@ class MyBottomNavigationBar extends StatelessWidget {
   }
 
   Widget _navIcon(String path) => Padding(
-      padding: Utils.symmetric(v: 0.0, h: 0.0), child: CustomImage(path:path));
+    padding: Utils.symmetric(v: 0.0, h: 0.0),
+    child: CustomImage(path: path),
+  );
 }

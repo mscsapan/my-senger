@@ -1,16 +1,9 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_senger/data/models/auth/auth_state_model.dart';
 
 import '../../../logic/cubit/auth/auth_cubit.dart';
 import '../../utils/navigation_service.dart';
-import '../../widgets/custom_form.dart';
-
-import '../../widgets/loading_widget.dart';
-import '../authentication/change_password_screen.dart';
-import '/presentation/utils/k_images.dart';
 import 'package:flutter/material.dart';
-
 
 import '../../routes/route_names.dart';
 import '../../utils/constraints.dart';
@@ -19,7 +12,6 @@ import '../../widgets/circle_image.dart';
 
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_text.dart';
-import '../../widgets/primary_button.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -29,7 +21,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
   late AuthCubit profileCubit;
 
   @override
@@ -52,8 +43,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: ListView(
         padding: Utils.all(value: 16.0),
         children: [
-
-
           BlocBuilder<AuthCubit, AuthStateModel>(
             builder: (context, state) {
               return Column(
@@ -78,7 +67,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   CustomText(
-                    text: '${state.updateInfo?.firstName ??'Guest'} ${state.updateInfo?.lastName ?? 'User'}' ,
+                    text:
+                        '${state.updateInfo?.firstName ?? 'Guest'} ${state.updateInfo?.lastName ?? 'User'}',
                     fontWeight: FontWeight.bold,
                     fontSize: 22.0,
                   ),
@@ -138,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               icon: Icon(Icons.card_giftcard_outlined),
               title: "My Referrals",
               onTap: () {
-               // NavigationService.navigateTo(RouteNames.referralScreen);
+                // NavigationService.navigateTo(RouteNames.referralScreen);
                 // NavigationService.navigateTo(RouteNames.myMilestonesScreen);
               },
             ),
@@ -182,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Privacy policy',
               isAuth: false,
               onTap: () {
-               // NavigationService.navigateTo(RouteNames.privacyPolicyScreen, arguments: 'policy');
+                // NavigationService.navigateTo(RouteNames.privacyPolicyScreen, arguments: 'policy');
               },
             ),
             AccountItem(
@@ -190,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Terms & Condition',
               isAuth: false,
               onTap: () {
-               // NavigationService.navigateTo(RouteNames.privacyPolicyScreen, arguments: 'terms');
+                // NavigationService.navigateTo(RouteNames.privacyPolicyScreen, arguments: 'terms');
               },
             ),
             AccountItem(
@@ -198,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Refund & Return Policy',
               isAuth: false,
               onTap: () {
-               // NavigationService.navigateTo(RouteNames.privacyPolicyScreen, arguments: 'return');
+                // NavigationService.navigateTo(RouteNames.privacyPolicyScreen, arguments: 'return');
               },
             ),
             AccountItem(
@@ -220,9 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ]),
 
-
-
-       /*   Utils.verticalSpace(20.0),
+          /*   Utils.verticalSpace(20.0),
           if(Utils.isLoggedIn(context))...[
             BlocListener<LoginBloc, UserModel>(
               listener: (context, states) {
@@ -406,7 +394,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Utils.verticalSpace(20.0),
           ],*/
-
         ],
       ),
     );

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../utils/constraints.dart';
-import '../utils/utils.dart';
 import 'custom_text.dart';
 
 class TitleAndNavigator extends StatelessWidget {
@@ -10,7 +9,7 @@ class TitleAndNavigator extends StatelessWidget {
     required this.title,
     required this.press,
     this.isSeeAll = true,
-    this.textColors =  blackColor,
+    this.textColors = blackColor,
     this.seeAllColors = blueColor,
   });
 
@@ -35,10 +34,7 @@ class TitleAndNavigator extends StatelessWidget {
         isSeeAll
             ? GestureDetector(
                 onTap: press,
-                child:  CustomText(
-                  text: 'See All',
-                  color: seeAllColors,
-                ),
+                child: CustomText(text: 'See All', color: seeAllColors),
               )
             : const SizedBox(),
         //Utils.horizontalSpace(6),
