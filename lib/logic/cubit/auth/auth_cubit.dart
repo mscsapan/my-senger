@@ -177,18 +177,17 @@ class AuthCubit extends Cubit<AuthStateModel> {
       String? imageUrl;
       final String? oldImageUrl = state.updateInfo?.image;
 
-      debugPrint('old-imggggggg $oldImageUrl');
 
         if ((oldImageUrl?.trim().isNotEmpty??false) && (oldImageUrl?.startsWith('https://')??false)) {
-          debugPrint('old-img-found and delete $oldImageUrl');
+          //debugPrint('old-img-found and delete $oldImageUrl');
           await _storageService.deleteImage(state.updateInfo?.image);
         }else{
-          debugPrint('old-imageeeeeee $oldImageUrl');
+          debugPrint('old-image $oldImageUrl');
         }
 
         // Upload new image
         imageUrl = await _storageService.uploadProfileImage(
-          imageFile: state.updateInfo?.image,
+          imageFile: state.updateInfo?.localImage,
           userId: userId,
         );
 

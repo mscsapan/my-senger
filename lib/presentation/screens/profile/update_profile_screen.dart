@@ -33,7 +33,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   @override
   void initState() {
     super.initState();
-    profileCubit = context.read<AuthCubit>();
+    profileCubit = context.read<AuthCubit>()..updateUserInfo((info)=>info.copyWith(localImage: ''));
     profileUpdateKey = GlobalKey<FormState>();
 
     //final model = CoverModel(blurUrl: '',tempImg: '',isPreviousImg: true,url: profileCubit.profile?.cover?.url?? '');
