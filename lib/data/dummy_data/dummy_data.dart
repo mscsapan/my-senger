@@ -194,3 +194,75 @@ final List<ProductStatusModel> productStatusModel = [
 //     updatedAt: '',
 //   ),
 // ];
+
+
+class DummyModel{
+  final int id;
+  final String name;
+  final String value;
+  final String image;
+  final String time;
+  final int unreadMsg;
+  DummyModel(this.id,this.name, this.value,[this.image = '',this.time = '',this.unreadMsg = 0]);
+}
+
+class DemoMessage  {
+  final int id;
+  final String message;
+  final String sendBy;
+  const DemoMessage({
+    required this.id,
+    required this.message,
+    required this.sendBy,
+  });
+
+  DemoMessage copyWith({
+    int? id,
+    String? message,
+    String? sendBy,
+  }) {
+    return DemoMessage(
+      id: id ?? this.id,
+      message: message ?? this.message,
+      sendBy: sendBy ?? this.sendBy,
+    );
+  }
+}
+
+
+final List<DemoMessage> dummyMessages = [
+  const DemoMessage(id: 1, message: "Hi! Is this item still available?", sendBy: "user"),
+  const DemoMessage(id: 2, message: "Yes, it's available. Would you like to place an order?", sendBy: "seller"),
+  const DemoMessage(id: 3, message: "Can you tell me the condition of the product?", sendBy: "user"),
+  const DemoMessage(id: 4, message: "It's brand new and comes with a 1-year warranty.", sendBy: "seller"),
+  const DemoMessage(id: 5, message: "Great! Can you deliver by tomorrow?", sendBy: "user"),
+  const DemoMessage(id: 6, message: "Yes, we offer next-day delivery in your area.", sendBy: "seller"),
+  const DemoMessage(id: 7, message: "Perfect. I’ll place the order now. Thanks!", sendBy: "user"),
+  const DemoMessage(id: 8, message: "You're welcome! Let us know if you need anything else.", sendBy: "seller"),
+  const DemoMessage(id: 9, message: "Just placed the order. Can you confirm?", sendBy: "user"),
+  const DemoMessage(id: 10, message: "Order received! We’ll process it shortly.", sendBy: "seller"),
+  const DemoMessage(id: 11, message: "Awesome. Can I get the tracking info once shipped?", sendBy: "user"),
+  const DemoMessage(id: 12, message: "Of course. You’ll receive an update via message.", sendBy: "seller"),
+  const DemoMessage(id: 13, message: "Do you have this in another color?", sendBy: "user"),
+  const DemoMessage(id: 14, message: "Yes, it’s also available in black and blue.", sendBy: "seller"),
+  const DemoMessage(id: 15, message: "Cool! I’ll take the black one next time.", sendBy: "user"),
+  const DemoMessage(id: 16, message: "No problem. We’ll keep it ready for you.", sendBy: "seller"),
+  const DemoMessage(id: 17, message: "What’s your return policy?", sendBy: "user"),
+  const DemoMessage(id: 18, message: "You can return within 7 days if the item is unused.", sendBy: "seller"),
+  const DemoMessage(id: 19, message: "Got it. Thanks for the quick replies!", sendBy: "user"),
+  const DemoMessage(id: 20, message: "Anytime! Have a great day!", sendBy: "seller"),
+];
+
+List<DummyModel> dummyChatList = [
+  DummyModel(9, 'Mohammad Ali', 'Can you send the file? so that i can make changes from you file', 'https://i.pravatar.cc/150?img=10', 'Fri',4),
+  DummyModel(10, 'Kayum Mursalin', 'Can you send the file?', 'https://i.pravatar.cc/150?img=12', '2:33 PM', 2),
+  DummyModel(1, 'Ayesha Siddiqua', 'I’ll call you later.', 'https://i.pravatar.cc/150?img=1', '10:45 AM'),
+  DummyModel(2, 'Tanvir Rahman', 'Where are you?', 'https://i.pravatar.cc/150?img=2', '09:30 AM',1),
+  DummyModel(3, 'Rifat Mahmud', 'Thanks bro!', 'https://i.pravatar.cc/150?img=3', 'Yesterday',3),
+  DummyModel(4, 'Nusrat Jahan', 'Let me check and get back to you.', 'https://i.pravatar.cc/150?img=4', 'Mon'),
+  DummyModel(5, 'Shahriar Hossain', 'Happy birthday! 🎉', 'https://i.pravatar.cc/150?img=5', 'Sun'),
+  DummyModel(6, 'Mahiya Mim', 'Okay, noted.', 'https://i.pravatar.cc/150?img=6', 'Sat',3),
+  DummyModel(7, 'Hasan Kabir', 'Let’s meet at 5 PM.', 'https://i.pravatar.cc/150?img=7', 'Fri'),
+  DummyModel(8,'Salma Akter', 'Can you send the file?', 'https://i.pravatar.cc/150?img=8', 'Thu'),
+];
+
