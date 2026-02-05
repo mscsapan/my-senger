@@ -1,6 +1,7 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,13 +21,29 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // Configure Firebase App Check with graceful error handling
+  try {
+    await FirebaseAppCheck.instance.activate(
+      // Use debug provider in debug mode, Play Integrity in release mode
+      androidProvider: kDebugMode
+          ? AndroidProvider.debug
+          : AndroidProvider.playIntegrity,
+      // Use debug provider in debug mode, App Attest in release mode
+      appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.appAttest,
+    );
+    debugPrint('✅ Firebase App Check activated successfully');
+  } catch (e) {
+    // In debug mode, allow app to continue even if App Check fails
+    // In production, App Check failures will still be enforced by Firebase
+    debugPrint('⚠️ Firebase App Check activation failed: $e');
+    if (kDebugMode) {
+      debugPrint('📝 Continuing in debug mode without App Check enforcement');
+      debugPrint('💡 To fix: Register debug token in Firebase Console');
+    }
+  }
+
   // Register background message handler
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-  await FirebaseAppCheck.instance.activate(
-    providerAndroid: AndroidPlayIntegrityProvider(),
-    providerApple: AppleAppAttestProvider(),
-  );
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
