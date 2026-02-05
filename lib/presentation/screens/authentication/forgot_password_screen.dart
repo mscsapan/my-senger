@@ -15,7 +15,7 @@ class ForgotPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fCubit = context.read<AuthCubit>();
+    context.read<AuthCubit>();
     return Scaffold(
       appBar: const CustomAppBar(
         title: '',

@@ -1,13 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_senger/data/models/auth/auth_state_model.dart';
+import '/data/models/auth/auth_state_model.dart';
 
 import '../../../logic/cubit/auth/auth_cubit.dart';
 import '../../utils/navigation_service.dart';
 import '../../widgets/confirm_dialog.dart';
-import '../../widgets/custom_form.dart';
-
-import '../../widgets/loading_widget.dart';
-import '../authentication/change_password_screen.dart';
 import '/presentation/utils/k_images.dart';
 import 'package:flutter/material.dart';
 
