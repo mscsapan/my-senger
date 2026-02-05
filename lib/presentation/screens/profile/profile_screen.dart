@@ -220,6 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             listener: (context, login) {
              final state = login.authState;
              if(state is AuthSuccess && state.authType == AuthType.logOut){
+               NavigationService.showSnackBar(context,state.message??'');
                NavigationService.navigateToAndClearStack(RouteNames.authScreen);
              }
             },

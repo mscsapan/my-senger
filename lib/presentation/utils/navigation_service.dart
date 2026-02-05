@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../presentation/utils/constraints.dart';
 import '../../presentation/widgets/custom_text.dart';
 
@@ -67,51 +68,51 @@ class NavigationService {
   }
 
   // Snackbar
-  static void errorSnackBar(BuildContext context, String errorMsg,[int time = 2000]) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          duration: Duration(milliseconds: time),
-          content: CustomText(text:errorMsg, color: redColor),
-        ),
-      );
-  }
-
-
-  // static void errorSnackBar(BuildContext context, String msg,
-  //     [Color textColor = whiteColor, int time = 1000]) {
-  //   Fluttertoast.showToast(
-  //     msg: msg,
-  //     toastLength: time < 2000 ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG,
-  //     gravity: ToastGravity.CENTER,
-  //     backgroundColor: redColor,
-  //     textColor: textColor,
-  //     fontSize: 16.0,
-  //   );
+  // static void errorSnackBar(BuildContext context, String errorMsg,[int time = 2000]) {
+  //   ScaffoldMessenger.of(context)
+  //     ..hideCurrentSnackBar()
+  //     ..showSnackBar(
+  //       SnackBar(
+  //         duration: Duration(milliseconds: time),
+  //         content: CustomText(text:errorMsg, color: redColor),
+  //       ),
+  //     );
   // }
 
-  static void showSnackBar(BuildContext context, String msg,
-      [Color textColor = whiteColor, int time = 2000]) {
-    final snackBar = SnackBar(
-        duration: Duration(milliseconds: time),
-        content: CustomText(text:msg, color: textColor));
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
+
+  static void errorSnackBar(BuildContext context, String msg,
+      [Color textColor = whiteColor, int time = 1000]) {
+    Fluttertoast.showToast(
+      msg: msg,
+      toastLength: time < 2000 ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: redColor,
+      textColor: textColor,
+      fontSize: 16.0,
+    );
   }
 
   // static void showSnackBar(BuildContext context, String msg,
-  //     [Color textColor = whiteColor, int time = 1000]) {
-  //   Fluttertoast.showToast(
-  //     msg: msg,
-  //     toastLength: time < 2000 ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG,
-  //     gravity: ToastGravity.CENTER,
-  //     backgroundColor: greenColor,
-  //     textColor: textColor,
-  //     fontSize: 16.0,
-  //   );
+  //     [Color textColor = whiteColor, int time = 2000]) {
+  //   final snackBar = SnackBar(
+  //       duration: Duration(milliseconds: time),
+  //       content: CustomText(text:msg, color: textColor));
+  //   ScaffoldMessenger.of(context)
+  //     ..hideCurrentSnackBar()
+  //     ..showSnackBar(snackBar);
   // }
+
+  static void showSnackBar(BuildContext context, String msg,
+      [Color textColor = whiteColor, int time = 1000]) {
+    Fluttertoast.showToast(
+      msg: msg,
+      toastLength: time < 2000 ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: greenColor,
+      textColor: textColor,
+      fontSize: 16.0,
+    );
+  }
 
   static void serviceUnAvailable(BuildContext context, String msg,
       [Color textColor = whiteColor]) {
