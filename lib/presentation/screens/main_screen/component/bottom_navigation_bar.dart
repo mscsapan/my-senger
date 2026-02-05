@@ -18,7 +18,7 @@ class MyBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = MainController();
     return Container(
-      height: Platform.isAndroid ? 86 : 110,
+      height: Platform.isAndroid ? 65.0 : 110.0,
       decoration: BoxDecoration(
         color: whiteColor,
         borderRadius: BorderRadius.only(

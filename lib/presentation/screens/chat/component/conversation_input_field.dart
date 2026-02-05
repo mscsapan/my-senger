@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_senger/presentation/utils/k_images.dart';
+import '/presentation/utils/k_images.dart';
 
 import '../../../utils/constraints.dart';
 import '../../../utils/utils.dart';
@@ -33,11 +33,11 @@ class ConversationInputField extends StatelessWidget {
               //contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14.0),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(0.0),borderSide:   BorderSide(color: borderColor),),
               enabledBorder:  OutlineInputBorder(
-                // borderRadius: BorderRadius.circular(0.0),
+                borderRadius: BorderRadius.circular(50.0),
                 borderSide:  BorderSide(color: borderColor),
               ),
               focusedBorder:  OutlineInputBorder(
-                // borderRadius: BorderRadius.circular(0.0),
+                borderRadius: BorderRadius.circular(50.0),
                 borderSide:  BorderSide(color: borderColor),
               ),
               /*suffixIcon: IconButton(
@@ -108,10 +108,11 @@ class ConversationInputField extends StatelessWidget {
               width: 48.0,
               decoration: BoxDecoration(
                   color: primaryColor,
-                  borderRadius: Utils.borderRadius(r: 4.0)
+                  shape: BoxShape.circle
+                  //borderRadius: Utils.borderRadius(r: 50.0)
               ),
               margin: Utils.only(left: 10.0),
-              padding: Utils.all(value: 10.0),
+              padding: Utils.all(value: 12.0),
               child:  CustomImage(path: KImages.sendIcon),
             ),
           ),

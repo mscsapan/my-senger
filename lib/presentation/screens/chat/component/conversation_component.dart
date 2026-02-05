@@ -26,8 +26,8 @@ class ConversationComponent extends StatelessWidget {
             padding: Utils.symmetric(h: 12.0, v: 12.0),
             margin: Utils.symmetric(h: 16.0, v: 10.0).copyWith(top: 0.0),
             decoration: BoxDecoration(
-              color: !isSeller ? gray5B : greenColor.withValues(alpha: 0.2),
-              // color: isSeller ? AppColor.colorBg2GreyF1 : AppColor.info10CCE4 .withValues(alpha: 0.8),
+              color: !isSeller ? disableColor : blackColor.withValues(alpha: 0.4),
+              // color: !isSeller ? disableColor : primaryColor.withValues(alpha: 0.6),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(radius),
                 topRight: Radius.circular(radius),
@@ -50,7 +50,7 @@ class ConversationComponent extends StatelessWidget {
                     maxLine: 20,
                     color: blackColor,
                     fontSize: 14.0,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 /* if (m.documents?.isNotEmpty??false) ...[

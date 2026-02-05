@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_senger/presentation/routes/route_packages_name.dart';
+import '/presentation/routes/route_packages_name.dart';
 
 import '../../../data/dummy_data/dummy_data.dart';
 import '../../utils/utils.dart';
@@ -7,6 +7,8 @@ import '../../widgets/circle_image.dart';
 import '../../widgets/custom_text.dart';
 import 'component/conversation_component.dart';
 import 'component/conversation_input_field.dart';
+
+
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({super.key, required this.chat});
   final DummyModel chat;
@@ -19,7 +21,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return   Scaffold(
-      backgroundColor: whiteColor,
+      // backgroundColor: whiteColor,
       appBar: AppBar(
         leadingWidth: 30.0,
         // leading: Padding(
@@ -35,7 +37,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           children: [
             CircleImage(image: widget.chat.image,size: 44.0),
             Utils.horizontalSpace(10.0),
-            CustomText(text: widget.chat.name,fontWeight: FontWeight.w600,fontSize: 16.0,color: whiteColor,height: 1.6,),
+            CustomText(text: widget.chat.name,fontWeight: FontWeight.w700,fontSize: 16.0,color: blackColor,height: 1.6,),
           ],
         ),
         centerTitle: false,
