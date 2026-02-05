@@ -3,7 +3,7 @@ import 'package:my_senger/presentation/screens/profile/update_profile_screen.dar
 
 import '../../data/dummy_data/dummy_data.dart';
 import '../screens/authentication/sign_up_screen.dart';
-import '../screens/chat/messages_screen.dart';
+import '../screens/chat/conversation_screen.dart';
 import '../screens/main_screen/main_screen.dart';
 import 'route_packages_name.dart';
 
@@ -78,7 +78,7 @@ class RouteNames {
     case RouteNames.conversationScreen:
       final chat = settings.arguments as DummyModel;
         return MaterialPageRoute(
-            settings: settings, builder: (_) =>  MessagesScreen(chat: chat));
+            settings: settings, builder: (_) =>  ConversationScreen(chat: chat));
 
 
       default:

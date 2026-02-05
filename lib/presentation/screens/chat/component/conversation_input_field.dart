@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:my_senger/presentation/utils/k_images.dart';
 
 import '../../../utils/constraints.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/custom_image.dart';
 
 
-class SupportInputField extends StatelessWidget {
-  SupportInputField({super.key});
+class ConversationInputField extends StatelessWidget {
+  ConversationInputField({super.key});
 
   final FocusNode focusNode = FocusNode();
 
@@ -111,7 +112,7 @@ class SupportInputField extends StatelessWidget {
               ),
               margin: Utils.only(left: 10.0),
               padding: Utils.all(value: 10.0),
-              child: const CustomImage(path: 'assets/send_icon.svg'),
+              child:  CustomImage(path: KImages.sendIcon),
             ),
           ),
           //]

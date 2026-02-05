@@ -43,8 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: scaffoldBgColor,
       appBar: CustomAppBar(
         title: 'My Account',
-        //isShowBackButton: false,
-        bgColor: whiteColor,
+        visibleLeading: false,
       ),
       body: ListView(
         padding: Utils.all(value: 16.0),

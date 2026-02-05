@@ -5,17 +5,17 @@ import '../../../data/dummy_data/dummy_data.dart';
 import '../../utils/utils.dart';
 import '../../widgets/circle_image.dart';
 import '../../widgets/custom_text.dart';
-import 'component/single_support_component.dart';
-import 'component/support_input_field.dart';
-class MessagesScreen extends StatefulWidget {
-  const MessagesScreen({super.key, required this.chat});
+import 'component/conversation_component.dart';
+import 'component/conversation_input_field.dart';
+class ConversationScreen extends StatefulWidget {
+  const ConversationScreen({super.key, required this.chat});
   final DummyModel chat;
 
   @override
-  State<MessagesScreen> createState() => _MessagesScreenState();
+  State<ConversationScreen> createState() => _ConversationScreenState();
 }
 
-class _MessagesScreenState extends State<MessagesScreen> {
+class _ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return   Scaffold(
@@ -63,7 +63,7 @@ class LoadedChat extends StatelessWidget {
               itemBuilder: (context, index) {
                 final m = dummyMessages[index];
                 final isSeller = m.sendBy == 'user';
-                return SingleSupportComponent(m: m, isSeller: isSeller);
+                return ConversationComponent(m: m, isSeller: isSeller);
               },
             ),
           ),
@@ -75,7 +75,7 @@ class LoadedChat extends StatelessWidget {
             ),
           ),
         ],
-        SupportInputField(),
+        ConversationInputField(),
       ],
     );
   }

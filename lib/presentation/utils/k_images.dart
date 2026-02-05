@@ -5,6 +5,7 @@ class KImages {
   static const String loginBg = 'assets/images/bg.jpg';
   static const String defaultImg = 'assets/images/default_image.png';
   static const String editIcon = 'assets/icons/edit_iocn.svg';
+  static const String sendIcon = 'assets/icons/send_icons.svg';
 
 
 

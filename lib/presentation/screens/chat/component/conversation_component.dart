@@ -6,8 +6,8 @@ import '../../../widgets/custom_text.dart';
 
 
 // ignore: must_be_immutable
-class SingleSupportComponent extends StatelessWidget {
-  SingleSupportComponent({super.key, required this.m, required this.isSeller});
+class ConversationComponent extends StatelessWidget {
+  ConversationComponent({super.key, required this.m, required this.isSeller});
 
   final DemoMessage m;
   final bool isSeller;

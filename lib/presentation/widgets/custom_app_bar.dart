@@ -14,7 +14,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.onTap,
     this.horSpace = 24.0,
-    this.bgColor = scaffoldBgColor,
+    this.bgColor = whiteColor,
     this.textColor = blackColor,
     this.iconColor = blackColor,
     this.visibleLeading = true,

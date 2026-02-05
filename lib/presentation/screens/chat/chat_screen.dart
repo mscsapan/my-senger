@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_senger/presentation/widgets/custom_app_bar.dart';
 
 import '../../../data/dummy_data/dummy_data.dart';
 import '../../routes/route_names.dart';
@@ -15,14 +16,16 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(title: 'Chats',visibleLeading: false,),
       body: ListView.builder(
         itemCount: dummyChatList.length,
+        physics: ClampingScrollPhysics(),
         padding: Utils.only(bottom: 20.0),
         itemBuilder: (context, index) {
           final item = dummyChatList[index];
           return GestureDetector(
             onTap: (){
-              NavigationService.navigateTo(RouteNames.conversationScreen);
+              NavigationService.navigateTo(RouteNames.conversationScreen,arguments: item);
             },
             child: ChatItem(item: item),
           );
