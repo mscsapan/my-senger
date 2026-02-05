@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '/presentation/utils/k_images.dart';
 
 import '../../../utils/constraints.dart';
@@ -29,8 +30,12 @@ class ConversationInputField extends StatelessWidget {
               // mCubit.messageChange(text);
             },
             decoration: InputDecoration(
-              hintText: 'Write here...',
-              //contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14.0),
+              hintText: 'Message',
+              hintStyle: GoogleFonts.roboto(
+                fontWeight: FontWeight.w500,
+                color: blackColor,
+              ),
+              contentPadding: Utils.symmetric(h: 14.0),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(0.0),borderSide:   BorderSide(color: borderColor),),
               enabledBorder:  OutlineInputBorder(
                 borderRadius: BorderRadius.circular(50.0),
@@ -40,55 +45,7 @@ class ConversationInputField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(50.0),
                 borderSide:  BorderSide(color: borderColor),
               ),
-              /*suffixIcon: IconButton(
-                splashRadius: 1.0,
-                onPressed: () {
-                  Utils.closeKeyBoard(context);
-                  mCubit.sendTicketMessage();
-                  mCubit.messageController.clear();
-                  // mCubit.clear();
-                },
-                icon: Icon(
-                  Icons.send_rounded,
-                  // color:  greenColor ,
-                  color: state.message.trim().isNotEmpty ? greenColor : grayColor,
-                  size: 30.0,
-                ),
-              ),*/
-              prefixIcon: IconButton(
-                splashRadius: 0.5,
-                onPressed: () async {
-                  // mCubit.docClear();
-                  //
-                  // int totalSize = 0;
-                  //
-                  // const maxFileSize = 2 * 1024 * 1024;
-                  //
-                  // final img = await Utils.pickMultipleFile();
-                  //
-                  // if (img.isNotEmpty) {
-                  //   for (final i in img) {
-                  //     final file = File(i);
-                  //     final fileSize = await file.length();
-                  //     totalSize +=  fileSize;
-                  //   }
-                  // }
-                  //
-                  // if (totalSize > maxFileSize) {
-                  //   Utils.errorSnackBar(context, 'Files size should not exceed 2MB');
-                  //   return;
-                  // } else {
-                  //   for (final i in img) {
-                  //     mCubit.documentChange(i);
-                  //   }
-                  // }
-                },
-                icon:  Icon(
-                  Icons.attach_file,
-                  color: whiteColor,
-                  size: 30.0,
-                ),
-              ),
+             suffixIcon: SizedBox.shrink(),
               // fillColor: fillColor,
             ),
           )),

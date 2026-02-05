@@ -3,6 +3,7 @@ import 'package:my_senger/data/models/auth/auth_state_model.dart';
 
 import '../../../logic/cubit/auth/auth_cubit.dart';
 import '../../utils/navigation_service.dart';
+import '../../widgets/confirm_dialog.dart';
 import '../../widgets/custom_form.dart';
 
 import '../../widgets/loading_widget.dart';
@@ -214,34 +215,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
           ]),
-
-          /*   Utils.verticalSpace(20.0),
-          if(Utils.isLoggedIn(context))...[
-            BlocListener<LoginBloc, UserModel>(
-              listener: (context, states) {
-                final state = states.loginState;
-                if (state is LogoutLoaded) {
-                  NavigationService.showSnackBar(context, state.message);
-
-                  NavigationService.navigateToAndClearStack(RouteNames.authScreen, arguments: false);
-                }
-
-                if(state is AuthPassTypeError){
-
-                  NavigationService.errorSnackBar(context, state.message);
-
-                }else if(state is AuthPassTypeLoaded){
-
-                  NavigationService.goBack();
-
-                  NavigationService.showSnackBar(context, state.authResponse?.message??'');
-
-                  WidgetsBinding.instance.addPostFrameCallback((_){
-                    NavigationService.navigateToAndClearStack(RouteNames.authScreen, arguments: false);
-                  });
-                }
+          Utils.verticalSpace(20.0),
+          BlocListener<AuthCubit, AuthStateModel>(
+            listener: (context, login) {
+             final state = login.authState;
+             if(state is AuthSuccess && state.authType == AuthType.logOut){
+               NavigationService.navigateToAndClearStack(RouteNames.authScreen);
+             }
+            },
+            child: PrimaryButton(
+              text: 'Logout',
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ConfirmDialog(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      image: KImages.logout,
+                      title: 'Logout',
+                      subTitle: 'Are you sure, you want to logout?',
+                      isOneButton: false,
+                      child: Padding(
+                        padding: Utils.only(top: 16.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 8,
+                              child: PrimaryButton(
+                                text: 'Cancel',
+                                onPressed: () => NavigationService.goBack(),
+                                bgColor: Colors.grey.shade200,
+                                textColor: blackColor,
+                              ),
+                            ),
+                            Spacer(),
+                            Expanded(
+                              flex: 8,
+                              child: PrimaryButton(
+                                text: 'Yes,Logout',
+                                bgColor: redColor,
+                                onPressed: () async{
+                                  Navigator.of(context).pop();
+                                  await profileCubit.logOut();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
-              child:Column(
+              buttonType: ButtonType.iconButton,
+              icon: const Icon(Icons.logout_outlined, color: whiteColor),
+              borderColor: transparent,
+            ),
+          ),
+
+
+
+          /*
+
+              Column(
                 children: [
 
                   _buildCardSection([

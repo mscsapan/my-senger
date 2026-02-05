@@ -8,9 +8,6 @@ class KImages {
   static const String sendIcon = 'assets/icons/send_icons.svg';
 
 
-
-
-
   static const String home = 'assets/icons/home.svg';
   static const String homeActive = 'assets/icons/home_active.svg';
   static const String category = 'assets/icons/category.svg';
@@ -26,6 +23,13 @@ class KImages {
   static const String submitAdd = 'assets/icons/submit-add.svg';
   static const String submitAddActive = 'assets/icons/submit-add-active.svg';
   static const String adAddedSuccess = 'assets/icons/ad-added-success.svg';
+
+
+  ///dialog images
+  static const String done = 'assets/images/done_icon.png';
+  static const String delete = 'assets/images/delete.png';
+  static const String logout = 'assets/images/logout.png';
+  static const String actDelete = 'assets/images/delete_account.png';
 
 
   static const String placeholderImg = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';

@@ -26,8 +26,8 @@ class ConversationComponent extends StatelessWidget {
             padding: Utils.symmetric(h: 12.0, v: 12.0),
             margin: Utils.symmetric(h: 16.0, v: 10.0).copyWith(top: 0.0),
             decoration: BoxDecoration(
-              color: !isSeller ? disableColor : blackColor.withValues(alpha: 0.4),
-              // color: !isSeller ? disableColor : primaryColor.withValues(alpha: 0.6),
+              // color: !isSeller ? disableColor : blackColor.withValues(alpha: 0.4),
+              color: !isSeller ? disableColor : primaryColor.withValues(alpha: 0.6),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(radius),
                 topRight: Radius.circular(radius),

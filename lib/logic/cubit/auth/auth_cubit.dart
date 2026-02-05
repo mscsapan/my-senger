@@ -46,7 +46,7 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
     emit(state.copyWith(updateInfo: updateFn));
 
-    debugPrint('user-info ${state.updateInfo?.image}');
+    debugPrint('user-info ${state.updateInfo}');
   }
 
   User? get currentUser => _auth.currentUser;
@@ -141,6 +141,18 @@ class AuthCubit extends Cubit<AuthStateModel> {
     }
   }
 
+  Future<void> logOut() async{
+    final authType = AuthType.logOut;
+    try{
+      await _auth.signOut();
+
+      emit(state.copyWith(authState: AuthSuccess('Successfully logout', authType)));
+
+    }on FirebaseAuthException catch(e){
+      emit(state.copyWith(authState: AuthError('Something went wrong',null,authType)));
+    }
+  }
+
   // Future<void> forgotPassword() async {
   //   try {
   //     emit(state.copyWith(authState: AuthLoading()));
@@ -225,4 +237,4 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
 }
 
-enum AuthType {login,signUp,update,uploadImg}
+enum AuthType {login,signUp,logOut,update,uploadImg}
