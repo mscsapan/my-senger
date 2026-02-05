@@ -5,7 +5,10 @@ import '../../../data/models/auth/auth_state_model.dart';
 import '../../../logic/cubit/auth/auth_cubit.dart';
 import '../../routes/route_names.dart';
 import '../../utils/constraints.dart';
+import '../../utils/k_images.dart';
+import '../../utils/navigation_service.dart';
 import '../../utils/utils.dart';
+import '../../widgets/confirm_dialog.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_form.dart';
 import '../../widgets/custom_text.dart';
@@ -205,7 +208,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                         ),
-                        if(login is AuthLoading)...[
+                        if(login is AuthLoading && login.authType == AuthType.signUp)...[
                           const LoadingWidget()
                         ]else...[
                           PrimaryButton(
@@ -217,6 +220,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if(signUpFormKey.currentState?.validate()??false){
                                 loginBloc.signUp();
                               }
+
                             },
                           )
                         ],
@@ -235,10 +239,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             GestureDetector(
                               onTap: () {
                                 loginBloc.clear();
-                                Navigator.pushNamed(
-                                  context,
-                                  RouteNames.authScreen,
-                                );
+                                Navigator.pushNamed(context, RouteNames.authScreen);
                               },
                               child: const CustomText(
                                 text: 'Login',
@@ -259,11 +260,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   if (state is AuthError) {
                     Utils.errorSnackBar(context, state.message ?? '');
                   } else if (state is AuthSuccess) {
-                    Utils.showSnackBar(context, state.message ?? '');
+                    if(state.authType == AuthType.signUp){
 
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
                       loginBloc.storeNewUser();
-                    });
+
+                      loginBloc.addUserInfo((info)=>info.copyWith(
+                        loginEmail: login.users?.signUpEmail,
+                        loginPassword: login.users?.signUpPassword,
+                        authState: AuthInitial(),
+                      ));
+
+                      showDialog(
+                        context: context,
+                        builder: (context) =>LoginAfterSignUp(),
+                      );
+                    }else  if(state.authType == AuthType.login){
+                      Navigator.pushNamedAndRemoveUntil(context, RouteNames.mainScreen, (route)=>false);
+                    }
+
                   }
                 },
               ),
@@ -274,3 +288,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
+
+class LoginAfterSignUp extends StatelessWidget {
+  const LoginAfterSignUp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ConfirmDialog(
+      onTap: () {
+        Navigator.of(context).pop();
+      },
+      title: 'Success',
+      subTitle: 'You\'ve successfully registered',
+      isShowCancelButton: false,
+      isOneButton: false,
+      child: BlocBuilder<AuthCubit, AuthStateModel>(
+        builder: (context, login) {
+          final state = login.authState;
+          return Padding(
+            padding: Utils.only(top: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if(state is AuthLoading && state.authType == AuthType.login)...[
+                  LoadingWidget(),
+                ]else...[
+                  Expanded(
+                    flex: 8,
+                    child: PrimaryButton(
+                      text: 'Back',
+                      onPressed: () => NavigationService.goBack(),
+                      bgColor: Colors.grey.shade200,
+                      textColor: blackColor,
+                    ),
+                  ),
+                  Spacer(),
+                  Expanded(
+                    flex: 8,
+                    child: PrimaryButton(
+                      text: 'Login Now',
+                      onPressed: () async{
+                        await context.read<AuthCubit>().signIn();
+                      },
+                    ),
+                  ),
+                ]
+
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+

@@ -12,7 +12,12 @@ final class AuthInitial extends AuthState {
 }
 
 final class AuthLoading extends AuthState {
-  const AuthLoading();
+  final AuthType? authType;
+
+  const AuthLoading(this.authType);
+
+  @override
+  List<Object?> get props => [authType];
 }
 
 final class AuthError extends AuthState {

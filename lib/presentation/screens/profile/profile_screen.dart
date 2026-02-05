@@ -73,8 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   CustomText(
-                    text:
-                        '${state.updateInfo?.firstName ?? 'Guest'} ${state.updateInfo?.lastName ?? 'User'}',
+                    text: '${Utils.textTrim(state.updateInfo?.firstName) ?state.updateInfo?.firstName: 'Guest'} ${Utils.textTrim(state.updateInfo?.lastName)?state.updateInfo?.lastName:'User'}',
                     fontWeight: FontWeight.bold,
                     fontSize: 22.0,
                   ),

@@ -58,7 +58,6 @@ class AuthCubit extends Cubit<AuthStateModel> {
   UserResponse? get userInformation => _userResponse;
 
   Future<void> checkAuthStatus() async {
-    emit(state.copyWith(authState: AuthLoading()));
 
     await Future.delayed(const Duration(seconds: 1));
 
@@ -91,7 +90,7 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
     final authType = AuthType.signUp;
     try {
-      emit(state.copyWith(authState: AuthLoading()));
+      emit(state.copyWith(authState: AuthLoading(authType)));
       await _auth.createUserWithEmailAndPassword(
         email: state.users?.signUpEmail?? '',
         password: state.users?.signUpPassword ?? '',
@@ -100,13 +99,9 @@ class AuthCubit extends Cubit<AuthStateModel> {
         // addUserInfo((info)=>info.copyWith(id: _auth.currentUser?.uid,status: true));
         // debugPrint('id-uid-2 ${state.users?.id} - ${_auth.currentUser?.uid}');
         //
-        // debugPrint('User registered successful with UID ${_auth.currentUser?.uid}.');
-      /*    final updatedUser = (state.users ?? UserResponse()).copyWith(
-            id: _auth.currentUser?.uid,
-            loginEmail: state.loginEmail,
-            loginPassword: state.loginPassword,
-          );
-          emit(state.copyWith(users: updatedUser));*/
+         debugPrint('User registered successful with UID ${_auth.currentUser?.uid}.');
+            final updatedUser = (state.users ?? UserResponse()).copyWith(id: _auth.currentUser?.uid,status: true);
+          emit(state.copyWith(users: updatedUser));
       });
 
       // debugPrint('User registered successful with user object ${state.users}');
@@ -121,7 +116,7 @@ class AuthCubit extends Cubit<AuthStateModel> {
     final authType = AuthType.login;
 
     try {
-      emit(state.copyWith(authState: AuthLoading()));
+      emit(state.copyWith(authState: AuthLoading(authType)));
 
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: state.users?.loginEmail ?? '',
@@ -167,10 +162,8 @@ class AuthCubit extends Cubit<AuthStateModel> {
   Future<void> storeNewUser() async {
     try {
       //emit(state.copyWith(authState: AuthLoading()));
-      // Future.delayed(const Duration(seconds: 1));
-      // debugPrint('user-map ${state.users?.toMap()}');
-      // debugPrint('user-newly-created-id ${_auth.currentUser?.uid}');
-      debugPrint('id-uid-33 ${state.users?.id} - ${_auth.currentUser?.uid}');
+      //debugPrint('id-uid-333333 ${state.users?.id} - ${_auth.currentUser?.uid}');
+      //debugPrint('create-user-body ${jsonEncode(state.users?.toMap())}');
       await _db.collection(DatabaseConfig.userCollection).doc(_auth.currentUser?.uid).set(state.users?.toMap() ?? <String, dynamic>{});
       // emit(state.copyWith(authState: AuthSuccess('Successfully login')));
       // debugPrint('successfully store');
@@ -179,7 +172,6 @@ class AuthCubit extends Cubit<AuthStateModel> {
       //emit(state.copyWith(authState: AuthError(e.message, e.code)));
     }
   }
-
 
   Future<void> uploadProfileImg() async {
     final authType = AuthType.uploadImg;
@@ -219,10 +211,10 @@ class AuthCubit extends Cubit<AuthStateModel> {
   }
 
   Future<void> updateProfile() async {
-    debugPrint('update-body ${jsonEncode(state.updateInfo?.toUpdateMap())}');
+    //debugPrint('update-body ${jsonEncode(state.updateInfo?.toUpdateMap())}');
     final authType = AuthType.update;
     try {
-      emit(state.copyWith(authState: AuthLoading()));
+      emit(state.copyWith(authState: AuthLoading(authType)));
 
       await _db.collection(DatabaseConfig.userCollection).doc(_auth.currentUser?.uid).update(state.updateInfo?.toUpdateMap() ?? <String, dynamic>{});
       emit(state.copyWith(authState: AuthSuccess('Successfully login',authType)));

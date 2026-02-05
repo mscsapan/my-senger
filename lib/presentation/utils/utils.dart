@@ -62,6 +62,12 @@ class Utils {
     return input.toLowerCase().replaceAll(RegExp(r'[^a-zA-Z\d]+'), '-');
   }
 
+
+  static bool textTrim(String ? text){
+    if(text?.trim().isEmpty??false) return false;
+    return true;
+  }
+
   static Size mediaQuery(BuildContext context) => MediaQuery.of(context).size;
 
   static List<TextInputFormatter> inputFormatter = [

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/auth/login_state_model.dart';
 import '../../../logic/bloc/login/login_bloc.dart';
 
+import '../../../logic/cubit/auth/auth_cubit.dart';
 import '../chat/chat_screen.dart';
 import '../home/home_screen.dart';
 
@@ -23,13 +24,13 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _homeController = MainController();
-  late LoginBloc loginBloc;
+  late AuthCubit loginBloc;
   late List<Widget> screenList;
 
   @override
   void initState() {
     super.initState();
-    loginBloc = context.read<LoginBloc>();
+    loginBloc = context.read<AuthCubit>()..fetchUserData();
     _init();
 
   }
@@ -65,22 +66,7 @@ class _MainScreenState extends State<MainScreen> {
             return screenList[item];
           },
         ),
-        bottomNavigationBar: BlocBuilder<LoginBloc, LoginStateModel>(
-          builder: (context, state) {
-            //_init();
-
-            return MyBottomNavigationBar();
-
-            // if (state is DashboardStateLoaded) {
-            //   return const MyBottomNavigationBar();
-            // }
-            // if (dCubit.dashboardModel != null) {
-            //   return const MyBottomNavigationBar();
-            // } else {
-            //   return const SizedBox.shrink();
-            // }
-          },
-        ),
+        bottomNavigationBar: MyBottomNavigationBar(),
       ),
     );
   }
