@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '/utils/colors/app_color.dart';
+import '../../../../data/dummy_data/dummy_data.dart';
+import '../../../utils/constraints.dart';
+import '../../../utils/utils.dart';
+import '../../../widgets/custom_text.dart';
 
-import '../../../../../common/dummy_model/dummy_model.dart';
-import '../../../../../common/widgets/custom_text.dart';
-import '../../../../../utils/data_utils/data_utils.dart';
 
 // ignore: must_be_immutable
 class SingleSupportComponent extends StatelessWidget {
@@ -23,10 +23,10 @@ class SingleSupportComponent extends StatelessWidget {
       children: [
         Flexible(
           child: Container(
-            padding: DataUtils.symmetric(h: 12.0, v: 12.0),
-            margin: DataUtils.symmetric(h: 16.0, v: 10.0).copyWith(top: 0.0),
+            padding: Utils.symmetric(h: 12.0, v: 12.0),
+            margin: Utils.symmetric(h: 16.0, v: 10.0).copyWith(top: 0.0),
             decoration: BoxDecoration(
-              color: !isSeller ? AppColor.colorBg2GreyF1 : AppColor.mGreen.withValues(alpha: 0.2),
+              color: !isSeller ? gray5B : greenColor.withValues(alpha: 0.2),
               // color: isSeller ? AppColor.colorBg2GreyF1 : AppColor.info10CCE4 .withValues(alpha: 0.8),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(radius),
@@ -48,13 +48,13 @@ class SingleSupportComponent extends StatelessWidget {
                   child: CustomText(
                     text: m.message,
                     maxLine: 20,
-                    color: AppColor.colorBlack,
+                    color: blackColor,
                     fontSize: 14.0,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
                 /* if (m.documents?.isNotEmpty??false) ...[
-                      DataUtils.verticalSpace(6.0),
+                      Utils.verticalSpace(6.0),
                       ...List.generate(m.documents?.length??0, (index) {
                         final doc = m.documents?[index];
                         if(doc?.document.isNotEmpty??false){
@@ -62,18 +62,18 @@ class SingleSupportComponent extends StatelessWidget {
                             onTap: () async {
                               debugPrint('image-path ${doc?.document}');
                               bool permissionGranted =
-                              await DataUtils.getStoragePermission();
+                              await Utils.getStoragePermission();
                               if (permissionGranted) {
                                 final ext = doc?.document.split('.').last;
                                 debugPrint('extension $ext');
                                 final result = await msgCubit.chatFileDownload(doc?.document??'',ext??'jpeg');
                                 result.fold((failure) {
-                                  DataUtils.errorSnackBar(context, "Something went wrong!");
+                                  Utils.errorSnackBar(context, "Something went wrong!");
                                 }, (success) {
                                   if (success) {
-                                    DataUtils.showSnackBar(context, "Downloaded");
+                                    Utils.showSnackBar(context, "Downloaded");
                                   } else {
-                                    DataUtils.errorSnackBar(context, "Download Failed");
+                                    Utils.errorSnackBar(context, "Download Failed");
                                   }
                                 });
                               }
@@ -85,7 +85,7 @@ class SingleSupportComponent extends StatelessWidget {
                                 const Icon(Icons.download_rounded,
                                     size: 16.0,
                                     color:  blackColor),
-                                DataUtils.horizontalSpace(2.0),
+                                Utils.horizontalSpace(2.0),
                                 const CustomText(
                                     text: 'Download',
                                     fontSize: 12.0,
@@ -110,5 +110,5 @@ class SingleSupportComponent extends StatelessWidget {
 }
 
 // void showImage(BuildContext context, String path) {
-//   DataUtils.showCustomDialog(context, child: CustomImage(path: path));
+//   Utils.showCustomDialog(context, child: CustomImage(path: path));
 // }

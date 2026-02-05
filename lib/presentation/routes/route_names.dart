@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_senger/presentation/screens/profile/update_profile_screen.dart';
 
+import '../../data/dummy_data/dummy_data.dart';
 import '../screens/authentication/sign_up_screen.dart';
+import '../screens/chat/messages_screen.dart';
 import '../screens/main_screen/main_screen.dart';
 import 'route_packages_name.dart';
 
@@ -27,6 +29,7 @@ class RouteNames {
   ///profile routes
   static const String profileScreen = '/profileScreen';
   static const String updateProfile = '/updateProfile';
+  static const String conversationScreen = '/conversationScreen';
 
   static Route<dynamic> generateRoutes(RouteSettings settings) {
     switch (settings.name) {
@@ -70,6 +73,12 @@ class RouteNames {
         case RouteNames.updateProfile:
         return MaterialPageRoute(
             settings: settings, builder: (_) => const UpdateProfileScreen());
+
+
+    case RouteNames.conversationScreen:
+      final chat = settings.arguments as DummyModel;
+        return MaterialPageRoute(
+            settings: settings, builder: (_) =>  MessagesScreen(chat: chat));
 
 
       default:

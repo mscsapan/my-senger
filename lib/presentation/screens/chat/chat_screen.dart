@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../data/dummy_data/dummy_data.dart';
+import '../../routes/route_names.dart';
+import '../../utils/constraints.dart';
+import '../../utils/navigation_service.dart';
+import '../../utils/utils.dart';
+import '../../widgets/circle_image.dart';
+import '../../widgets/custom_text.dart';
+
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -9,17 +17,12 @@ class ChatScreen extends StatelessWidget {
     return Scaffold(
       body: ListView.builder(
         itemCount: dummyChatList.length,
-        padding: DataUtils.only(bottom: 20.0),
+        padding: Utils.only(bottom: 20.0),
         itemBuilder: (context, index) {
           final item = dummyChatList[index];
           return GestureDetector(
             onTap: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>  MessagesScreen(chat: item),
-                ),
-              );
+              NavigationService.navigateTo(RouteNames.conversationScreen);
             },
             child: ChatItem(item: item),
           );
@@ -37,11 +40,11 @@ class ChatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: DataUtils.symmetric(h: 14.0,v: 12.0),
+      padding: Utils.symmetric(h: 14.0,v: 12.0),
       child: Row(
         children: [
            CircleImage(image: item.image,size: 48.0),
-          DataUtils.horizontalSpace(8.0),
+          Utils.horizontalSpace(8.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,10 +71,10 @@ class ChatItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             // mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CustomText(text: item.time,fontWeight: FontWeight.w600,fontSize: 14.0,color: AppColor.darkLightest6C7576),
+              CustomText(text: item.time,fontWeight: FontWeight.w600,fontSize: 14.0,color: grayColor),
               if(item.unreadMsg > 0)...[
-                DataUtils.verticalSpace(4.0),
-                CircleAvatar(maxRadius: 10.0,backgroundColor: AppColor.primaryOne4B9EFF,child: CustomText(text: '${item.unreadMsg}',color: AppColor.whiteFFFFFF,fontWeight: FontWeight.w500,),),
+                Utils.verticalSpace(4.0),
+                CircleAvatar(maxRadius: 10.0,backgroundColor: primaryColor,child: CustomText(text: '${item.unreadMsg}',color: whiteColor,fontWeight: FontWeight.w500,),),
               ],
             ],
           ),

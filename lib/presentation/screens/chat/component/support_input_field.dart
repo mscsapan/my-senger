@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
-import '../../../../../common/theme/colors.dart';
-import '../../../../../common/widgets/custom_image.dart';
-import '../../../../../utils/data_utils/data_utils.dart';
-
+import '../../../utils/constraints.dart';
+import '../../../utils/utils.dart';
+import '../../../widgets/custom_image.dart';
 
 
 class SupportInputField extends StatelessWidget {
@@ -17,7 +14,7 @@ class SupportInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     // final mCubit = context.read<BidCubit>();
     return Container(
-      margin: DataUtils.symmetric(v: 8.0, h: 12.0).copyWith(bottom: 8),
+      margin: Utils.symmetric(v: 8.0, h: 12.0).copyWith(bottom: 8),
       child: Row(
         children: [
           Expanded(child: TextFormField(
@@ -31,16 +28,16 @@ class SupportInputField extends StatelessWidget {
               // mCubit.messageChange(text);
             },
             decoration: InputDecoration(
-              hintText: '${DataUtils.localizeText(context)?.writeHere}...',
+              hintText: 'Write here...',
               //contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14.0),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(0.0),borderSide:   BorderSide(color: AppColor.inputBorderRegularE4E5E7),),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(0.0),borderSide:   BorderSide(color: borderColor),),
               enabledBorder:  OutlineInputBorder(
                 // borderRadius: BorderRadius.circular(0.0),
-                borderSide:  BorderSide(color: AppColor.inputBorderRegularE4E5E7),
+                borderSide:  BorderSide(color: borderColor),
               ),
               focusedBorder:  OutlineInputBorder(
                 // borderRadius: BorderRadius.circular(0.0),
-                borderSide:  BorderSide(color: AppColor.inputBorderFocus469FFF),
+                borderSide:  BorderSide(color: borderColor),
               ),
               /*suffixIcon: IconButton(
                 splashRadius: 1.0,
@@ -87,7 +84,7 @@ class SupportInputField extends StatelessWidget {
                 },
                 icon:  Icon(
                   Icons.attach_file,
-                  color: AppColor.darkLightest6C7576,
+                  color: whiteColor,
                   size: 30.0,
                 ),
               ),
@@ -109,11 +106,11 @@ class SupportInputField extends StatelessWidget {
               height: 48.0,
               width: 48.0,
               decoration: BoxDecoration(
-                  color: AppColor.primaryOne4B9EFF,
-                  borderRadius: DataUtils.borderRadius(r: 4.0)
+                  color: primaryColor,
+                  borderRadius: Utils.borderRadius(r: 4.0)
               ),
-              margin: DataUtils.only(left: 10.0),
-              padding: DataUtils.all(value: 10.0),
+              margin: Utils.only(left: 10.0),
+              padding: Utils.all(value: 10.0),
               child: const CustomImage(path: 'assets/send_icon.svg'),
             ),
           ),
