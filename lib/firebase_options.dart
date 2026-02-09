@@ -55,6 +55,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '432405771305',
     projectId: 'bdmarket-726ff',
     storageBucket: 'bdmarket-726ff.firebasestorage.app',
+
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
