@@ -13,9 +13,7 @@ import '../../../data/models/auth/user_response_model.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthStateModel> {
-  AuthCubit() : super(AuthStateModel()){
-    fetchUserData();
-  }
+  AuthCubit() : super(AuthStateModel());
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 

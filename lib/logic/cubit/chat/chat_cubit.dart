@@ -1,8 +1,7 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+// This file is kept for backward compatibility
+// The chat functionality has been moved to:
+// - chat_list_cubit.dart for chat list management
+// - conversation_cubit.dart for individual conversations
 
-part 'chat_state.dart';
-
-class ChatCubit extends Cubit<ChatState> {
-  ChatCubit() : super(ChatInitial());
-}
+export 'chat_list_cubit.dart';
+export 'conversation_cubit.dart';

@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../data/data_provider/database_config.dart';
+import '../data/models/chat/chat_room_model.dart';
+import '../data/models/chat/chat_user_model.dart';
+import '../presentation/routes/route_names.dart';
+import '../presentation/utils/navigation_service.dart';
 
 /// Top-level function to handle background messages
 /// This must be a top-level function (not a class method)
@@ -37,6 +40,15 @@ class NotificationService {
 
   // Store the last known FCM token to avoid redundant updates
   String? _lastKnownToken;
+
+  // Store the current active chat room ID to prevent notifications
+  String? _activeChatRoomId;
+
+  /// Set the active chat room (to suppress notifications while in chat)
+  void setActiveChatRoom(String? chatRoomId) {
+    _activeChatRoomId = chatRoomId;
+    debugPrint('Active chat room set to: $chatRoomId');
+  }
 
   /// Initialize the notification service
   Future<void> init() async {
@@ -72,7 +84,10 @@ class NotificationService {
       // Handle notification tap when app is terminated
       RemoteMessage? initialMessage = await _messaging.getInitialMessage();
       if (initialMessage != null) {
-        _handleNotificationTap(initialMessage);
+        // Delay navigation to allow app to initialize
+        Future.delayed(const Duration(seconds: 1), () {
+          _handleNotificationTap(initialMessage);
+        });
       }
 
       debugPrint('✅ NotificationService initialized successfully');
@@ -126,20 +141,33 @@ class NotificationService {
 
     // Create notification channel for Android
     if (Platform.isAndroid) {
-      const AndroidNotificationChannel channel = AndroidNotificationChannel(
-        'high_importance_channel', // id
-        'High Importance Notifications', // name
+      // Chat messages channel
+      const AndroidNotificationChannel chatChannel = AndroidNotificationChannel(
+        'chat_messages_channel',
+        'Chat Messages',
+        description: 'Notifications for new chat messages.',
+        importance: Importance.high,
+        playSound: true,
+        enableVibration: true,
+      );
+
+      // High importance channel for other notifications
+      const AndroidNotificationChannel highChannel = AndroidNotificationChannel(
+        'high_importance_channel',
+        'High Importance Notifications',
         description: 'This channel is used for important notifications.',
         importance: Importance.high,
         playSound: true,
         enableVibration: true,
       );
 
-      await _localNotifications
+      final androidPlugin = _localNotifications
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
-          >()
-          ?.createNotificationChannel(channel);
+          >();
+
+      await androidPlugin?.createNotificationChannel(chatChannel);
+      await androidPlugin?.createNotificationChannel(highChannel);
     }
   }
 
@@ -200,7 +228,7 @@ class NotificationService {
           .get();
 
       if (doc.exists) {
-        return doc.data()?['device_token'] as String?;
+        return doc.data()?[DatabaseConfig.fieldDeviceToken] as String?;
       }
       return null;
     } catch (e) {
@@ -225,7 +253,7 @@ class NotificationService {
       }
 
       await _db.collection(DatabaseConfig.userCollection).doc(userId).update({
-        'device_token': token,
+        DatabaseConfig.fieldDeviceToken: token,
       });
 
       _lastKnownToken = token;
@@ -238,7 +266,7 @@ class NotificationService {
           final String? userId = _auth.currentUser?.uid;
           if (userId != null) {
             await _db.collection(DatabaseConfig.userCollection).doc(userId).set(
-              {'device_token': token},
+              {DatabaseConfig.fieldDeviceToken: token},
               SetOptions(merge: true),
             );
             _lastKnownToken = token;
@@ -256,38 +284,61 @@ class NotificationService {
     debugPrint('Foreground message received: ${message.messageId}');
     debugPrint('Message data: ${message.data}');
 
+    // Extract chat data
+    final String? chatRoomId = message.data['chat_room_id'];
+    final String? senderName = message.data['sender_name'];
+    final String? messageContent = message.data['message'];
+    final String? type = message.data['type'];
+
+    // Don't show notification if we're in the same chat room
+    if (type == 'chat_message' && chatRoomId == _activeChatRoomId) {
+      debugPrint('📱 Suppressing notification - user is in active chat');
+      return;
+    }
+
     RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
 
     // Show local notification when app is in foreground
-    if (notification != null && android != null) {
-      _showLocalNotification(
+    if (notification != null) {
+      _showChatNotification(
         id: notification.hashCode,
-        title: notification.title ?? 'New Message',
-        body: notification.body ?? '',
-        payload: message.data.toString(),
+        title: senderName ?? notification.title ?? 'New Message',
+        body: messageContent ?? notification.body ?? '',
+        chatRoomId: chatRoomId,
+        senderId: message.data['sender_id'],
+      );
+    } else if (type == 'chat_message' && messageContent != null) {
+      // Handle data-only messages
+      _showChatNotification(
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title: senderName ?? 'New Message',
+        body: messageContent,
+        chatRoomId: chatRoomId,
+        senderId: message.data['sender_id'],
       );
     }
   }
 
-  /// Show local notification
-  Future<void> _showLocalNotification({
+  /// Show chat notification with action support
+  Future<void> _showChatNotification({
     required int id,
     required String title,
     required String body,
-    String? payload,
+    String? chatRoomId,
+    String? senderId,
   }) async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-          'high_importance_channel',
-          'High Importance Notifications',
-          channelDescription:
-              'This channel is used for important notifications.',
+          'chat_messages_channel',
+          'Chat Messages',
+          channelDescription: 'Notifications for new chat messages.',
           importance: Importance.high,
           priority: Priority.high,
           showWhen: true,
           enableVibration: true,
           playSound: true,
+          category: AndroidNotificationCategory.message,
+          styleInformation: BigTextStyleInformation(''),
         );
 
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
@@ -300,6 +351,13 @@ class NotificationService {
       android: androidDetails,
       iOS: iosDetails,
     );
+
+    // Create payload with chat info for navigation
+    final payload = {
+      'type': 'chat_message',
+      'chat_room_id': chatRoomId ?? '',
+      'sender_id': senderId ?? '',
+    }.entries.map((e) => '${e.key}=${e.value}').join('&');
 
     await _localNotifications.show(
       id: id,
@@ -324,30 +382,77 @@ class NotificationService {
     debugPrint('Local notification tapped: ${response.payload}');
 
     // Parse payload and navigate
-    if (response.payload != null) {
-      // TODO: Parse payload and navigate to appropriate screen
-      debugPrint('Payload: ${response.payload}');
+    if (response.payload != null && response.payload!.isNotEmpty) {
+      final Map<String, String> data = {};
+      final pairs = response.payload!.split('&');
+      for (final pair in pairs) {
+        final keyValue = pair.split('=');
+        if (keyValue.length == 2) {
+          data[keyValue[0]] = keyValue[1];
+        }
+      }
+      _navigateBasedOnPayload(data);
     }
   }
 
   /// Navigate to appropriate screen based on notification payload
-  void _navigateBasedOnPayload(Map<String, dynamic> data) {
-    // Example: Navigate based on notification type
-    String? type = data['type'];
-    String? chatId = data['chatId'];
-    String? userId = data['userId'];
+  Future<void> _navigateBasedOnPayload(Map<String, dynamic> data) async {
+    final String? type = data['type']?.toString();
+    final String? chatRoomId = data['chat_room_id']?.toString();
+    final String? senderId = data['sender_id']?.toString();
 
     debugPrint(
-      'Navigation data - type: $type, chatId: $chatId, userId: $userId',
+      'Navigation data - type: $type, chatRoomId: $chatRoomId, senderId: $senderId',
     );
 
-    // TODO: Implement navigation logic based on your app's routes
-    // Example:
-    // if (type == 'chat' && chatId != null) {
-    //   NavigationService.navigateTo(RouteNames.chatScreen, arguments: chatId);
-    // } else if (type == 'profile' && userId != null) {
-    //   NavigationService.navigateTo(RouteNames.profileScreen, arguments: userId);
-    // }
+    if (type == 'chat_message' && chatRoomId != null && chatRoomId.isNotEmpty) {
+      await _navigateToChatRoom(chatRoomId, senderId);
+    }
+  }
+
+  /// Navigate to a specific chat room
+  Future<void> _navigateToChatRoom(String chatRoomId, String? senderId) async {
+    try {
+      // Fetch the chat room data
+      final chatRoomDoc = await _db
+          .collection(DatabaseConfig.chatRoomsCollection)
+          .doc(chatRoomId)
+          .get();
+
+      if (!chatRoomDoc.exists) {
+        debugPrint('❌ Chat room not found: $chatRoomId');
+        return;
+      }
+
+      var chatRoom = ChatRoomModel.fromDocument(chatRoomDoc);
+
+      // Fetch the other user's data
+      final currentUserId = _auth.currentUser?.uid;
+      if (currentUserId != null) {
+        final otherUserId = chatRoom.getOtherParticipantId(currentUserId);
+        if (otherUserId.isNotEmpty) {
+          final userDoc = await _db
+              .collection(DatabaseConfig.userCollection)
+              .doc(otherUserId)
+              .get();
+
+          if (userDoc.exists) {
+            final otherUser = ChatUserModel.fromDocument(userDoc);
+            chatRoom = chatRoom.copyWith(otherUser: otherUser);
+          }
+        }
+      }
+
+      // Navigate to the conversation screen
+      NavigationService.navigateTo(
+        RouteNames.conversationScreen,
+        arguments: chatRoom,
+      );
+
+      debugPrint('✅ Navigated to chat room: $chatRoomId');
+    } catch (e) {
+      debugPrint('❌ Error navigating to chat room: $e');
+    }
   }
 
   /// Subscribe to a topic
