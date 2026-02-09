@@ -66,13 +66,13 @@ class UserResponseModel extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       accessToken,
       tokenType,
       isVendor,
       expireIn,
-      user!,
+      user,
     ];
   }
 }

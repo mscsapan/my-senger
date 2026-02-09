@@ -1,10 +1,4 @@
-part of 'chat_cubit.dart';
-
-sealed class ChatState extends Equatable {
-  const ChatState();
-}
-
-final class ChatInitial extends ChatState {
-  @override
-  List<Object> get props => [];
-}
+// This file is kept for backward compatibility
+// States are now defined in their respective cubit files:
+// - chat_list_state.dart
+// - conversation_state.dart
