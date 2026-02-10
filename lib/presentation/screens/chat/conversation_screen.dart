@@ -29,9 +29,7 @@ class ConversationScreen extends StatelessWidget {
         // Then initialize the conversation
         cubit.initConversation(
           chatRoomId: chatRoom.chatRoomId,
-          otherUserId:
-              chatRoom.otherUser?.id ??
-              chatRoom.getOtherParticipantId(cubit.currentUserId ?? ''),
+          otherUserId: chatRoom.otherUser?.id ?? chatRoom.getOtherParticipantId(cubit.currentUserId ?? ''),
           existingChatRoom: chatRoom,
           existingOtherUser: chatRoom.otherUser,
         );
@@ -46,12 +44,11 @@ class _ConversationScreenContent extends StatefulWidget {
   const _ConversationScreenContent();
 
   @override
-  State<_ConversationScreenContent> createState() =>
-      _ConversationScreenContentState();
+  State<_ConversationScreenContent> createState() => _ConversationScreenContentState();
 }
 
-class _ConversationScreenContentState
-    extends State<_ConversationScreenContent> {
+class _ConversationScreenContentState extends State<_ConversationScreenContent> {
+
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
