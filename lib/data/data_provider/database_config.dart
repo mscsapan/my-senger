@@ -5,6 +5,7 @@ class DatabaseConfig {
   static const String chatRoomsCollection = 'chat_rooms';
   static const String messagesCollection = 'messages';
   static const String typingStatusCollection = 'typing_status';
+  static const String chatPageCollection = 'chat_page';
 
   // Subcollections
   static const String participantsSubcollection = 'participants';

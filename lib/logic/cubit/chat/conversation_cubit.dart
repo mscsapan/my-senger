@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
@@ -9,12 +10,14 @@ import '../../../data/models/chat/chat_room_model.dart';
 import '../../../data/models/chat/chat_user_model.dart';
 import '../../../data/models/chat/message_model.dart';
 import '../../../data/models/chat/typing_status_model.dart';
+import '../../repository/conversation_repository.dart';
 
 part 'conversation_state.dart';
 
 /// Cubit for managing the conversation screen state
 class ConversationCubit extends Cubit<ConversationState> {
-  ConversationCubit() : super(const ConversationInitial());
+  final ConversationRepository _repository;
+  ConversationCubit({required ConversationRepository repository }) : _repository = repository,super(const ConversationInitial());
 
   final ChatService _chatService = ChatService();
 
@@ -40,6 +43,7 @@ class ConversationCubit extends Cubit<ConversationState> {
     ChatRoomModel? existingChatRoom,
     ChatUserModel? existingOtherUser,
   }) async {
+
     emit(const ConversationLoading());
 
     // Set initial data if provided
@@ -58,6 +62,9 @@ class ConversationCubit extends Cubit<ConversationState> {
     // Mark messages as read
     await _chatService.markMessagesAsRead(chatRoomId);
   }
+
+
+
 
   /// Setup message stream listener
   void _setupMessageListener(String chatRoomId) {
@@ -201,6 +208,20 @@ class ConversationCubit extends Cubit<ConversationState> {
   bool isFromCurrentUser(MessageModel message) {
     return message.senderId == currentUserId;
   }
+
+
+  Future<void> sendChatNotificationToOther(Map? body,String token)async{
+
+
+    final result = await _repository.sendChatNotification(body,token);
+
+    result.fold((failure){
+      emit(SendNotificationError(failure.message,failure.statusCode));
+    }, (success){
+      emit(SendNotificationSuccess(success));
+    });
+  }
+
 
   @override
   Future<void> close() {

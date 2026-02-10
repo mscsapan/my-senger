@@ -43,51 +43,53 @@ class ConversationInputFieldNew extends StatelessWidget {
           children: [
             // Text Input
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: fillColor,
-                  borderRadius: BorderRadius.circular(24.0),
-                  border: Border.all(color: borderColor, width: 1),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        textInputAction: TextInputAction.send,
-                        textCapitalization: TextCapitalization.sentences,
-                        maxLines: 4,
-                        minLines: 1,
-                        style: GoogleFonts.roboto(
-                          fontSize: 15.0,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      textInputAction: TextInputAction.send,
+                      textCapitalization: TextCapitalization.sentences,
+                      style: GoogleFonts.roboto(
+                        fontSize: 15.0,
+                        color: blackColor,
+                      ),
+                      maxLines: null,
+                      onChanged: onChanged,
+                      // onFieldSubmitted: (_) {
+                      //   if (canSend) onSend();
+                      // },
+                      decoration: InputDecoration(
+                        hintText: 'Type a message...',
+                        // hintText: 'Message',
+                        hintStyle: GoogleFonts.roboto(
+                          fontWeight: FontWeight.w500,
                           color: blackColor,
                         ),
-                        onChanged: onChanged,
-                        onFieldSubmitted: (_) {
-                          if (canSend) onSend();
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Type a message...',
-                          hintStyle: GoogleFonts.roboto(
-                            fontWeight: FontWeight.w400,
-                            color: grayColor,
-                            fontSize: 15.0,
-                          ),
-                          contentPadding: Utils.symmetric(h: 16.0, v: 12.0),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
+                        contentPadding: Utils.symmetric(h: 16.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(0.0),
+                          borderSide: const BorderSide(color: borderColor),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50.0),
+                          borderSide: const BorderSide(color: borderColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50.0),
+                          borderSide: const BorderSide(color: borderColor),
+                        ),
+                        suffixIcon: const SizedBox.shrink(),
                       ),
                     ),
-                    // Emoji/Attachment button (placeholder)
-                    // IconButton(
-                    //   icon: Icon(Icons.attach_file, color: grayColor),
-                    //   onPressed: () {},
-                    // ),
-                  ],
-                ),
+                  ),
+                  // Emoji/Attachment button (placeholder)
+                  // IconButton(
+                  //   icon: Icon(Icons.attach_file, color: grayColor),
+                  //   onPressed: () {},
+                  // ),
+                ],
               ),
             ),
             Utils.horizontalSpace(8.0),

@@ -112,7 +112,7 @@ class _TypingIndicatorBubbleState extends State<TypingIndicatorBubble>
 
 /// Simpler inline typing indicator (dots only)
 class InlineTypingIndicator extends StatefulWidget {
-  const InlineTypingIndicator({super.key, this.color, this.dotSize = 6.0});
+  const InlineTypingIndicator({super.key, this.color, this.dotSize = 2.0});
 
   final Color? color;
   final double dotSize;

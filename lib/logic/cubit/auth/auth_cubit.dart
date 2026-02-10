@@ -54,6 +54,8 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
   UserResponse? get userInformation => _userResponse;
 
+  UserResponse ? otherUserInfo;
+
   Future<void> checkAuthStatus() async {
 
     await Future.delayed(const Duration(seconds: 1));
@@ -82,6 +84,29 @@ class AuthCubit extends Cubit<AuthStateModel> {
       debugPrint('Error fetching user data: $e');
     }
   }
+
+  /// fetch other user info for sending chat notification
+  Future<void> fetchOtherUserInfo(String ? id) async {
+    try {
+      final doc = await _db.collection(DatabaseConfig.userCollection).doc(id).get();
+
+      if (doc.exists) {
+        final userData = UserResponse.fromMap(doc.data()??{});
+        otherUserInfo = userData;
+        debugPrint('otherUserInfo $otherUserInfo');
+        emit(state.copyWith(authState: AnotherUserInfo(otherUserInfo)));
+      }
+    } catch (e) {
+      debugPrint('Error fetching user data: $e');
+    }
+  }
+
+
+  // Future<bool> getUserOpenChatPageStatus(String ? id) async{
+  //   await _db.collection(DatabaseConfig.chatPageCollection).doc(id).
+  //
+  // }
+
 
   Future<void> signUp() async {
 

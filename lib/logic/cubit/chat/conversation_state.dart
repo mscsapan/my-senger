@@ -86,3 +86,23 @@ final class ConversationError extends ConversationState {
 final class ConversationSending extends ConversationState {
   const ConversationSending();
 }
+
+
+final class SendNotificationError extends ConversationState {
+  final String message;
+  final int statusCode;
+
+  const SendNotificationError(this.message,this.statusCode);
+
+  @override
+  List<Object?> get props => [message,statusCode];
+}
+
+final class SendNotificationSuccess extends ConversationState {
+  final String? message;
+
+  const SendNotificationSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_senger/presentation/utils/k_string.dart';
+import '/logic/cubit/auth/auth_cubit.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../data/models/chat/chat_room_model.dart';
@@ -13,48 +15,48 @@ import 'component/conversation_input_field.dart';
 import 'component/message_bubble.dart';
 import 'component/typing_indicator_bubble.dart';
 
-/// Real-time Conversation Screen
-class ConversationScreen extends StatelessWidget {
-  const ConversationScreen({super.key, required this.chatRoom});
-
+class ConversationScreen extends StatefulWidget {
+  const ConversationScreen({super.key,required this.chatRoom});
   final ChatRoomModel chatRoom;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        final cubit = ConversationCubit();
-        // Set the chat room first
-        cubit.setChatRoom(chatRoom);
-        // Then initialize the conversation
-        cubit.initConversation(
-          chatRoomId: chatRoom.chatRoomId,
-          otherUserId:
-              chatRoom.otherUser?.id ??
-              chatRoom.getOtherParticipantId(cubit.currentUserId ?? ''),
-          existingChatRoom: chatRoom,
-          existingOtherUser: chatRoom.otherUser,
-        );
-        return cubit;
-      },
-      child: const _ConversationScreenContent(),
-    );
-  }
+  State<ConversationScreen> createState() => _ConversationScreenState();
 }
 
-class _ConversationScreenContent extends StatefulWidget {
-  const _ConversationScreenContent();
+class _ConversationScreenState extends State<ConversationScreen> {
 
-  @override
-  State<_ConversationScreenContent> createState() =>
-      _ConversationScreenContentState();
-}
 
-class _ConversationScreenContentState
-    extends State<_ConversationScreenContent> {
+  late ConversationCubit conversationCubit;
+  late AuthCubit authCubit;
+  late ChatRoomModel chatRoom;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+
+  }
+
+  void _init(){
+    conversationCubit = context.read<ConversationCubit>();
+    authCubit = context.read<AuthCubit>();
+
+    chatRoom = widget.chatRoom;
+
+    conversationCubit.setChatRoom(chatRoom);
+    // Then initialize the conversation
+    final otherUserId = chatRoom.otherUser?.id ?? chatRoom.getOtherParticipantId(conversationCubit.currentUserId ?? '');
+    conversationCubit.initConversation(
+      chatRoomId: chatRoom.chatRoomId,
+      otherUserId: otherUserId,
+      existingChatRoom: chatRoom,
+      existingOtherUser: chatRoom.otherUser,
+    );
+    context.read<AuthCubit>().fetchOtherUserInfo(otherUserId);
+  }
 
   @override
   void dispose() {
@@ -87,18 +89,16 @@ class _ConversationScreenContentState
           }
         },
         builder: (context, state) {
-          return switch (state) {
-            ConversationInitial() => const _LoadingView(),
-            ConversationLoading() => const _LoadingView(),
-            ConversationError(message: final message) => _ErrorView(
-              message: message,
-            ),
-            ConversationLoaded() => _buildLoadedView(context, state),
-            ConversationSending() => _buildLoadedView(
-              context,
-              context.read<ConversationCubit>().state as ConversationLoaded,
-            ),
-          };
+          if(state is ConversationInitial || state is ConversationLoading){
+            return const _LoadingView();
+          }else if(state is ConversationError){
+            return _ErrorView(message: state.message);
+          }else if(state is ConversationLoaded){
+            return _buildLoadedView(context, state);
+          }else if(state is ConversationSending){
+            return _buildLoadedView(context, context.read<ConversationCubit>().state as ConversationLoaded);
+          }
+          return SizedBox.shrink();
         },
       ),
     );
@@ -115,10 +115,8 @@ class _ConversationScreenContentState
           final otherUser = state is ConversationLoaded
               ? state.otherUser
               : null;
-          final isTyping =
-              state is ConversationLoaded && state.isOtherUserTyping;
-          final isOnline =
-              state is ConversationLoaded && state.isOtherUserOnline;
+          final isTyping = state is ConversationLoaded && state.isOtherUserTyping;
+          final isOnline = state is ConversationLoaded && state.isOtherUserOnline;
 
           return Row(
             mainAxisSize: MainAxisSize.min,
@@ -126,7 +124,7 @@ class _ConversationScreenContentState
               // Profile Image with Online Indicator
               Stack(
                 children: [
-                  CircleImage(image: otherUser?.image ?? '', size: 44.0),
+                  CircleImage(image: Utils.imagePath(otherUser?.image), size: 44.0),
                   if (isOnline)
                     Positioned(
                       right: 0,
@@ -230,16 +228,30 @@ class _ConversationScreenContentState
           controller: _messageController,
           focusNode: _focusNode,
           onChanged: (text) {
-            context.read<ConversationCubit>().onMessageChanged(text);
+            conversationCubit.onMessageChanged(text);
           },
           onSend: () async {
             final text = _messageController.text;
             if (text.trim().isEmpty) return;
 
+
+
+            if(authCubit.otherUserInfo?.deviceToken.isNotEmpty??false){
+              final  body = {
+                'message': {
+                  'token': authCubit.otherUserInfo?.deviceToken??'',
+                  'notification' : {
+                    'title': chatRoom.otherUser?.firstName??'Guest User',
+                    'body': _messageController.text,
+                  }
+                },
+              };
+              conversationCubit.sendChatNotificationToOther(body,KString.notificationAuthToken);
+            }
+
+
             _messageController.clear();
-            final sent = await context.read<ConversationCubit>().sendMessage(
-              text,
-            );
+            final sent = await conversationCubit.sendMessage(text);
             if (sent) {
               _scrollToBottom();
             }

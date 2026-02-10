@@ -197,7 +197,7 @@ class _ChatRoomItem extends StatelessWidget {
             // Profile Image with Online Indicator
             Stack(
               children: [
-                CircleImage(image: otherUser?.image ?? '', size: 52.0),
+                CircleImage(image: Utils.imagePath(otherUser?.image), size: 52.0),
                 if (otherUser?.isOnline ?? false)
                   Positioned(
                     right: 2,
@@ -359,10 +359,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
 
 /// Bottom sheet for starting a new chat
 class _NewChatBottomSheet extends StatelessWidget {
-  const _NewChatBottomSheet({
-    required this.users,
-    required this.onUserSelected,
-  });
+  const _NewChatBottomSheet({required this.users, required this.onUserSelected});
 
   final List<ChatUserModel> users;
   final void Function(ChatUserModel) onUserSelected;
@@ -415,7 +412,7 @@ class _NewChatBottomSheet extends StatelessWidget {
                         return ListTile(
                           leading: Stack(
                             children: [
-                              CircleImage(image: user.image, size: 48),
+                              CircleImage(image: Utils.imagePath(user.image), size: 48),
                               if (user.isOnline)
                                 Positioned(
                                   right: 0,
@@ -436,8 +433,9 @@ class _NewChatBottomSheet extends StatelessWidget {
                             ],
                           ),
                           title: CustomText(
+                            fontSize: 15.0,
                             text: user.fullName,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                           ),
                           subtitle: CustomText(
                             text: user.email,

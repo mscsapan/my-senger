@@ -6,6 +6,7 @@ class RemoteUrls {
   static const String register = '${baseUrl}store-register';
   static const String login = '${baseUrl}store-login';
   static const String websiteSetup = '${baseUrl}website-setup';
+  static const String sendChatNotification = 'https://fcm.googleapis.com/v1/projects/bdmarket-726ff/messages:send';
 
   static String changePassword(String token) =>
       '${baseUrl}user/update-password?token=$token';
