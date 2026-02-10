@@ -101,6 +101,13 @@ class AuthCubit extends Cubit<AuthStateModel> {
     }
   }
 
+
+  // Future<bool> getUserOpenChatPageStatus(String ? id) async{
+  //   await _db.collection(DatabaseConfig.chatPageCollection).doc(id).
+  //
+  // }
+
+
   Future<void> signUp() async {
 
     final authType = AuthType.signUp;
