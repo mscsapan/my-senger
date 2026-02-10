@@ -212,7 +212,6 @@ class ConversationCubit extends Cubit<ConversationState> {
 
   Future<void> sendChatNotificationToOther(Map? body,String token)async{
 
-    debugPrint('bodyyyyy ${jsonEncode(body)})');
 
     final result = await _repository.sendChatNotification(body,token);
 

@@ -99,15 +99,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
             return _buildLoadedView(context, context.read<ConversationCubit>().state as ConversationLoaded);
           }
           return SizedBox.shrink();
-
-          // return switch (state) {
-          //   ConversationInitial() => const _LoadingView(),
-          //   ConversationLoading() => const _LoadingView(),
-          //   ConversationError(message: final message) => _ErrorView(message: message),
-          //   ConversationLoaded() => _buildLoadedView(context, state),
-          //   ConversationSending() => _buildLoadedView(context, context.read<ConversationCubit>().state as ConversationLoaded),
-          //
-          // };
         },
       ),
     );
