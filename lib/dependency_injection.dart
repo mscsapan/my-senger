@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dependency_injection_packages.dart';
 import 'logic/cubit/auth/auth_cubit.dart';
 import 'logic/cubit/chat/chat_list_cubit.dart';
+import 'logic/cubit/chat/conversation_cubit.dart';
+import 'logic/repository/conversation_repository.dart';
 
 class DInjector {
   static late final SharedPreferences _sharedPreferences;
@@ -38,6 +40,11 @@ class DInjector {
         localDataSources: context.read(),
       ),
     ),
+    RepositoryProvider<ConversationRepository>(
+      create: (context) => ConversationRepositoryImpl(
+        remoteDataSources: context.read(),
+      ),
+    ),
   ];
 
   static final blocProviders = <BlocProvider>[
@@ -56,6 +63,9 @@ class DInjector {
     // ConversationCubit is created at screen level since it's specific to each conversation
     BlocProvider<ChatListCubit>(
       create: (BuildContext context) => ChatListCubit(),
+    ),
+    BlocProvider<ConversationCubit>(
+      create: (BuildContext context) => ConversationCubit(repository: context.read<ConversationRepository>()),
     ),
   ];
 }

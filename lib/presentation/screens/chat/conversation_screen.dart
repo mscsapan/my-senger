@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_senger/logic/cubit/auth/auth_cubit.dart';
+import '/logic/cubit/auth/auth_cubit.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../data/models/chat/chat_room_model.dart';
@@ -14,47 +14,46 @@ import 'component/conversation_input_field.dart';
 import 'component/message_bubble.dart';
 import 'component/typing_indicator_bubble.dart';
 
-/// Real-time Conversation Screen
-class ConversationScreen extends StatelessWidget {
-  const ConversationScreen({super.key, required this.chatRoom});
-
+class ConversationScreen extends StatefulWidget {
+  const ConversationScreen({super.key,required this.chatRoom});
   final ChatRoomModel chatRoom;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        final cubit = ConversationCubit();
-        // Set the chat room first
-        cubit.setChatRoom(chatRoom);
-        // Then initialize the conversation
-        final otherUserId = chatRoom.otherUser?.id ?? chatRoom.getOtherParticipantId(cubit.currentUserId ?? '');
-        cubit.initConversation(
-          chatRoomId: chatRoom.chatRoomId,
-          otherUserId: otherUserId,
-          existingChatRoom: chatRoom,
-          existingOtherUser: chatRoom.otherUser,
-        );
-        context.read<AuthCubit>().fetchOtherUserInfo(otherUserId);
-        return cubit;
-      },
-      child: const _ConversationScreenContent(),
-    );
-  }
+  State<ConversationScreen> createState() => _ConversationScreenState();
 }
 
-class _ConversationScreenContent extends StatefulWidget {
-  const _ConversationScreenContent();
+class _ConversationScreenState extends State<ConversationScreen> {
 
-  @override
-  State<_ConversationScreenContent> createState() => _ConversationScreenContentState();
-}
 
-class _ConversationScreenContentState extends State<_ConversationScreenContent> {
-
+  late ConversationCubit conversationCubit;
+  late ChatRoomModel chatRoom;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+
+  }
+
+  void _init(){
+    conversationCubit = context.read<ConversationCubit>();
+
+    chatRoom = widget.chatRoom;
+
+    conversationCubit.setChatRoom(chatRoom);
+    // Then initialize the conversation
+    final otherUserId = chatRoom.otherUser?.id ?? chatRoom.getOtherParticipantId(conversationCubit.currentUserId ?? '');
+    conversationCubit.initConversation(
+      chatRoomId: chatRoom.chatRoomId,
+      otherUserId: otherUserId,
+      existingChatRoom: chatRoom,
+      existingOtherUser: chatRoom.otherUser,
+    );
+    context.read<AuthCubit>().fetchOtherUserInfo(otherUserId);
+  }
 
   @override
   void dispose() {
@@ -115,10 +114,8 @@ class _ConversationScreenContentState extends State<_ConversationScreenContent> 
           final otherUser = state is ConversationLoaded
               ? state.otherUser
               : null;
-          final isTyping =
-              state is ConversationLoaded && state.isOtherUserTyping;
-          final isOnline =
-              state is ConversationLoaded && state.isOtherUserOnline;
+          final isTyping = state is ConversationLoaded && state.isOtherUserTyping;
+          final isOnline = state is ConversationLoaded && state.isOtherUserOnline;
 
           return Row(
             mainAxisSize: MainAxisSize.min,

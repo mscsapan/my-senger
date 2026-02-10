@@ -9,12 +9,14 @@ import '../../../data/models/chat/chat_room_model.dart';
 import '../../../data/models/chat/chat_user_model.dart';
 import '../../../data/models/chat/message_model.dart';
 import '../../../data/models/chat/typing_status_model.dart';
+import '../../repository/conversation_repository.dart';
 
 part 'conversation_state.dart';
 
 /// Cubit for managing the conversation screen state
 class ConversationCubit extends Cubit<ConversationState> {
-  ConversationCubit() : super(const ConversationInitial());
+  final ConversationRepository _repository;
+  ConversationCubit({required ConversationRepository repository }) : _repository = repository,super(const ConversationInitial());
 
   final ChatService _chatService = ChatService();
 
