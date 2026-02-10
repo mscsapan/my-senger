@@ -7,7 +7,7 @@ import '../../presentation/errors/exception.dart';
 import '../../presentation/errors/failure.dart';
 
 abstract class ConversationRepository {
-  Future<Either<Failure, WebsiteSetupModel>> getSetting();
+  Future<Either<Failure, String?>> sendChatNotification(Map ? body,String token);
 
 }
 
@@ -17,10 +17,10 @@ class ConversationRepositoryImpl implements ConversationRepository {
   ConversationRepositoryImpl({required this.remoteDataSources});
 
   @override
-  Future<Either<Failure, WebsiteSetupModel>> getSetting() async {
+  Future<Either<Failure, String?>> sendChatNotification(Map ? body,String token) async {
     try {
-      final result = await remoteDataSources.getSetting();
-      final web = WebsiteSetupModel.fromMap(result);
+      final result = await remoteDataSources.sendChatNotification(body,token);
+      final web = result['name'] ?? '';
       return Right(web);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, e.statusCode));

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_senger/presentation/utils/k_string.dart';
 import '/logic/cubit/auth/auth_cubit.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -26,6 +27,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
 
   late ConversationCubit conversationCubit;
+  late AuthCubit authCubit;
   late ChatRoomModel chatRoom;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
@@ -40,6 +42,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   void _init(){
     conversationCubit = context.read<ConversationCubit>();
+    authCubit = context.read<AuthCubit>();
 
     chatRoom = widget.chatRoom;
 
@@ -86,18 +89,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
           }
         },
         builder: (context, state) {
-          return switch (state) {
-            ConversationInitial() => const _LoadingView(),
-            ConversationLoading() => const _LoadingView(),
-            ConversationError(message: final message) => _ErrorView(
-              message: message,
-            ),
-            ConversationLoaded() => _buildLoadedView(context, state),
-            ConversationSending() => _buildLoadedView(
-              context,
-              context.read<ConversationCubit>().state as ConversationLoaded,
-            ),
-          };
+          if(state is ConversationInitial || state is ConversationLoading){
+            return const _LoadingView();
+          }else if(state is ConversationError){
+            return _ErrorView(message: state.message);
+          }else if(state is ConversationLoaded){
+            return _buildLoadedView(context, state);
+          }else if(state is ConversationSending){
+            return _buildLoadedView(context, context.read<ConversationCubit>().state as ConversationLoaded);
+          }
+          return SizedBox.shrink();
+
+          // return switch (state) {
+          //   ConversationInitial() => const _LoadingView(),
+          //   ConversationLoading() => const _LoadingView(),
+          //   ConversationError(message: final message) => _ErrorView(message: message),
+          //   ConversationLoaded() => _buildLoadedView(context, state),
+          //   ConversationSending() => _buildLoadedView(context, context.read<ConversationCubit>().state as ConversationLoaded),
+          //
+          // };
         },
       ),
     );
@@ -227,14 +237,30 @@ class _ConversationScreenState extends State<ConversationScreen> {
           controller: _messageController,
           focusNode: _focusNode,
           onChanged: (text) {
-            context.read<ConversationCubit>().onMessageChanged(text);
+            conversationCubit.onMessageChanged(text);
           },
           onSend: () async {
             final text = _messageController.text;
             if (text.trim().isEmpty) return;
 
+
+
+            if(authCubit.otherUserInfo?.deviceToken.isNotEmpty??false){
+              final  body = {
+                'message': {
+                  'token': authCubit.otherUserInfo?.deviceToken??'',
+                  'notification' : {
+                    'title': chatRoom.otherUser?.firstName??'Guest User',
+                    'body': _messageController.text,
+                  }
+                },
+              };
+              conversationCubit.sendChatNotificationToOther(body,KString.notificationAuthToken);
+            }
+
+
             _messageController.clear();
-            final sent = await context.read<ConversationCubit>().sendMessage(text);
+            final sent = await conversationCubit.sendMessage(text);
             if (sent) {
               _scrollToBottom();
             }

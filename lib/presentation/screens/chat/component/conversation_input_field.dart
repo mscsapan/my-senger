@@ -57,9 +57,9 @@ class ConversationInputFieldNew extends StatelessWidget {
                       ),
                       maxLines: null,
                       onChanged: onChanged,
-                      onFieldSubmitted: (_) {
-                        if (canSend) onSend();
-                      },
+                      // onFieldSubmitted: (_) {
+                      //   if (canSend) onSend();
+                      // },
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
                         // hintText: 'Message',
