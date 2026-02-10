@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_senger/logic/cubit/auth/auth_cubit.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../data/models/chat/chat_room_model.dart';
@@ -27,12 +28,14 @@ class ConversationScreen extends StatelessWidget {
         // Set the chat room first
         cubit.setChatRoom(chatRoom);
         // Then initialize the conversation
+        final otherUserId = chatRoom.otherUser?.id ?? chatRoom.getOtherParticipantId(cubit.currentUserId ?? '');
         cubit.initConversation(
           chatRoomId: chatRoom.chatRoomId,
-          otherUserId: chatRoom.otherUser?.id ?? chatRoom.getOtherParticipantId(cubit.currentUserId ?? ''),
+          otherUserId: otherUserId,
           existingChatRoom: chatRoom,
           existingOtherUser: chatRoom.otherUser,
         );
+        context.read<AuthCubit>().fetchOtherUserInfo(otherUserId);
         return cubit;
       },
       child: const _ConversationScreenContent(),
@@ -123,7 +126,7 @@ class _ConversationScreenContentState extends State<_ConversationScreenContent> 
               // Profile Image with Online Indicator
               Stack(
                 children: [
-                  CircleImage(image: otherUser?.image ?? '', size: 44.0),
+                  CircleImage(image: Utils.imagePath(otherUser?.image), size: 44.0),
                   if (isOnline)
                     Positioned(
                       right: 0,
@@ -234,9 +237,7 @@ class _ConversationScreenContentState extends State<_ConversationScreenContent> 
             if (text.trim().isEmpty) return;
 
             _messageController.clear();
-            final sent = await context.read<ConversationCubit>().sendMessage(
-              text,
-            );
+            final sent = await context.read<ConversationCubit>().sendMessage(text);
             if (sent) {
               _scrollToBottom();
             }

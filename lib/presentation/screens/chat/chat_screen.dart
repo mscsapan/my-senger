@@ -197,7 +197,7 @@ class _ChatRoomItem extends StatelessWidget {
             // Profile Image with Online Indicator
             Stack(
               children: [
-                CircleImage(image: otherUser?.image ?? '', size: 52.0),
+                CircleImage(image: Utils.imagePath(otherUser?.image), size: 52.0),
                 if (otherUser?.isOnline ?? false)
                   Positioned(
                     right: 2,

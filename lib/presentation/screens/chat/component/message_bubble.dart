@@ -21,9 +21,7 @@ class MessageBubble extends StatelessWidget {
     return Align(
       alignment: isFromMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: Utils.symmetric(
-          v: 4.0,
-        ).copyWith(left: isFromMe ? 60.0 : 0.0, right: isFromMe ? 0.0 : 60.0),
+        margin: Utils.symmetric(v: 4.0).copyWith(left: isFromMe ? 60.0 : 0.0, right: isFromMe ? 0.0 : 60.0),
         padding: Utils.symmetric(h: 14.0, v: 10.0),
         decoration: BoxDecoration(
           color: isFromMe ? primaryColor.withValues(alpha: 0.9) : disableColor,

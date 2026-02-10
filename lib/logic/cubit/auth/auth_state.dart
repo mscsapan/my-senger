@@ -55,3 +55,12 @@ class AuthUnauthenticated extends AuthState {
   @override
   List<Object?> get props => [];
 }
+
+final class AnotherUserInfo extends AuthState {
+  final UserResponse ? userInfo;
+
+  const AnotherUserInfo(this.userInfo);
+
+  @override
+  List<Object?> get props => [userInfo];
+}

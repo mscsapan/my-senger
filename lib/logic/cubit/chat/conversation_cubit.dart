@@ -40,6 +40,7 @@ class ConversationCubit extends Cubit<ConversationState> {
     ChatRoomModel? existingChatRoom,
     ChatUserModel? existingOtherUser,
   }) async {
+
     emit(const ConversationLoading());
 
     // Set initial data if provided
@@ -58,6 +59,9 @@ class ConversationCubit extends Cubit<ConversationState> {
     // Mark messages as read
     await _chatService.markMessagesAsRead(chatRoomId);
   }
+
+
+
 
   /// Setup message stream listener
   void _setupMessageListener(String chatRoomId) {
