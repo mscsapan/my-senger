@@ -24,8 +24,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 class NotificationService {
   // Singleton pattern
-  static final NotificationService _notificationService =
-      NotificationService._internal();
+  static final NotificationService _notificationService = NotificationService._internal();
   factory NotificationService() {
     return _notificationService;
   }
@@ -67,7 +66,7 @@ class NotificationService {
       await _initializeLocalNotifications();
 
       // Get and sync FCM token
-      await _initializeFcmToken();
+      // await _initializeFcmToken();
 
       // Listen to token refresh and sync to Firestore
       _messaging.onTokenRefresh.listen((newToken) {
@@ -172,7 +171,7 @@ class NotificationService {
   }
 
   /// Initialize FCM token - get token and sync to Firestore if needed
-  Future<void> _initializeFcmToken() async {
+  Future<void> initializeFcmToken() async {
     try {
       final String? currentToken = await _messaging.getToken();
 
