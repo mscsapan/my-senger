@@ -59,9 +59,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
       existingOtherUser: chatRoom.otherUser,
     );
 
-    final model = ChatPageStatus(userId: otherUserId ?? '', isOpenChatPage: true);
+    final model = ChatPageStatus(userId: conversationCubit.currentUserId ?? '', isOpenChatPage: true);
 
     authCubit..fetchOtherUserInfo(otherUserId)..createUserOnlineStatus(model);
+
+    debugPrint('current-user ${conversationCubit.currentUserId}');
+    debugPrint('other-user $otherUserId');
   }
 
   @override
@@ -70,7 +73,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     _messageController.dispose();
     _focusNode.dispose();
 
-    authCubit.updateUserOnlineStatus(ChatPageStatus(userId: otherUserId??'',isOpenChatPage: false));
+    authCubit.updateUserOnlineStatus(ChatPageStatus(userId: conversationCubit.currentUserId??'',isOpenChatPage: false));
 
     super.dispose();
   }
@@ -238,10 +241,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
             stream: authCubit.getUserOnlineStatusStream(otherUserId ?? ''),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
 
-              // if(snapshot.data.isOpenChatPage){
-                debugPrint('Online status ${snapshot.data.isOpenChatPage}');
-
-                NavigationService.showSnackBar(context, 'Online Status ${snapshot.data.isOpenChatPage}');
 
               return ConversationInputFieldNew(
                 controller: _messageController,
@@ -253,18 +252,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   final text = _messageController.text;
                   if (text.trim().isEmpty) return;
 
-
-                  if (authCubit.otherUserInfo?.deviceToken.isNotEmpty ?? false) {
+                  if (!snapshot.data.isOpenChatPage) {
+                    debugPrint('send-because false ${snapshot.data.isOpenChatPage}');
                     final body = {
                       'message': {
                         'token': authCubit.otherUserInfo?.deviceToken ?? '',
                         'notification': {
-                          'title': chatRoom.otherUser?.firstName ?? 'Guest User',
+                          'title': 'New message from ${chatRoom.otherUser?.fullName ?? 'Guest User'}',
                           'body': _messageController.text,
                         }
                       },
                     };
                     conversationCubit.sendChatNotificationToOther(body, KString.notificationAuthToken);
+                  }else{
+                    debugPrint('not-send-because true ${snapshot.data.isOpenChatPage}');
                   }
                   _messageController.clear();
                   final sent = await conversationCubit.sendMessage(text);
@@ -274,7 +275,38 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 },
                 canSend: state.canSendMessage,
               );
-            })
+            },
+        ),
+
+        /*ConversationInputFieldNew(
+                controller: _messageController,
+                focusNode: _focusNode,
+                onChanged: (text) {
+                  conversationCubit.onMessageChanged(text);
+                },
+                onSend: () async {
+                  final text = _messageController.text;
+                  if (text.trim().isEmpty) return;
+
+                    final body = {
+                      'message': {
+                        'token': authCubit.otherUserInfo?.deviceToken ?? '',
+                        'notification': {
+                          'title': 'New message from ${chatRoom.otherUser?.fullName ?? 'Guest User'}',
+                          'body': _messageController.text,
+                        }
+                      },
+                    };
+                    conversationCubit.sendChatNotificationToOther(body, KString.notificationAuthToken);
+
+                  _messageController.clear();
+                  final sent = await conversationCubit.sendMessage(text);
+                  if (sent) {
+                    _scrollToBottom();
+                  }
+                },
+                canSend: state.canSendMessage,
+              ),*/
 
       ],
     );
