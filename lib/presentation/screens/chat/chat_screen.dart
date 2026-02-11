@@ -16,26 +16,28 @@ import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_text.dart';
 
 /// Real-time Chat List Screen
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ChatListCubit()
-        ..loadChatRooms()
-        ..loadAllUsers(),
-      child: const _ChatScreenContent(),
-    );
-  }
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenContent extends StatelessWidget {
-  const _ChatScreenContent();
+class _ChatScreenState extends State<ChatScreen> {
+
+  late ChatListCubit chatListCubit;
+
+  @override
+  void initState() {
+    chatListCubit = context.read<ChatListCubit>()
+      ..loadChatRooms()
+      ..loadAllUsers();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+   return Scaffold(
       appBar: CustomAppBar(
         title: 'Chats',
         visibleLeading: false,
@@ -294,8 +296,7 @@ class _TypingIndicator extends StatefulWidget {
   State<_TypingIndicator> createState() => _TypingIndicatorState();
 }
 
-class _TypingIndicatorState extends State<_TypingIndicator>
-    with SingleTickerProviderStateMixin {
+class _TypingIndicatorState extends State<_TypingIndicator> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override

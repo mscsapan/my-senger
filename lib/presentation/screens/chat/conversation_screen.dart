@@ -278,36 +278,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
             },
         ),
 
-        /*ConversationInputFieldNew(
-                controller: _messageController,
-                focusNode: _focusNode,
-                onChanged: (text) {
-                  conversationCubit.onMessageChanged(text);
-                },
-                onSend: () async {
-                  final text = _messageController.text;
-                  if (text.trim().isEmpty) return;
-
-                    final body = {
-                      'message': {
-                        'token': authCubit.otherUserInfo?.deviceToken ?? '',
-                        'notification': {
-                          'title': 'New message from ${chatRoom.otherUser?.fullName ?? 'Guest User'}',
-                          'body': _messageController.text,
-                        }
-                      },
-                    };
-                    conversationCubit.sendChatNotificationToOther(body, KString.notificationAuthToken);
-
-                  _messageController.clear();
-                  final sent = await conversationCubit.sendMessage(text);
-                  if (sent) {
-                    _scrollToBottom();
-                  }
-                },
-                canSend: state.canSendMessage,
-              ),*/
-
       ],
     );
   }
