@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +11,7 @@ import '../../../core/storage_service.dart';
 import '../../../data/data_provider/database_config.dart';
 import '../../../data/models/auth/auth_state_model.dart';
 import '../../../data/models/auth/user_response_model.dart';
+import '../../../data/models/chat/chat_page_status.dart';
 
 part 'auth_state.dart';
 
@@ -56,6 +59,8 @@ class AuthCubit extends Cubit<AuthStateModel> {
 
   UserResponse ? otherUserInfo;
 
+  ChatPageStatus ? userOnlineStatus;
+
   Future<void> checkAuthStatus() async {
 
     await Future.delayed(const Duration(seconds: 1));
@@ -102,11 +107,78 @@ class AuthCubit extends Cubit<AuthStateModel> {
   }
 
 
-  // Future<bool> getUserOpenChatPageStatus(String ? id) async{
-  //   await _db.collection(DatabaseConfig.chatPageCollection).doc(id).
+  Future<void> createUserOnlineStatus(ChatPageStatus ? model) async {
+    try {
+      await _db
+          .collection(DatabaseConfig.chatPageCollection)
+          .doc(model?.userId)
+          .set(model?.toMap() ?? {} as Map<String, dynamic>);
+    } on FirebaseException catch (e, t) {
+      debugPrint('createUserOnlineStatus: ${e.message} - ${e.stackTrace} - $t');
+    }
+  }
+
+  Future<void> updateUserOnlineStatus(ChatPageStatus ? model) async {
+    try {
+      await _db
+          .collection(DatabaseConfig.chatPageCollection)
+          .doc(model?.userId)
+          .update(model?.toMap() ?? {} as Map<String, dynamic>);
+    } on FirebaseException catch (e, t) {
+      debugPrint('createUserOnlineStatus: ${e.message} - ${e.stackTrace} - $t');
+    }
+  }
+
+
+  // StreamSubscription<DocumentSnapshot>? _onlineStatusSubscription;
   //
+  // void listenToUserOnlineStatus(String? id) {
+  //   if (id == null || id.isEmpty) return;
+  //
+  //   // Cancel previous subscription
+  //   _onlineStatusSubscription?.cancel();
+  //
+  //   _onlineStatusSubscription = _db
+  //       .collection(DatabaseConfig.chatPageCollection)
+  //       .doc(id)
+  //       .snapshots()
+  //       .listen(
+  //         (snapshot) {
+  //       if (snapshot.exists) {
+  //         final status = ChatPageStatus.fromMap(snapshot.data() ?? {});
+  //         emit(state.copyWith(userOnlineStatus: status));
+  //         debugPrint('🟢 Online status updated: ${status.isAvailable}');
+  //       } else {
+  //         emit(state.copyWith(userOnlineStatus: null));
+  //         debugPrint('🔴 User not found');
+  //       }
+  //     },
+  //     onError: (error) {
+  //       debugPrint('❌ Online status error: $error');
+  //     },
+  //   );
   // }
 
+  // Returns a Stream of ChatPageStatus
+  Stream<ChatPageStatus?> getUserOnlineStatusStream(String? id) {
+    if (id == null || id.isEmpty) {
+      return Stream.value(null);
+    }
+
+    return _db
+        .collection(DatabaseConfig.chatPageCollection)
+        .doc(id)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        return ChatPageStatus.fromMap(snapshot.data() ?? {});
+      }
+      return null;
+    }).handleError((error) {
+      debugPrint('❌ getUserOnlineStatusStream Error: $error');
+      return null;
+    });
+  }
 
   Future<void> signUp() async {
 

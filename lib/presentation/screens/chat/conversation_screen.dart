@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_senger/presentation/utils/k_string.dart';
+import '../../../data/models/chat/chat_page_status.dart';
+import '../../utils/navigation_service.dart';
 import '/logic/cubit/auth/auth_cubit.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -32,6 +34,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  late String ? otherUserId;
 
   @override
   void initState() {
@@ -48,14 +51,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
     conversationCubit.setChatRoom(chatRoom);
     // Then initialize the conversation
-    final otherUserId = chatRoom.otherUser?.id ?? chatRoom.getOtherParticipantId(conversationCubit.currentUserId ?? '');
+    otherUserId = chatRoom.otherUser?.id ?? chatRoom.getOtherParticipantId(conversationCubit.currentUserId ?? '');
     conversationCubit.initConversation(
       chatRoomId: chatRoom.chatRoomId,
-      otherUserId: otherUserId,
+      otherUserId: otherUserId ?? '',
       existingChatRoom: chatRoom,
       existingOtherUser: chatRoom.otherUser,
     );
-    context.read<AuthCubit>().fetchOtherUserInfo(otherUserId);
+
+    final model = ChatPageStatus(userId: otherUserId ?? '', isOpenChatPage: true);
+
+    authCubit..fetchOtherUserInfo(otherUserId)..createUserOnlineStatus(model);
   }
 
   @override
@@ -63,6 +69,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
     _scrollController.dispose();
     _messageController.dispose();
     _focusNode.dispose();
+
+    authCubit.updateUserOnlineStatus(ChatPageStatus(userId: otherUserId??'',isOpenChatPage: false));
+
     super.dispose();
   }
 
@@ -224,40 +233,49 @@ class _ConversationScreenState extends State<ConversationScreen> {
             child: TypingIndicatorBubble(),
           ),
         // Input Field
-        ConversationInputFieldNew(
-          controller: _messageController,
-          focusNode: _focusNode,
-          onChanged: (text) {
-            conversationCubit.onMessageChanged(text);
-          },
-          onSend: () async {
-            final text = _messageController.text;
-            if (text.trim().isEmpty) return;
+
+        StreamBuilder<ChatPageStatus?>(
+            stream: authCubit.getUserOnlineStatusStream(otherUserId ?? ''),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+
+              // if(snapshot.data.isOpenChatPage){
+                debugPrint('Online status ${snapshot.data.isOpenChatPage}');
+
+                NavigationService.showSnackBar(context, 'Online Status ${snapshot.data.isOpenChatPage}');
+
+              return ConversationInputFieldNew(
+                controller: _messageController,
+                focusNode: _focusNode,
+                onChanged: (text) {
+                  conversationCubit.onMessageChanged(text);
+                },
+                onSend: () async {
+                  final text = _messageController.text;
+                  if (text.trim().isEmpty) return;
 
 
-
-            if(authCubit.otherUserInfo?.deviceToken.isNotEmpty??false){
-              final  body = {
-                'message': {
-                  'token': authCubit.otherUserInfo?.deviceToken??'',
-                  'notification' : {
-                    'title': chatRoom.otherUser?.firstName??'Guest User',
-                    'body': _messageController.text,
+                  if (authCubit.otherUserInfo?.deviceToken.isNotEmpty ?? false) {
+                    final body = {
+                      'message': {
+                        'token': authCubit.otherUserInfo?.deviceToken ?? '',
+                        'notification': {
+                          'title': chatRoom.otherUser?.firstName ?? 'Guest User',
+                          'body': _messageController.text,
+                        }
+                      },
+                    };
+                    conversationCubit.sendChatNotificationToOther(body, KString.notificationAuthToken);
+                  }
+                  _messageController.clear();
+                  final sent = await conversationCubit.sendMessage(text);
+                  if (sent) {
+                    _scrollToBottom();
                   }
                 },
-              };
-              conversationCubit.sendChatNotificationToOther(body,KString.notificationAuthToken);
-            }
+                canSend: state.canSendMessage,
+              );
+            })
 
-
-            _messageController.clear();
-            final sent = await conversationCubit.sendMessage(text);
-            if (sent) {
-              _scrollToBottom();
-            }
-          },
-          canSend: state.canSendMessage,
-        ),
       ],
     );
   }
