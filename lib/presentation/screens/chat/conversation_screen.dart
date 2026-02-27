@@ -241,6 +241,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             stream: authCubit.getUserOnlineStatusStream(otherUserId ?? ''),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
 
+              // debugPrint('fcmToken-updated ${snapshot.data.fcmToken}');
 
               return ConversationInputFieldNew(
                 controller: _messageController,
@@ -258,12 +259,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       'message': {
                         'token': authCubit.otherUserInfo?.deviceToken ?? '',
                         'notification': {
-                          'title': 'New message from ${chatRoom.otherUser?.fullName ?? 'Guest User'}',
+                          'title': 'New message from ${authCubit.state.updateInfo?.firstName ?? 'Guest User'}',
+                          // 'title': 'New message from ${chatRoom.otherUser?.fullName ?? 'Guest User'}',
                           'body': _messageController.text,
                         }
                       },
                     };
                     conversationCubit.sendChatNotificationToOther(body, KString.notificationAuthToken);
+                    // conversationCubit.sendChatNotificationToOther(body, snapshot.data.fcmToken);
                   }else{
                     debugPrint('not-send-because true ${snapshot.data.isOpenChatPage}');
                   }
