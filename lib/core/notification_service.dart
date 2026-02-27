@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -24,7 +25,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 class NotificationService {
   // Singleton pattern
-  static final NotificationService _notificationService = NotificationService._internal();
+  static final NotificationService _notificationService =
+      NotificationService._internal();
   factory NotificationService() {
     return _notificationService;
   }
@@ -78,13 +80,20 @@ class NotificationService {
       FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
 
       // Handle notification tap when app is in background
-      FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        debugPrint('App opened from notification: ${message.messageId}');
+        _handleNotificationTap(message);
+      });
 
       // Handle notification tap when app is terminated
       RemoteMessage? initialMessage = await _messaging.getInitialMessage();
       if (initialMessage != null) {
-        // Delay navigation to allow app to initialize
-        Future.delayed(const Duration(seconds: 1), () {
+        debugPrint(
+          'App launched from notification: ${initialMessage.messageId}',
+        );
+        // Add a delay to ensure the app is fully initialized
+        // and the navigator is ready
+        Future.delayed(const Duration(milliseconds: 1500), () {
           _handleNotificationTap(initialMessage);
         });
       }
@@ -288,6 +297,16 @@ class NotificationService {
     final String? senderName = message.data['sender_name'];
     final String? messageContent = message.data['message'];
     final String? type = message.data['type'];
+    final String? senderId = message.data['sender_id'];
+
+    debugPrint('═══ Extracted from Firebase message ═══');
+    debugPrint(
+      'chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})',
+    );
+    debugPrint(
+      'senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})',
+    );
+    debugPrint('type: "$type"');
 
     // Don't show notification if we're in the same chat room
     if (type == 'chat_message' && chatRoomId == _activeChatRoomId) {
@@ -299,26 +318,32 @@ class NotificationService {
 
     // Show local notification when app is in foreground
     if (notification != null) {
+      debugPrint(
+        'Showing notification with chatRoomId: "$chatRoomId", senderId: "$senderId"',
+      );
       _showChatNotification(
         id: notification.hashCode,
         title: senderName ?? notification.title ?? 'New Message',
         body: messageContent ?? notification.body ?? '',
         chatRoomId: chatRoomId,
-        senderId: message.data['sender_id'],
+        senderId: senderId,
       );
     } else if (type == 'chat_message' && messageContent != null) {
       // Handle data-only messages
+      debugPrint(
+        'Showing data-only notification with chatRoomId: "$chatRoomId", senderId: "$senderId"',
+      );
       _showChatNotification(
         id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
         title: senderName ?? 'New Message',
         body: messageContent,
         chatRoomId: chatRoomId,
-        senderId: message.data['sender_id'],
+        senderId: senderId,
       );
     }
   }
 
-  /// Show chat notification with action support
+  /// Show chat notification with action support (direct reply)
   Future<void> _showChatNotification({
     required int id,
     required String title,
@@ -326,7 +351,8 @@ class NotificationService {
     String? chatRoomId,
     String? senderId,
   }) async {
-    const AndroidNotificationDetails androidDetails =
+    // Android reply action
+    final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
           'chat_messages_channel',
           'Chat Messages',
@@ -337,26 +363,57 @@ class NotificationService {
           enableVibration: true,
           playSound: true,
           category: AndroidNotificationCategory.message,
-          styleInformation: BigTextStyleInformation(''),
+          styleInformation: const BigTextStyleInformation(''),
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              'reply',
+              'Reply',
+              titleColor: Colors.blue,
+              showsUserInterface: true,
+              inputs: const <AndroidNotificationActionInput>[
+                AndroidNotificationActionInput(label: 'Reply'),
+              ],
+            ),
+            const AndroidNotificationAction(
+              'mark_read',
+              'Mark as read',
+              titleColor: Colors.green,
+              showsUserInterface: false,
+            ),
+          ],
+          groupKey: 'chat_messages',
+          setAsGroupSummary: false,
         );
 
+    // iOS interactive notifications
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
+      subtitle: 'New message',
     );
 
-    const NotificationDetails notificationDetails = NotificationDetails(
+    final NotificationDetails notificationDetails = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
 
     // Create payload with chat info for navigation
+    debugPrint('═══ Creating notification ═══');
+    debugPrint(
+      'chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})',
+    );
+    debugPrint(
+      'senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})',
+    );
+
     final payload = {
       'type': 'chat_message',
       'chat_room_id': chatRoomId ?? '',
       'sender_id': senderId ?? '',
     }.entries.map((e) => '${e.key}=${e.value}').join('&');
+
+    debugPrint('Final payload string: "$payload"');
 
     await _localNotifications.show(
       id: id,
@@ -365,6 +422,8 @@ class NotificationService {
       notificationDetails: notificationDetails,
       payload: payload,
     );
+
+    debugPrint('═══ Notification shown ═══');
   }
 
   /// Handle notification tap (when app is in background)
@@ -376,26 +435,72 @@ class NotificationService {
     _navigateBasedOnPayload(message.data);
   }
 
-  /// Handle local notification tap
+  /// Handle local notification tap and actions
   void _onNotificationTapped(NotificationResponse response) {
-    debugPrint('Local notification tapped: ${response.payload}');
+    debugPrint('Local notification tap/action: ${response.actionId}');
+    debugPrint('Payload: ${response.payload}');
+    debugPrint('User input: ${response.input}');
+    debugPrint('Input is null: ${response.input == null}');
+    debugPrint('Input is empty: ${response.input?.isEmpty ?? true}');
 
-    // Parse payload and navigate
-    if (response.payload != null && response.payload!.isNotEmpty) {
-      final Map<String, String> data = {};
-      final pairs = response.payload!.split('&');
-      for (final pair in pairs) {
-        final keyValue = pair.split('=');
-        if (keyValue.length == 2) {
-          data[keyValue[0]] = keyValue[1];
+    // Handle action responses (reply, mark as read, etc.)
+    if (response.actionId == 'reply') {
+      if (response.input != null && response.input!.isNotEmpty) {
+        debugPrint('✅ Reply text captured: "${response.input}"');
+        _handleDirectReply(response.payload, response.input!);
+        return;
+      } else {
+        debugPrint('⚠️ Reply action triggered but no text input captured');
+        // Still navigate to the chat room even if no text was entered
+        if (response.payload != null && response.payload!.isNotEmpty) {
+          final data = _parsePayload(response.payload!);
+          _navigateBasedOnPayload(data, delayNavigation: true);
+          return;
         }
       }
-      _navigateBasedOnPayload(data);
+    } else if (response.actionId == 'mark_read') {
+      debugPrint('Marking notification as read');
+      return;
+    }
+
+    // Handle notification tap
+    if (response.payload != null && response.payload!.isNotEmpty) {
+      final data = _parsePayload(response.payload!);
+      _navigateBasedOnPayload(data, delayNavigation: true);
     }
   }
 
+  /// Parse payload string into key-value map
+  Map<String, String> _parsePayload(String payload) {
+    final Map<String, String> data = {};
+    if (payload.isEmpty) {
+      debugPrint('⚠️ Empty payload string');
+      return data;
+    }
+
+    debugPrint('Parsing payload: "$payload"');
+    final pairs = payload.split('&');
+    for (final pair in pairs) {
+      if (pair.contains('=')) {
+        final keyValue = pair.split('=');
+        if (keyValue.length >= 2) {
+          final key = keyValue[0];
+          final value = keyValue
+              .sublist(1)
+              .join('='); // Handle values with = in them
+          debugPrint('  Parsed: "$key" = "$value"');
+          data[key] = value;
+        }
+      }
+    }
+    return data;
+  }
+
   /// Navigate to appropriate screen based on notification payload
-  Future<void> _navigateBasedOnPayload(Map<String, dynamic> data) async {
+  Future<void> _navigateBasedOnPayload(
+    Map<String, dynamic> data, {
+    bool delayNavigation = false,
+  }) async {
     final String? type = data['type']?.toString();
     final String? chatRoomId = data['chat_room_id']?.toString();
     final String? senderId = data['sender_id']?.toString();
@@ -405,6 +510,11 @@ class NotificationService {
     );
 
     if (type == 'chat_message' && chatRoomId != null && chatRoomId.isNotEmpty) {
+      if (delayNavigation) {
+        // Delay navigation to ensure the app is fully initialized
+        // This is important when tapping notifications from terminated state
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
       await _navigateToChatRoom(chatRoomId, senderId);
     }
   }
@@ -442,15 +552,108 @@ class NotificationService {
         }
       }
 
-      // Navigate to the conversation screen
-      NavigationService.navigateTo(
-        RouteNames.conversationScreen,
-        arguments: chatRoom,
-      );
-
-      debugPrint('✅ Navigated to chat room: $chatRoomId');
+      // Check if navigator is ready before navigating
+      if (NavigationService.navigator != null &&
+          NavigationService.navigatorKey.currentContext != null) {
+        NavigationService.navigateTo(
+          RouteNames.conversationScreen,
+          arguments: chatRoom,
+        );
+        debugPrint('✅ Navigated to chat room: $chatRoomId');
+      } else {
+        debugPrint('⚠️ Navigator not ready, retrying navigation in 1 second');
+        // Retry after a short delay
+        await Future.delayed(const Duration(seconds: 1));
+        if (NavigationService.navigator != null) {
+          NavigationService.navigateTo(
+            RouteNames.conversationScreen,
+            arguments: chatRoom,
+          );
+          debugPrint('✅ Navigated to chat room after retry: $chatRoomId');
+        } else {
+          debugPrint('❌ Navigator still not ready after retry');
+        }
+      }
     } catch (e) {
       debugPrint('❌ Error navigating to chat room: $e');
+    }
+  }
+
+  /// Handle direct reply from notification
+  Future<void> _handleDirectReply(String? payload, String replyText) async {
+    debugPrint('═══ Handling direct reply ═══');
+    debugPrint('Reply text: "$replyText"');
+    debugPrint('Payload: "$payload"');
+
+    try {
+      // Parse payload to get chatRoomId and senderId
+      final data = payload != null
+          ? _parsePayload(payload)
+          : <String, String>{};
+
+      final String? chatRoomId = data['chat_room_id'];
+      final String? senderId = data['sender_id'];
+
+      debugPrint(
+        'Extracted chatRoomId: "$chatRoomId" (empty: ${chatRoomId?.isEmpty ?? true})',
+      );
+      debugPrint(
+        'Extracted senderId: "$senderId" (empty: ${senderId?.isEmpty ?? true})',
+      );
+
+      // Validate required fields
+      if ((chatRoomId?.isEmpty ?? true) || (senderId?.isEmpty ?? true)) {
+        debugPrint('❌ Missing chatRoomId or senderId from payload');
+        debugPrint('Available data keys: ${data.keys.toList()}');
+        return;
+      }
+
+      if (chatRoomId == null || chatRoomId.isEmpty) {
+        debugPrint('❌ Cannot send reply - chat room ID missing');
+        return;
+      }
+
+      // Get current user ID
+      final currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null) {
+        debugPrint('❌ Cannot send reply - user not authenticated');
+        return;
+      }
+
+      // Add message to Firestore
+      final messageRef = _db
+          .collection(DatabaseConfig.chatRoomsCollection)
+          .doc(chatRoomId)
+          .collection(DatabaseConfig.messagesCollection)
+          .doc();
+
+      await messageRef.set({
+        'id': messageRef.id,
+        'sender_id': currentUserId,
+        'receiver_id': senderId,
+        'content': replyText,
+        'message_type': 'text',
+        'timestamp': FieldValue.serverTimestamp(),
+        'is_read': false,
+        'created_at': FieldValue.serverTimestamp(),
+      });
+
+      // Update chat room's last message
+      await _db
+          .collection(DatabaseConfig.chatRoomsCollection)
+          .doc(chatRoomId)
+          .update({
+            'last_message': replyText,
+            'last_message_time': FieldValue.serverTimestamp(),
+            'last_sender_id': currentUserId,
+          });
+
+      debugPrint('✅ Reply sent successfully via notification');
+
+      // Navigate to chat room
+      await _navigateToChatRoom(chatRoomId, senderId);
+    } catch (e) {
+      debugPrint('❌ Error handling direct reply: $e');
     }
   }
 

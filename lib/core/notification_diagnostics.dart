@@ -196,11 +196,11 @@ class NotificationDiagnostics {
       await _db.collection('notification_queue').add({
         'receiver_id': user.uid,
         'receiver_token': fcmToken,
-        'sender_id': 'system',
+        'sender_id': 'test-sender-${DateTime.now().millisecondsSinceEpoch}',
         'sender_name': '🔔 Test Notification',
         'message': 'If you see this, notifications are working!',
-        'chat_room_id': '',
-        'type': 'test',
+        'chat_room_id': 'test-chat-room',
+        'type': 'chat_message',
         'created_at': FieldValue.serverTimestamp(),
         'processed': false,
       });
