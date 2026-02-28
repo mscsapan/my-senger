@@ -62,6 +62,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       existingOtherUser: chatRoom.otherUser,
     );
 
+
     final model = ChatPageStatus(
       userId: conversationCubit.currentUserId ?? '',
       isOpenChatPage: true,
@@ -284,13 +285,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     'message': {
                       'token': authCubit.otherUserInfo?.deviceToken ?? '',
                       'notification': {
-                        'title':
-                            'New message from ${authCubit.state.updateInfo?.firstName ?? 'Guest User'}',
+                        'title': 'New message from ${authCubit.state.updateInfo?.firstName ?? 'Guest User'}',
                         // 'title': 'New message from ${chatRoom.otherUser?.fullName ?? 'Guest User'}',
                         'body': _messageController.text,
                       },
+                      "data": {
+                        'chat_room_id': chatRoom.chatRoomId,
+                        'sender_id': conversationCubit.currentUserId,
+                        "type": "chat_message"
+                      }
                     },
                   };
+                  // debugPrint('notification-body $body');
                   conversationCubit.sendChatNotificationToOther(body, KString.notificationAuthToken);
                   // conversationCubit.sendChatNotificationToOther(body, snapshot.data.fcmToken);
                 } else {
