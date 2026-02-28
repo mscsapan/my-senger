@@ -7,19 +7,23 @@ class ChatPageStatus extends Equatable {
   final String userId;
   final bool isOnline;
   final bool isOpenChatPage;
+  final String fcmToken;
   const ChatPageStatus({
      this.userId = '',
      this.isOnline = false,
      this.isOpenChatPage = false,
+    this.fcmToken = '',
   });
 
   ChatPageStatus copyWith({
     String? userId,
+    String? fcmToken,
     bool? isOnline,
     bool? isOpenChatPage,
   }) {
     return ChatPageStatus(
       userId: userId ?? this.userId,
+      fcmToken: fcmToken ?? this.fcmToken,
       isOnline: isOnline ?? this.isOnline,
       isOpenChatPage: isOpenChatPage ?? this.isOpenChatPage,
     );
@@ -28,6 +32,7 @@ class ChatPageStatus extends Equatable {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'user_id': userId,
+      'fcm_token': fcmToken,
       'is_online': isOnline,
       'is_open_chat_page': isOpenChatPage,
     };
@@ -36,6 +41,7 @@ class ChatPageStatus extends Equatable {
   factory ChatPageStatus.fromMap(Map<String, dynamic> map) {
     return ChatPageStatus(
       userId: map['user_id'] ?? '',
+      fcmToken: map['fcm_token'] ?? '',
       isOnline: map['is_online'] ?? false,
       isOpenChatPage: map['is_open_chat_page'] ??false,
     );
@@ -49,5 +55,5 @@ class ChatPageStatus extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object?> get props => [userId, isOpenChatPage,isOnline];
+  List<Object?> get props => [userId, isOpenChatPage,isOnline,fcmToken];
 }

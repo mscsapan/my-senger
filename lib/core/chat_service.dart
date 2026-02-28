@@ -306,13 +306,13 @@ class ChatService {
       await setTypingStatus(chatRoomId: chatRoomId, isTyping: false);
 
       // Send push notification to receiver
-      await _sendPushNotification(
-        receiverId: receiverId,
-        senderId: userId,
-        senderName: senderName,
-        message: content.trim(),
-        chatRoomId: chatRoomId,
-      );
+      // await _sendPushNotification(
+      //   receiverId: receiverId,
+      //   senderId: userId,
+      //   senderName: senderName,
+      //   message: content.trim(),
+      //   chatRoomId: chatRoomId,
+      // );
 
       return message;
     } catch (e) {
@@ -322,78 +322,78 @@ class ChatService {
   }
 
   /// Send push notification to receiver
-  Future<void> _sendPushNotification({
-    required String receiverId,
-    required String senderId,
-    String? senderName,
-    required String message,
-    required String chatRoomId,
-  }) async {
-    try {
-      // Get sender's name if not provided
-      String name = senderName ?? 'Someone';
-      if (senderName == null || senderName.isEmpty) {
-        final senderDoc = await _db
-            .collection(DatabaseConfig.userCollection)
-            .doc(senderId)
-            .get();
-        if (senderDoc.exists) {
-          final data = senderDoc.data();
-          final firstName = data?['first_name'] as String? ?? '';
-          final lastName = data?['last_name'] as String? ?? '';
-          name = '$firstName $lastName'.trim();
-          if (name.isEmpty) {
-            name = data?['email'] as String? ?? 'Someone';
-          }
-        }
-      }
-
-      // Get receiver's FCM token
-      final receiverDoc = await _db
-          .collection(DatabaseConfig.userCollection)
-          .doc(receiverId)
-          .get();
-
-      if (!receiverDoc.exists) {
-        debugPrint('⚠️ Receiver document not found for notification');
-        return;
-      }
-
-      final receiverData = receiverDoc.data();
-      final fcmToken =
-          receiverData?[DatabaseConfig.fieldDeviceToken] as String?;
-
-      if (fcmToken == null || fcmToken.isEmpty) {
-        debugPrint('⚠️ Receiver has no FCM token - cannot send notification');
-        return;
-      }
-
-      debugPrint(
-        '📱 Receiver FCM token found: ${fcmToken.substring(0, 20)}...',
-      );
-
-      // Queue notification for Cloud Function processing
-      // (This is more secure than sending directly from client)
-      await _db.collection('notification_queue').add({
-        'receiver_id': receiverId,
-        'receiver_token': fcmToken,
-        'sender_id': senderId,
-        'sender_name': name,
-        'message': message.length > 100
-            ? '${message.substring(0, 97)}...'
-            : message,
-        'chat_room_id': chatRoomId,
-        'type': 'chat_message',
-        'created_at': FieldValue.serverTimestamp(),
-        'processed': false,
-      });
-
-      debugPrint('✅ Notification queued for processing');
-    } catch (e) {
-      debugPrint('⚠️ Error queueing notification: $e');
-      // Don't fail the message send if notification fails
-    }
-  }
+  // Future<void> _sendPushNotification({
+  //   required String receiverId,
+  //   required String senderId,
+  //   String? senderName,
+  //   required String message,
+  //   required String chatRoomId,
+  // }) async {
+  //   try {
+  //     // Get sender's name if not provided
+  //     String name = senderName ?? 'Someone';
+  //     if (senderName == null || senderName.isEmpty) {
+  //       final senderDoc = await _db
+  //           .collection(DatabaseConfig.userCollection)
+  //           .doc(senderId)
+  //           .get();
+  //       if (senderDoc.exists) {
+  //         final data = senderDoc.data();
+  //         final firstName = data?['first_name'] as String? ?? '';
+  //         final lastName = data?['last_name'] as String? ?? '';
+  //         name = '$firstName $lastName'.trim();
+  //         if (name.isEmpty) {
+  //           name = data?['email'] as String? ?? 'Someone';
+  //         }
+  //       }
+  //     }
+  //
+  //     // Get receiver's FCM token
+  //     final receiverDoc = await _db
+  //         .collection(DatabaseConfig.userCollection)
+  //         .doc(receiverId)
+  //         .get();
+  //
+  //     if (!receiverDoc.exists) {
+  //       debugPrint('⚠️ Receiver document not found for notification');
+  //       return;
+  //     }
+  //
+  //     final receiverData = receiverDoc.data();
+  //     final fcmToken =
+  //         receiverData?[DatabaseConfig.fieldDeviceToken] as String?;
+  //
+  //     if (fcmToken == null || fcmToken.isEmpty) {
+  //       debugPrint('⚠️ Receiver has no FCM token - cannot send notification');
+  //       return;
+  //     }
+  //
+  //     debugPrint(
+  //       '📱 Receiver FCM token found: ${fcmToken.substring(0, 20)}...',
+  //     );
+  //
+  //     // Queue notification for Cloud Function processing
+  //     // (This is more secure than sending directly from client)
+  //     await _db.collection('notification_queue').add({
+  //       'receiver_id': receiverId,
+  //       'receiver_token': fcmToken,
+  //       'sender_id': senderId,
+  //       'sender_name': name,
+  //       'message': message.length > 100
+  //           ? '${message.substring(0, 97)}...'
+  //           : message,
+  //       'chat_room_id': chatRoomId,
+  //       'type': 'chat_message',
+  //       'created_at': FieldValue.serverTimestamp(),
+  //       'processed': false,
+  //     });
+  //
+  //     debugPrint('✅ Notification queued for processing');
+  //   } catch (e) {
+  //     debugPrint('⚠️ Error queueing notification: $e');
+  //     // Don't fail the message send if notification fails
+  //   }
+  // }
 
   /// Mark messages as read
   Future<void> markMessagesAsRead(String chatRoomId) async {
