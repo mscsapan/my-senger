@@ -385,6 +385,38 @@ class NotificationService {
           setAsGroupSummary: false,
         );
 
+    /*AndroidNotificationDetails(
+      'chat_messages_channel',
+      'Chat Messages',
+      channelDescription: 'Notifications for new chat messages.',
+      importance: Importance.high,
+      priority: Priority.high,
+      showWhen: true,
+      enableVibration: true,
+      playSound: true,
+      category: AndroidNotificationCategory.message,
+      styleInformation: const BigTextStyleInformation(''),
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          'reply',
+          'Reply',
+          titleColor: Colors.red,
+          showsUserInterface: true,
+          inputs: const <AndroidNotificationActionInput>[
+            AndroidNotificationActionInput(label: 'Type reply...'),
+          ],
+        ),
+        const AndroidNotificationAction(
+          'mark_read',
+          'Mark as read',
+          titleColor: Colors.red,
+          showsUserInterface: false,
+        ),
+      ],
+      groupKey: 'chat_messages',
+      setAsGroupSummary: false,
+    );*/
+
     // iOS interactive notifications
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
       presentAlert: true,

@@ -285,7 +285,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     'message': {
                       'token': authCubit.otherUserInfo?.deviceToken ?? '',
                       'notification': {
-                        'title': 'New message from ${authCubit.state.updateInfo?.firstName ?? 'Guest User'}',
+                        'title': 'Message from ${authCubit.state.updateInfo?.fullName ?? 'Guest User'}',
+                        // 'title': 'New message from ${authCubit.state.updateInfo?.firstName ?? 'Guest User'}',
                         // 'title': 'New message from ${chatRoom.otherUser?.fullName ?? 'Guest User'}',
                         'body': _messageController.text,
                       },
