@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_senger/core/notification_service.dart';
+import 'package:my_senger/presentation/utils/k_images.dart';
 import 'package:my_senger/presentation/utils/k_string.dart';
 import '../../../data/models/chat/chat_page_status.dart';
+import '../../../data/models/setting/app_setting_model.dart';
 import '../../utils/navigation_service.dart';
 import '/logic/cubit/auth/auth_cubit.dart';
 import 'package:shimmer/shimmer.dart';
@@ -61,7 +63,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
       existingChatRoom: chatRoom,
       existingOtherUser: chatRoom.otherUser,
     );
-
 
     final model = ChatPageStatus(
       userId: conversationCubit.currentUserId ?? '',
@@ -191,14 +192,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     color: blackColor,
                   ),
                   if (isTyping)
-                    const Text(
-                      'typing...',
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        color: primaryColor,
-                        fontWeight: FontWeight.w500,
-                        fontStyle: FontStyle.italic,
-                      ),
+                    const CustomText(
+                      text: 'typing...',
+                      fontSize: 12.0,
+                      color: primaryColor,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.italic,
                     )
                   else if (isOnline)
                     const CustomText(
@@ -224,7 +223,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-
   Widget _buildLoadedView(BuildContext context, ConversationLoaded state) {
     final currentUserId = context.read<ConversationCubit>().currentUserId ?? '';
 
@@ -244,11 +242,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
 
         // Input Field
-        StreamBuilder<ChatPageStatus?>(
+        _buildInputField(state),
+      ],
+    );
+  }
+
+  /// Optimized input field widget to prevent unnecessary rebuilds
+  Widget _buildInputField(ConversationLoaded state) {
+    return StreamBuilder<AppSettingModel?>(
+      stream: authCubit.getSettings(),
+      builder: (context, settingsSnapshot) {
+        final settings = settingsSnapshot.data;
+        return StreamBuilder<ChatPageStatus?>(
           stream: authCubit.getUserOnlineStatusStream(otherUserId ?? ''),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            // debugPrint('fcmToken-updated ${snapshot.data.fcmToken}');
-
             return ConversationInputFieldNew(
               controller: _messageController,
               focusNode: _focusNode,
@@ -267,21 +274,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     'message': {
                       'token': authCubit.otherUserInfo?.deviceToken ?? '',
                       'notification': {
-                        'title': 'Message from ${authCubit.state.updateInfo?.fullName ?? 'Guest User'}',
-                        // 'title': 'New message from ${authCubit.state.updateInfo?.firstName ?? 'Guest User'}',
-                        // 'title': 'New message from ${chatRoom.otherUser?.fullName ?? 'Guest User'}',
+                        'title':
+                            'Message from ${authCubit.state.updateInfo?.fullName ?? 'Guest User'}',
                         'body': _messageController.text,
                       },
                       "data": {
                         'chat_room_id': chatRoom.chatRoomId,
                         'sender_id': conversationCubit.currentUserId,
-                        "type": "chat_message"
-                      }
+                        "type": "chat_message",
+                        "avatar":
+                            authCubit.state.updateInfo?.image ??
+                            KImages.placeholderImg,
+                        "body_image": KImages.bodyImage,
+                      },
                     },
                   };
-                  // debugPrint('notification-body $body');
-                  conversationCubit.sendChatNotificationToOther(body, KString.notificationAuthToken);
-                  // conversationCubit.sendChatNotificationToOther(body, snapshot.data.fcmToken);
+                  conversationCubit.sendChatNotificationToOther(
+                    body,
+                    settings?.authToken ?? '',
+                  );
                 } else {
                   debugPrint(
                     'not-send-because true ${snapshot.data.isOpenChatPage}',
@@ -296,8 +307,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
               canSend: state.canSendMessage,
             );
           },
-        ),
-      ],
+        );
+      },
     );
   }
 

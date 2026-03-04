@@ -297,12 +297,20 @@ class NotificationService {
     final String? senderName = message.data['sender_name'];
     final String? messageContent = message.data['message'];
     final String? type = message.data['type'];
+    final String? profile = message.data['avatar'];
+    final String? bodyImg = message.data['body_image'];
     final String? senderId = message.data['sender_id'];
 
     debugPrint('═══ Extracted from Firebase message ═══');
-    debugPrint('chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})');
-    debugPrint('senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})');
+    debugPrint(
+      'chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})',
+    );
+    debugPrint(
+      'senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})',
+    );
     debugPrint('type: "$type"');
+    debugPrint('avatar: $profile');
+    debugPrint('body image: $bodyImg');
 
     // Don't show notification if we're in the same chat room
     if (type == 'chat_message' && chatRoomId == _activeChatRoomId) {
@@ -314,13 +322,17 @@ class NotificationService {
 
     // Show local notification when app is in foreground
     if (notification != null) {
-      debugPrint('Showing notification with chatRoomId: "$chatRoomId", senderId: "$senderId"');
+      debugPrint(
+        'Showing notification with chatRoomId: "$chatRoomId", senderId: "$senderId"',
+      );
       _showChatNotification(
         id: notification.hashCode,
         title: senderName ?? notification.title ?? 'New Message',
         body: messageContent ?? notification.body ?? '',
         chatRoomId: chatRoomId,
         senderId: senderId,
+        avatarUrl: profile,
+        bodyImageUrl: bodyImg,
       );
     } else if (type == 'chat_message' && messageContent != null) {
       // Handle data-only messages
@@ -333,6 +345,8 @@ class NotificationService {
         body: messageContent,
         chatRoomId: chatRoomId,
         senderId: senderId,
+        avatarUrl: profile,
+        bodyImageUrl: bodyImg,
       );
     }
   }
@@ -344,7 +358,18 @@ class NotificationService {
     required String body,
     String? chatRoomId,
     String? senderId,
+    String? avatarUrl,
+    String? bodyImageUrl,
   }) async {
+    // Determine style information based on available images
+    final StyleInformation? styleInformation = bodyImageUrl != null
+        ? BigPictureStyleInformation(
+            UriAndroidBitmap(bodyImageUrl),
+            contentTitle: title,
+            summaryText: body,
+          )
+        : const BigTextStyleInformation('');
+
     // Android reply action
     final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
@@ -357,7 +382,10 @@ class NotificationService {
           enableVibration: true,
           playSound: true,
           category: AndroidNotificationCategory.message,
-          styleInformation: const BigTextStyleInformation(''),
+          largeIcon: avatarUrl != null
+              ? UriAndroidBitmap(avatarUrl)
+              : null,
+          styleInformation: styleInformation,
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
               'reply',
@@ -426,8 +454,12 @@ class NotificationService {
 
     // Create payload with chat info for navigation
     debugPrint('═══ Creating notification ═══');
-    debugPrint('chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})');
-    debugPrint('senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})');
+    debugPrint(
+      'chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})',
+    );
+    debugPrint(
+      'senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})',
+    );
 
     final payload = {
       'type': 'chat_message',

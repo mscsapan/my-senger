@@ -33,5 +33,6 @@ class KImages {
 
 
   static const String placeholderImg = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';
+  static const String bodyImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Flag_of_Bangladesh.svg/1280px-Flag_of_Bangladesh.svg.png';
 
 }
