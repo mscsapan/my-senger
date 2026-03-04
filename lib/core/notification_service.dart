@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +7,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../data/data_provider/database_config.dart';
@@ -287,6 +290,58 @@ class NotificationService {
     }
   }
 
+  /// Download and cache image from URL or return local path
+  Future<String?> _getCachedImagePath(String? imageUrl) async {
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return null;
+    }
+
+    try {
+      // Check if it's a local file path
+      if (!imageUrl.startsWith('http')) {
+        final localFile = File(imageUrl);
+        if (await localFile.exists()) {
+          return imageUrl;
+        }
+        return null;
+      }
+
+      // It's a remote URL, download and cache it
+      final cacheDir = await getTemporaryDirectory();
+      final fileName = imageUrl.hashCode.toString();
+      final filePath = '${cacheDir.path}/notification_$fileName.jpg';
+      final cachedFile = File(filePath);
+
+      // Return cached file if it already exists
+      if (await cachedFile.exists()) {
+        debugPrint('✅ Using cached image: $filePath');
+        return filePath;
+      }
+
+      debugPrint('📥 Downloading image from: $imageUrl');
+      final response = await http
+          .get(Uri.parse(imageUrl))
+          .timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              throw TimeoutException('Image download timeout');
+            },
+          );
+
+      if (response.statusCode == 200) {
+        await cachedFile.writeAsBytes(response.bodyBytes);
+        debugPrint('✅ Image cached at: $filePath');
+        return filePath;
+      } else {
+        debugPrint('❌ Failed to download image: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('❌ Error caching image: $e');
+      return null;
+    }
+  }
+
   /// Handle foreground messages (when app is open)
   void _handleForegroundMessage(RemoteMessage message) {
     debugPrint('Foreground message received: ${message.messageId}');
@@ -361,12 +416,18 @@ class NotificationService {
     String? avatarUrl,
     String? bodyImageUrl,
   }) async {
-    // Determine style information based on available images
-    final StyleInformation? styleInformation = bodyImageUrl != null
+    // Cache images in parallel
+    final avatarPath = await _getCachedImagePath(avatarUrl);
+    final bodyImagePath = await _getCachedImagePath(bodyImageUrl);
+
+    // Determine style information based on available body image
+    final styleInformation = bodyImagePath != null
         ? BigPictureStyleInformation(
-            UriAndroidBitmap(bodyImageUrl),
+            FilePathAndroidBitmap(bodyImagePath),
             contentTitle: title,
             summaryText: body,
+            htmlFormatContentTitle: false,
+            htmlFormatSummaryText: false,
           )
         : const BigTextStyleInformation('');
 
@@ -382,8 +443,8 @@ class NotificationService {
           enableVibration: true,
           playSound: true,
           category: AndroidNotificationCategory.message,
-          largeIcon: avatarUrl != null
-              ? UriAndroidBitmap(avatarUrl)
+          largeIcon: avatarPath != null
+              ? FilePathAndroidBitmap(avatarPath)
               : null,
           styleInformation: styleInformation,
           actions: <AndroidNotificationAction>[
@@ -393,7 +454,7 @@ class NotificationService {
               titleColor: Colors.blue,
               showsUserInterface: true,
               inputs: const <AndroidNotificationActionInput>[
-                AndroidNotificationActionInput(label: 'Reply'),
+                AndroidNotificationActionInput(label: 'Reply',allowFreeFormInput: false),
               ],
             ),
             const AndroidNotificationAction(

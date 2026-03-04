@@ -6,6 +6,7 @@ class KImages {
   static const String defaultImg = 'assets/images/default_image.png';
   static const String editIcon = 'assets/icons/edit_iocn.svg';
   static const String sendIcon = 'assets/icons/send_icons.svg';
+  static const String appIcon = 'assets/launcher_icons.png';
 
 
   static const String home = 'assets/icons/home.svg';
@@ -33,6 +34,8 @@ class KImages {
 
 
   static const String placeholderImg = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';
-  static const String bodyImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Flag_of_Bangladesh.svg/1280px-Flag_of_Bangladesh.svg.png';
+  static const String bodyImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Our_Bangladesh.jpg/250px-Our_Bangladesh.jpg';
+  // static const String bodyImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_Bangladesh_%281971%29.svg/500px-Flag_of_Bangladesh_%281971%29.svg.png';
+  // static const String bodyImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Flag_of_Bangladesh.svg/1280px-Flag_of_Bangladesh.svg.png';
 
 }

@@ -282,9 +282,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         'chat_room_id': chatRoom.chatRoomId,
                         'sender_id': conversationCubit.currentUserId,
                         "type": "chat_message",
-                        "avatar":
-                            authCubit.state.updateInfo?.image ??
-                            KImages.placeholderImg,
+                        // "avatar":  KImages.appIcon,
+                        // "body_image": KImages.appIcon,
+                        "avatar": authCubit.state.updateInfo?.image ?? KImages.placeholderImg,
                         "body_image": KImages.bodyImage,
                       },
                     },
