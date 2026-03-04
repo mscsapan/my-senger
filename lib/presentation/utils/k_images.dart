@@ -7,6 +7,7 @@ class KImages {
   static const String editIcon = 'assets/icons/edit_iocn.svg';
   static const String sendIcon = 'assets/icons/send_icons.svg';
   static const String appIcon = 'assets/launcher_icons.png';
+  static const String bdImg = 'assets/images/bd.png';
 
 
   static const String home = 'assets/icons/home.svg';
