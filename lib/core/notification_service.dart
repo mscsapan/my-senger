@@ -478,7 +478,7 @@ class NotificationService {
       debugPrint(
         'Showing notification with chatRoomId: "$chatRoomId", senderId: "$senderId"',
       );
-      _showChatNotification(
+      _showChatNotificationCustom(
         id: notification.hashCode,
         title: senderName ?? notification.title ?? 'New Message',
         body: messageContent ?? notification.body ?? '',
@@ -492,7 +492,7 @@ class NotificationService {
       debugPrint(
         'Showing data-only notification with chatRoomId: "$chatRoomId", senderId: "$senderId"',
       );
-      _showChatNotification(
+      _showChatNotificationCustom(
         id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
         title: senderName ?? 'New Message',
         body: messageContent,
@@ -504,6 +504,13 @@ class NotificationService {
     }
   }
 
+  /// PREVIOUS WORKING CODE - KEPT FOR REFERENCE
+  /// Shows notification with BigPictureStyle
+  /* ═════════════════════════════════════════════════════════════════
+     PREVIOUS WORKING CODE - KEPT FOR REFERENCE
+     Shows notification with BigPictureStyle
+     ═════════════════════════════════════════════════════════════════
+  
   /// Show chat notification with action support (direct reply)
   Future<void> _showChatNotification({
     required int id,
@@ -643,6 +650,149 @@ class NotificationService {
     );
 
     debugPrint('═══ Notification shown ═══');
+  }
+  
+  ═════════════════════════════════════════════════════════════════ */
+
+  /// NEW CUSTOM NOTIFICATION UI - Chat style with avatar on left
+  /// Shows: Avatar (left) | Sender Name, Message Text, Image (column on right)
+  /// Uses MessagingStyleInformation for message layout and BigPictureStyleInformation for images
+  /// Layout: [Avatar] | Sender Name | When there's image:
+  ///          | Message Text    | [Big Picture Image]
+  ///          | [Image if attached]
+  Future<void> _showChatNotificationCustom({
+    required int id,
+    required String title,
+    required String body,
+    String? chatRoomId,
+    String? senderId,
+    String? avatarUrl,
+    String? bodyImageUrl,
+  }) async {
+    // Cache images in parallel with avatar as circular
+    final avatarPath = await _getCachedImagePath(avatarUrl, makeCircular: true);
+    final bodyImagePath = await _getCachedImagePath(
+      bodyImageUrl,
+      makeCircular: false,
+    );
+
+    debugPrint('═══ Creating Custom Chat Notification ═══');
+    debugPrint('Title: $title');
+    debugPrint('Body: $body');
+    debugPrint('Avatar Path: $avatarPath');
+    debugPrint('Body Image Path: $bodyImagePath');
+
+    // Create Person object with avatar for messaging style
+    final person = Person(
+      name: title,
+      icon: avatarPath != null ? BitmapFilePathAndroidIcon(avatarPath) : null,
+      bot: false,
+      important: true,
+    );
+
+    // Determine which style to use based on whether image exists
+    final StyleInformation styleInformation;
+
+    if (bodyImagePath != null) {
+      // When there's an image, use BigPictureStyle to display it
+      // but keep the messaging format with title and body
+      styleInformation = BigPictureStyleInformation(
+        FilePathAndroidBitmap(bodyImagePath),
+        contentTitle: title, // Sender name
+        summaryText: body, // Message text
+        htmlFormatContentTitle: false,
+        htmlFormatSummaryText: false,
+      );
+    } else {
+      // When there's no image, use MessagingStyle for clean chat layout
+      final message = Message(body, DateTime.now(), person);
+      styleInformation = MessagingStyleInformation(
+        person,
+        conversationTitle: title,
+        groupConversation: false,
+        messages: [message],
+      );
+    }
+
+    // Android notification with appropriate style
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'chat_messages_channel',
+          'Chat Messages',
+          channelDescription: 'Notifications for new chat messages.',
+          importance: Importance.high,
+          priority: Priority.high,
+          showWhen: true,
+          enableVibration: true,
+          playSound: true,
+          category: AndroidNotificationCategory.message,
+          // Show avatar on the left side
+          largeIcon: avatarPath != null
+              ? FilePathAndroidBitmap(avatarPath)
+              : null,
+          styleInformation: styleInformation,
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              'reply',
+              'Reply',
+              titleColor: Colors.blue,
+              showsUserInterface: true,
+              inputs: const <AndroidNotificationActionInput>[
+                AndroidNotificationActionInput(
+                  label: 'Type your reply...',
+                  allowFreeFormInput: true,
+                ),
+              ],
+            ),
+            const AndroidNotificationAction(
+              'mark_read',
+              'Mark as read',
+              titleColor: Colors.green,
+              showsUserInterface: false,
+            ),
+          ],
+          groupKey: 'chat_messages',
+          setAsGroupSummary: false,
+        );
+
+    // iOS interactive notifications with same layout style
+    final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      subtitle: body,
+    );
+
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    // Create payload with chat info for navigation
+    debugPrint(
+      'chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})',
+    );
+    debugPrint(
+      'senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})',
+    );
+
+    final payload = {
+      'type': 'chat_message',
+      'chat_room_id': chatRoomId ?? '',
+      'sender_id': senderId ?? '',
+    }.entries.map((e) => '${e.key}=${e.value}').join('&');
+
+    debugPrint('Final payload string: "$payload"');
+
+    await _localNotifications.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+      payload: payload,
+    );
+
+    debugPrint('═══ Custom Chat Notification shown with MessagingStyle ═══');
   }
 
   /// Handle notification tap (when app is in background)
