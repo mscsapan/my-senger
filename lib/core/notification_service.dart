@@ -300,12 +300,8 @@ class NotificationService {
     final String? senderId = message.data['sender_id'];
 
     debugPrint('═══ Extracted from Firebase message ═══');
-    debugPrint(
-      'chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})',
-    );
-    debugPrint(
-      'senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})',
-    );
+    debugPrint('chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})');
+    debugPrint('senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})');
     debugPrint('type: "$type"');
 
     // Don't show notification if we're in the same chat room
@@ -318,9 +314,7 @@ class NotificationService {
 
     // Show local notification when app is in foreground
     if (notification != null) {
-      debugPrint(
-        'Showing notification with chatRoomId: "$chatRoomId", senderId: "$senderId"',
-      );
+      debugPrint('Showing notification with chatRoomId: "$chatRoomId", senderId: "$senderId"');
       _showChatNotification(
         id: notification.hashCode,
         title: senderName ?? notification.title ?? 'New Message',
@@ -432,12 +426,8 @@ class NotificationService {
 
     // Create payload with chat info for navigation
     debugPrint('═══ Creating notification ═══');
-    debugPrint(
-      'chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})',
-    );
-    debugPrint(
-      'senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})',
-    );
+    debugPrint('chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})');
+    debugPrint('senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})');
 
     final payload = {
       'type': 'chat_message',

@@ -209,7 +209,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     )
                   else
                     CustomText(
-                      text: _formatLastSeen(otherUser?.lastSeen),
+                      text: Utils.formatLastSeen(otherUser?.lastSeen),
                       fontSize: 12.0,
                       color: grayColor,
                       fontWeight: FontWeight.w400,
@@ -224,24 +224,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-  String _formatLastSeen(DateTime? lastSeen) {
-    if (lastSeen == null) return '';
-
-    final now = DateTime.now();
-    final difference = now.difference(lastSeen);
-
-    if (difference.inMinutes < 1) {
-      return 'Just now';
-    } else if (difference.inHours < 1) {
-      return 'Last seen ${difference.inMinutes}m ago';
-    } else if (difference.inDays < 1) {
-      return 'Last seen ${difference.inHours}h ago';
-    } else if (difference.inDays == 1) {
-      return 'Last seen yesterday';
-    } else {
-      return 'Last seen ${difference.inDays}d ago';
-    }
-  }
 
   Widget _buildLoadedView(BuildContext context, ConversationLoaded state) {
     final currentUserId = context.read<ConversationCubit>().currentUserId ?? '';
