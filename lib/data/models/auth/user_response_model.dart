@@ -230,6 +230,13 @@ class UserResponse extends Equatable {
     return fieldsNotEmpty && passwordValid && confirmPasswordValid && passwordsMatch;
   }
 
+
+  String get fullName {
+    final first = firstName.trim();
+    final last = lastName.trim();
+    return '$first $last'.trim();
+  }
+
   @override
   List<Object?> get props {
     return [

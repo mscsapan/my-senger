@@ -20,7 +20,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver{
   final _homeController = MainController();
   late AuthCubit loginBloc;
   late List<Widget> screenList;
@@ -28,22 +28,54 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    loginBloc = context.read<AuthCubit>()..fetchUserData();
     _init();
-    initFCMToken();
   }
 
   void _init(){
+    WidgetsBinding.instance.addObserver(this);
+
+    loginBloc = context.read<AuthCubit>()..fetchUserData();
+
     screenList = [
       const HomeScreen(),
       const ChatScreen(),
       const ProfileScreen(),
     ];
 
+    initFCMToken();
+
   }
 
   Future<void> initFCMToken()async{
     await NotificationService().initializeFcmToken();
+  }
+
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    debugPrint('calledddddddddd ${state.toString()}');
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('current-app-state resumed');
+    } else if (state == AppLifecycleState.inactive) {
+      debugPrint('current-app-state inactive');
+    } else if (state == AppLifecycleState.paused) {
+      debugPrint('current-app-state paused');
+    } else if (state == AppLifecycleState.hidden) {
+      debugPrint('current-app-state hidden');
+    } else if (state == AppLifecycleState.detached) {
+      debugPrint('current-app-state detached');
+    }
+
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+
+    WidgetsBinding.instance.removeObserver(this);
+
+    super.dispose();
   }
 
   @override

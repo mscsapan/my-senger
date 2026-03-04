@@ -12,6 +12,7 @@ import '../../../data/data_provider/database_config.dart';
 import '../../../data/models/auth/auth_state_model.dart';
 import '../../../data/models/auth/user_response_model.dart';
 import '../../../data/models/chat/chat_page_status.dart';
+import '../../../data/models/setting/app_setting_model.dart';
 
 part 'auth_state.dart';
 
@@ -60,6 +61,8 @@ class AuthCubit extends Cubit<AuthStateModel> {
   UserResponse ? otherUserInfo;
 
   ChatPageStatus ? userOnlineStatus;
+
+  AppSettingModel ? appSetting;
 
   Future<void> checkAuthStatus() async {
 
@@ -175,7 +178,24 @@ class AuthCubit extends Cubit<AuthStateModel> {
       }
       return null;
     }).handleError((error) {
-      debugPrint('❌ getUserOnlineStatusStream Error: $error');
+      debugPrint('getUserOnlineStatusStream Error: $error');
+      return null;
+    });
+  }
+
+  Stream<AppSettingModel?> getSettings() {
+    return _db
+        .collection(DatabaseConfig.settingCollection)
+        .doc(DatabaseConfig.settingId)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists && snapshot.data() != null) {
+        appSetting =  AppSettingModel.fromMap(snapshot.data()??{});
+        return appSetting;
+      }
+      return null;
+    }).handleError((e){
+      debugPrint('getSettings Error: $e');
       return null;
     });
   }

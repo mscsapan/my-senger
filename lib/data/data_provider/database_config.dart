@@ -6,6 +6,8 @@ class DatabaseConfig {
   static const String messagesCollection = 'messages';
   static const String typingStatusCollection = 'typing_status';
   static const String chatPageCollection = 'chat_page';
+  static const String settingCollection = 'settings';
+  static const String settingId = 'h5MyargLyZqNjD2kS69n';
 
   // Subcollections
   static const String participantsSubcollection = 'participants';

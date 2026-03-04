@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_senger/core/notification_service.dart';
+import 'package:my_senger/presentation/utils/k_images.dart';
 import 'package:my_senger/presentation/utils/k_string.dart';
 import '../../../data/models/chat/chat_page_status.dart';
+import '../../../data/models/setting/app_setting_model.dart';
 import '../../utils/navigation_service.dart';
 import '/logic/cubit/auth/auth_cubit.dart';
 import 'package:shimmer/shimmer.dart';
@@ -61,7 +63,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
       existingChatRoom: chatRoom,
       existingOtherUser: chatRoom.otherUser,
     );
-
 
     final model = ChatPageStatus(
       userId: conversationCubit.currentUserId ?? '',
@@ -191,14 +192,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     color: blackColor,
                   ),
                   if (isTyping)
-                    const Text(
-                      'typing...',
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        color: primaryColor,
-                        fontWeight: FontWeight.w500,
-                        fontStyle: FontStyle.italic,
-                      ),
+                    const CustomText(
+                      text: 'typing...',
+                      fontSize: 12.0,
+                      color: primaryColor,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.italic,
                     )
                   else if (isOnline)
                     const CustomText(
@@ -209,7 +208,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     )
                   else
                     CustomText(
-                      text: _formatLastSeen(otherUser?.lastSeen),
+                      text: Utils.formatLastSeen(otherUser?.lastSeen),
                       fontSize: 12.0,
                       color: grayColor,
                       fontWeight: FontWeight.w400,
@@ -222,25 +221,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
       ),
       centerTitle: false,
     );
-  }
-
-  String _formatLastSeen(DateTime? lastSeen) {
-    if (lastSeen == null) return '';
-
-    final now = DateTime.now();
-    final difference = now.difference(lastSeen);
-
-    if (difference.inMinutes < 1) {
-      return 'Just now';
-    } else if (difference.inHours < 1) {
-      return 'Last seen ${difference.inMinutes}m ago';
-    } else if (difference.inDays < 1) {
-      return 'Last seen ${difference.inHours}h ago';
-    } else if (difference.inDays == 1) {
-      return 'Last seen yesterday';
-    } else {
-      return 'Last seen ${difference.inDays}d ago';
-    }
   }
 
   Widget _buildLoadedView(BuildContext context, ConversationLoaded state) {
@@ -262,11 +242,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
 
         // Input Field
-        StreamBuilder<ChatPageStatus?>(
+        _buildInputField(state),
+      ],
+    );
+  }
+
+  /// Optimized input field widget to prevent unnecessary rebuilds
+  Widget _buildInputField(ConversationLoaded state) {
+    return StreamBuilder<AppSettingModel?>(
+      stream: authCubit.getSettings(),
+      builder: (context, settingsSnapshot) {
+        final settings = settingsSnapshot.data;
+        return StreamBuilder<ChatPageStatus?>(
           stream: authCubit.getUserOnlineStatusStream(otherUserId ?? ''),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            // debugPrint('fcmToken-updated ${snapshot.data.fcmToken}');
-
             return ConversationInputFieldNew(
               controller: _messageController,
               focusNode: _focusNode,
@@ -285,20 +274,24 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     'message': {
                       'token': authCubit.otherUserInfo?.deviceToken ?? '',
                       'notification': {
-                        'title': 'New message from ${authCubit.state.updateInfo?.firstName ?? 'Guest User'}',
-                        // 'title': 'New message from ${chatRoom.otherUser?.fullName ?? 'Guest User'}',
+                        'title': authCubit.state.updateInfo?.fullName ?? 'Guest User',
                         'body': _messageController.text,
                       },
                       "data": {
                         'chat_room_id': chatRoom.chatRoomId,
                         'sender_id': conversationCubit.currentUserId,
-                        "type": "chat_message"
-                      }
+                        "type": "chat_message",
+                        "avatar":  KImages.appIcon,
+                        "body_image": KImages.bdImg,
+                        // "avatar": authCubit.state.updateInfo?.image ?? KImages.placeholderImg,
+                        // "body_image": KImages.bodyImage,
+                      },
                     },
                   };
-                  // debugPrint('notification-body $body');
-                  conversationCubit.sendChatNotificationToOther(body, KString.notificationAuthToken);
-                  // conversationCubit.sendChatNotificationToOther(body, snapshot.data.fcmToken);
+                  conversationCubit.sendChatNotificationToOther(
+                    body,
+                    settings?.authToken ?? '',
+                  );
                 } else {
                   debugPrint(
                     'not-send-because true ${snapshot.data.isOpenChatPage}',
@@ -313,8 +306,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
               canSend: state.canSendMessage,
             );
           },
-        ),
-      ],
+        );
+      },
     );
   }
 

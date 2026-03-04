@@ -17,6 +17,7 @@ class CustomText extends StatelessWidget {
     this.decoration = TextDecoration.none,
     this.overflow = TextOverflow.ellipsis,
     this.textAlign = TextAlign.start,
+    this.fontStyle,
   });
 
   final String text;
@@ -28,6 +29,7 @@ class CustomText extends StatelessWidget {
   final int maxLine;
   final TextOverflow overflow;
   final TextDecoration decoration;
+  final FontStyle ? fontStyle ;
 
 
   @override
@@ -45,6 +47,7 @@ class CustomText extends StatelessWidget {
           color: color,
           height: height.h,
           decoration: decoration,
+          fontStyle: fontStyle?? FontStyle.normal,
         ),
       ),
     );

@@ -1,11 +1,16 @@
 import 'dart:io';
+import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../data/data_provider/database_config.dart';
@@ -287,6 +292,154 @@ class NotificationService {
     }
   }
 
+  /// Download and cache image from URL, asset, or local path
+  Future<String?> _getCachedImagePath(
+    String? imagePath, {
+    bool makeCircular = false,
+  }) async {
+    if (imagePath == null || imagePath.isEmpty) {
+      return null;
+    }
+
+    try {
+      // Handle asset paths (e.g., 'assets/images/...')
+      if (imagePath.startsWith('assets/')) {
+        debugPrint('📦 Loading asset: $imagePath');
+        final byteData = await rootBundle.load(imagePath);
+        final tempDir = await getTemporaryDirectory();
+        final fileName = imagePath.hashCode.toString();
+        final filePath = '${tempDir.path}/notification_asset_$fileName.jpg';
+        final file = File(filePath);
+
+        if (!await file.exists()) {
+          await file.writeAsBytes(byteData.buffer.asUint8List());
+          debugPrint('✅ Asset cached at: $filePath');
+        }
+
+        if (makeCircular) {
+          return await _makeCircularBitmap(filePath);
+        }
+        return filePath;
+      }
+
+      // Handle local file paths (not assets)
+      if (!imagePath.startsWith('http')) {
+        final localFile = File(imagePath);
+        if (await localFile.exists()) {
+          debugPrint('✅ Using local file: $imagePath');
+          if (makeCircular) {
+            return await _makeCircularBitmap(imagePath);
+          }
+          return imagePath;
+        }
+        debugPrint('❌ Local file not found: $imagePath');
+        return null;
+      }
+
+      // Handle remote URLs
+      final cacheDir = await getTemporaryDirectory();
+      final fileName = imagePath.hashCode.toString();
+      final filePath = '${cacheDir.path}/notification_$fileName.jpg';
+      final cachedFile = File(filePath);
+
+      // Return cached file if it already exists
+      if (await cachedFile.exists()) {
+        debugPrint('✅ Using cached image: $filePath');
+        if (makeCircular) {
+          return await _makeCircularBitmap(filePath);
+        }
+        return filePath;
+      }
+
+      debugPrint('📥 Downloading image from: $imagePath');
+      final response = await http
+          .get(Uri.parse(imagePath))
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              throw TimeoutException('Image download timeout');
+            },
+          );
+
+      if (response.statusCode == 200) {
+        await cachedFile.writeAsBytes(response.bodyBytes);
+        debugPrint('✅ Image cached at: $filePath');
+        if (makeCircular) {
+          return await _makeCircularBitmap(filePath);
+        }
+        return filePath;
+      } else {
+        debugPrint('❌ Failed to download image: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('❌ Error caching image: $e');
+      return null;
+    }
+  }
+
+  /// Create a circular version of the image
+  Future<String?> _makeCircularBitmap(String imagePath) async {
+    try {
+      debugPrint('🔄 Creating circular bitmap for: $imagePath');
+      final imageFile = File(imagePath);
+      final imageBytes = await imageFile.readAsBytes();
+
+      // Decode image
+      final codec = await ui.instantiateImageCodec(imageBytes);
+      final nextFrame = await codec.getNextFrame();
+      final image = nextFrame.image;
+
+      // Create circular image
+      final size = ui.Size(image.width.toDouble(), image.height.toDouble());
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder, Offset.zero & size);
+
+      // Draw circular clip
+      canvas.drawCircle(
+        Offset(size.width / 2, size.height / 2),
+        size.width / 2,
+        Paint()
+          ..color = Colors.white
+          ..isAntiAlias = true,
+      );
+
+      // Draw image within circle
+      canvas.save();
+      canvas.clipPath(
+        Path()..addOval(
+          Rect.fromCircle(
+            center: Offset(size.width / 2.0, size.height / 2.0),
+            radius: size.width / 2.0,
+          ),
+        ),
+      );
+      canvas.drawImage(image, Offset.zero, Paint());
+      canvas.restore();
+
+      // Convert back to bytes
+      final picture = recorder.endRecording();
+      final circularImage = await picture.toImage(
+        size.width.toInt(),
+        size.height.toInt(),
+      );
+      final bytes = await circularImage.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+
+      // Save circular image
+      final tempDir = await getTemporaryDirectory();
+      final circularPath = '${tempDir.path}/circular_${imagePath.hashCode}.png';
+      await File(circularPath).writeAsBytes(bytes!.buffer.asUint8List());
+
+      debugPrint('✅ Circular bitmap created at: $circularPath');
+      return circularPath;
+    } catch (e) {
+      debugPrint('❌ Error creating circular bitmap: $e');
+      return imagePath; // Return original if circular fails
+    }
+  }
+
   /// Handle foreground messages (when app is open)
   void _handleForegroundMessage(RemoteMessage message) {
     debugPrint('Foreground message received: ${message.messageId}');
@@ -297,6 +450,8 @@ class NotificationService {
     final String? senderName = message.data['sender_name'];
     final String? messageContent = message.data['message'];
     final String? type = message.data['type'];
+    final String? profile = message.data['avatar'];
+    final String? bodyImg = message.data['body_image'];
     final String? senderId = message.data['sender_id'];
 
     debugPrint('═══ Extracted from Firebase message ═══');
@@ -307,6 +462,8 @@ class NotificationService {
       'senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})',
     );
     debugPrint('type: "$type"');
+    debugPrint('avatar: $profile');
+    debugPrint('body image: $bodyImg');
 
     // Don't show notification if we're in the same chat room
     if (type == 'chat_message' && chatRoomId == _activeChatRoomId) {
@@ -321,28 +478,39 @@ class NotificationService {
       debugPrint(
         'Showing notification with chatRoomId: "$chatRoomId", senderId: "$senderId"',
       );
-      _showChatNotification(
+      _showChatNotificationCustom(
         id: notification.hashCode,
         title: senderName ?? notification.title ?? 'New Message',
         body: messageContent ?? notification.body ?? '',
         chatRoomId: chatRoomId,
         senderId: senderId,
+        avatarUrl: profile,
+        bodyImageUrl: bodyImg,
       );
     } else if (type == 'chat_message' && messageContent != null) {
       // Handle data-only messages
       debugPrint(
         'Showing data-only notification with chatRoomId: "$chatRoomId", senderId: "$senderId"',
       );
-      _showChatNotification(
+      _showChatNotificationCustom(
         id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
         title: senderName ?? 'New Message',
         body: messageContent,
         chatRoomId: chatRoomId,
         senderId: senderId,
+        avatarUrl: profile,
+        bodyImageUrl: bodyImg,
       );
     }
   }
 
+  /// PREVIOUS WORKING CODE - KEPT FOR REFERENCE
+  /// Shows notification with BigPictureStyle
+  /* ═════════════════════════════════════════════════════════════════
+     PREVIOUS WORKING CODE - KEPT FOR REFERENCE
+     Shows notification with BigPictureStyle
+     ═════════════════════════════════════════════════════════════════
+  
   /// Show chat notification with action support (direct reply)
   Future<void> _showChatNotification({
     required int id,
@@ -350,7 +518,27 @@ class NotificationService {
     required String body,
     String? chatRoomId,
     String? senderId,
+    String? avatarUrl,
+    String? bodyImageUrl,
   }) async {
+    // Cache images in parallel with avatar as circular
+    final avatarPath = await _getCachedImagePath(avatarUrl, makeCircular: true);
+    final bodyImagePath = await _getCachedImagePath(
+      bodyImageUrl,
+      makeCircular: false,
+    );
+
+    // Determine style information based on available body image
+    final styleInformation = bodyImagePath != null
+        ? BigPictureStyleInformation(
+            FilePathAndroidBitmap(bodyImagePath),
+            contentTitle: title,
+            summaryText: body,
+            htmlFormatContentTitle: false,
+            htmlFormatSummaryText: false,
+          )
+        : const BigTextStyleInformation('');
+
     // Android reply action
     final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
@@ -363,7 +551,10 @@ class NotificationService {
           enableVibration: true,
           playSound: true,
           category: AndroidNotificationCategory.message,
-          styleInformation: const BigTextStyleInformation(''),
+          largeIcon: avatarPath != null
+              ? FilePathAndroidBitmap(avatarPath)
+              : null,
+          styleInformation: styleInformation,
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
               'reply',
@@ -371,7 +562,10 @@ class NotificationService {
               titleColor: Colors.blue,
               showsUserInterface: true,
               inputs: const <AndroidNotificationActionInput>[
-                AndroidNotificationActionInput(label: 'Reply'),
+                AndroidNotificationActionInput(
+                  label: 'Reply',
+                  allowFreeFormInput: true,
+                ),
               ],
             ),
             const AndroidNotificationAction(
@@ -384,6 +578,38 @@ class NotificationService {
           groupKey: 'chat_messages',
           setAsGroupSummary: false,
         );
+
+    /*AndroidNotificationDetails(
+      'chat_messages_channel',
+      'Chat Messages',
+      channelDescription: 'Notifications for new chat messages.',
+      importance: Importance.high,
+      priority: Priority.high,
+      showWhen: true,
+      enableVibration: true,
+      playSound: true,
+      category: AndroidNotificationCategory.message,
+      styleInformation: const BigTextStyleInformation(''),
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          'reply',
+          'Reply',
+          titleColor: Colors.red,
+          showsUserInterface: true,
+          inputs: const <AndroidNotificationActionInput>[
+            AndroidNotificationActionInput(label: 'Type reply...'),
+          ],
+        ),
+        const AndroidNotificationAction(
+          'mark_read',
+          'Mark as read',
+          titleColor: Colors.red,
+          showsUserInterface: false,
+        ),
+      ],
+      groupKey: 'chat_messages',
+      setAsGroupSummary: false,
+    );*/
 
     // iOS interactive notifications
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
@@ -424,6 +650,149 @@ class NotificationService {
     );
 
     debugPrint('═══ Notification shown ═══');
+  }
+  
+  ═════════════════════════════════════════════════════════════════ */
+
+  /// NEW CUSTOM NOTIFICATION UI - Chat style with avatar on left
+  /// Shows: Avatar (left) | Sender Name, Message Text, Image (column on right)
+  /// Uses MessagingStyleInformation for message layout and BigPictureStyleInformation for images
+  /// Layout: [Avatar] | Sender Name | When there's image:
+  ///          | Message Text    | [Big Picture Image]
+  ///          | [Image if attached]
+  Future<void> _showChatNotificationCustom({
+    required int id,
+    required String title,
+    required String body,
+    String? chatRoomId,
+    String? senderId,
+    String? avatarUrl,
+    String? bodyImageUrl,
+  }) async {
+    // Cache images in parallel with avatar as circular
+    final avatarPath = await _getCachedImagePath(avatarUrl, makeCircular: true);
+    final bodyImagePath = await _getCachedImagePath(
+      bodyImageUrl,
+      makeCircular: false,
+    );
+
+    debugPrint('═══ Creating Custom Chat Notification ═══');
+    debugPrint('Title: $title');
+    debugPrint('Body: $body');
+    debugPrint('Avatar Path: $avatarPath');
+    debugPrint('Body Image Path: $bodyImagePath');
+
+    // Create Person object with avatar for messaging style
+    final person = Person(
+      name: title,
+      icon: avatarPath != null ? BitmapFilePathAndroidIcon(avatarPath) : null,
+      bot: false,
+      important: true,
+    );
+
+    // Determine which style to use based on whether image exists
+    final StyleInformation styleInformation;
+
+    if (bodyImagePath != null) {
+      // When there's an image, use BigPictureStyle to display it
+      // but keep the messaging format with title and body
+      styleInformation = BigPictureStyleInformation(
+        FilePathAndroidBitmap(bodyImagePath),
+        contentTitle: title, // Sender name
+        summaryText: body, // Message text
+        htmlFormatContentTitle: false,
+        htmlFormatSummaryText: false,
+      );
+    } else {
+      // When there's no image, use MessagingStyle for clean chat layout
+      final message = Message(body, DateTime.now(), person);
+      styleInformation = MessagingStyleInformation(
+        person,
+        conversationTitle: title,
+        groupConversation: false,
+        messages: [message],
+      );
+    }
+
+    // Android notification with appropriate style
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'chat_messages_channel',
+          'Chat Messages',
+          channelDescription: 'Notifications for new chat messages.',
+          importance: Importance.high,
+          priority: Priority.high,
+          showWhen: true,
+          enableVibration: true,
+          playSound: true,
+          category: AndroidNotificationCategory.message,
+          // Show avatar on the left side
+          largeIcon: avatarPath != null
+              ? FilePathAndroidBitmap(avatarPath)
+              : null,
+          styleInformation: styleInformation,
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              'reply',
+              'Reply',
+              titleColor: Colors.blue,
+              showsUserInterface: true,
+              inputs: const <AndroidNotificationActionInput>[
+                AndroidNotificationActionInput(
+                  label: 'Type your reply...',
+                  allowFreeFormInput: true,
+                ),
+              ],
+            ),
+            const AndroidNotificationAction(
+              'mark_read',
+              'Mark as read',
+              titleColor: Colors.green,
+              showsUserInterface: false,
+            ),
+          ],
+          groupKey: 'chat_messages',
+          setAsGroupSummary: false,
+        );
+
+    // iOS interactive notifications with same layout style
+    final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      subtitle: body,
+    );
+
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    // Create payload with chat info for navigation
+    debugPrint(
+      'chatRoomId: "$chatRoomId" (null: ${chatRoomId == null}, empty: ${chatRoomId?.isEmpty ?? true})',
+    );
+    debugPrint(
+      'senderId: "$senderId" (null: ${senderId == null}, empty: ${senderId?.isEmpty ?? true})',
+    );
+
+    final payload = {
+      'type': 'chat_message',
+      'chat_room_id': chatRoomId ?? '',
+      'sender_id': senderId ?? '',
+    }.entries.map((e) => '${e.key}=${e.value}').join('&');
+
+    debugPrint('Final payload string: "$payload"');
+
+    await _localNotifications.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+      payload: payload,
+    );
+
+    debugPrint('═══ Custom Chat Notification shown with MessagingStyle ═══');
   }
 
   /// Handle notification tap (when app is in background)

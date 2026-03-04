@@ -62,6 +62,24 @@ class Utils {
     return input.toLowerCase().replaceAll(RegExp(r'[^a-zA-Z\d]+'), '-');
   }
 
+  static String formatLastSeen(DateTime? lastSeen) {
+    if (lastSeen == null) return '';
+
+    final now = DateTime.now();
+    final difference = now.difference(lastSeen);
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inHours < 1) {
+      return 'Last seen ${difference.inMinutes}m ago';
+    } else if (difference.inDays < 1) {
+      return 'Last seen ${difference.inHours}h ago';
+    } else if (difference.inDays == 1) {
+      return 'Last seen yesterday';
+    } else {
+      return 'Last seen ${difference.inDays}d ago';
+    }
+  }
 
   static bool textTrim(String ? text){
     if(text?.trim().isEmpty??false) return false;
